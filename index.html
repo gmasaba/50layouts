@@ -175,7 +175,12 @@
         }
         .tessellation-output .tile { outline: 1px solid rgba(0,0,0,0.1); }
 
-        /* Right Panel (Collapsible) */
+        /* Mobile Layout Top Container Block (Hidden on Desktop) */
+        .mobile-top-bar {
+            display: none;
+        }
+
+        /* Right Panel (Collapsible on PC) */
         .tools-panel {
             width: 450px;
             min-width: 450px;
@@ -353,93 +358,150 @@
         .crop-preview-container { max-height: 400px; margin: 15px 0; background: #eee; position: relative; border-radius: 6px; overflow: hidden; }
         #cropImageTag { max-width: 100%; display: block; }
 
+        /* Mobile App Navigation Elements (Hidden on Desktop) */
+        .mobile-app-nav {
+            display: none;
+        }
+
         /* ==========================================================================
-           --- MOBILE & TABLET UI OPTIMIZATIONS (Media Queries) ---
+           --- MOBILE & TABLET APP-STYLE UI OVERRIDES ---
            ========================================================================== */
         @media (max-width: 991px) {
-            /* 1. Layout adjustment for mobile split view */
             .editor-container {
                 flex-direction: column;
-            }
-            .workspace {
-                height: 50vh;
-                flex: none;
-            }
-            .workspace-header {
-                padding: 8px 12px;
-                gap: 5px;
-            }
-            .workspace-header span {
-                display: none; /* Hide PC shortcuts instruction text on mobile */
-            }
-            .preview-area {
-                padding: 20px;
+                height: 100vh;
+                width: 100vw;
             }
 
-            /* 2. Tools panel relocates to bottom */
+            /* Top selector bar setup */
+            .mobile-top-bar {
+                display: block;
+                background: #ffffff;
+                padding: 10px;
+                border-bottom: 1px solid #e2e8f0;
+                z-index: 105;
+            }
+            .mobile-top-bar select {
+                width: 100%;
+                padding: 8px;
+                font-size: 0.9rem;
+                border-radius: 6px;
+                border: 1px solid #cbd5e1;
+            }
+
+            /* Workspace Area Size and Pan Adjustments */
+            .workspace {
+                flex: 1;
+                height: auto;
+            }
+            .workspace-header span {
+                display: none; /* Hide Desktop Tips text */
+            }
+
+            /* Remap right panel to standard App Bottom Sheet style */
             .tools-panel {
                 width: 100% !important;
                 min-width: 100% !important;
-                height: 50vh;
+                height: auto;
+                max-height: 40vh;
                 border-left: none;
                 border-top: 1px solid #e2e8f0;
-                transition: height 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+                background: #ffffff;
+                box-shadow: 0 -4px 10px rgba(0,0,0,0.05);
             }
             .tools-panel.collapsed {
-                height: 0px !important;
-                min-height: 0px !important;
+                display: none !important;
             }
+            .panel-toggle {
+                display: none !important; /* Hide standard PC sidebar toggle handle */
+            }
+
             .panel-content {
                 width: 100%;
-                padding: 15px;
+                padding: 12px 16px;
+                overflow-y: auto;
             }
 
-            /* Toggle handle switches direction */
-            .panel-toggle {
-                left: 50%;
-                top: -14px;
-                transform: translateX(-50%);
-                width: 40px;
-                height: 28px;
-                border-radius: 14px 14px 0 0;
-                box-shadow: 0 -2px 5px rgba(0,0,0,0.1);
-            }
-            .tools-panel.collapsed .panel-toggle {
-                transform: translateX(-50%) rotate(180deg);
+            /* Hide PC exclusive items on mobile layout */
+            .mini-preview-box, 
+            .tool-group:first-of-type { 
+                display: none !important; 
             }
 
-            /* 3. Fat-fingers element sizing up */
+            /* Tab Systems for Sub-menus inside app edit engine */
+            .tool-group {
+                margin-bottom: 0;
+                border-bottom: none;
+                padding-bottom: 0;
+                display: none; /* Controlled via JS Tabs toggler */
+            }
+            .tool-group.active-tab {
+                display: block !important;
+            }
+
+            /* App Style bottom menu tab bar buttons */
+            .mobile-app-nav {
+                display: flex;
+                background: #f8fafc;
+                border-top: 1px solid #e2e8f0;
+                width: 100%;
+                height: 60px;
+                z-index: 110;
+            }
+            .nav-tab-item {
+                flex: 1;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                font-size: 0.75rem;
+                font-weight: 600;
+                color: #64748b;
+                cursor: pointer;
+                border: none;
+                background: transparent;
+                gap: 2px;
+            }
+            .nav-tab-item.active {
+                color: var(--primary-color);
+                background: #ffffff;
+            }
+            .nav-tab-item svg {
+                width: 20px;
+                height: 20px;
+                fill: currentColor;
+            }
+
+            /* Optimize elements for touch input targets (Fat Fingers) */
             .btn, .tool-btn, .num-input, select, input[type="color"] {
-                min-height: 40px;
-                font-size: 0.95rem !important;
+                min-height: 42px;
             }
             .tool-row {
-                gap: 15px;
-                margin-bottom: 14px;
+                margin-bottom: 12px;
             }
             .tool-row label {
-                width: 95px;
-                font-size: 0.9rem;
+                width: 90px;
+                font-size: 0.85rem;
             }
             .dot-size-container {
                 height: 42px;
-                gap: 16px;
+                gap: 14px;
             }
             .dot-option {
                 width: 32px;
                 height: 32px;
             }
-            #btnBucketTool {
-                height: 40px !important;
+            #btnBucketTool, .compact-color-picker {
+                height: 42px;
             }
-            .compact-color-picker {
-                height: 40px;
+            .canvas-container {
+                width: 160px;
+                height: 160px;
+                margin: 5px auto;
             }
-            
-            /* Responsive patterns container grid */
             .patterns-container {
-                grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-                gap: 16px;
+                grid-template-columns: repeat(auto-fill, minmax(290px, 1fr));
+                gap: 15px;
             }
         }
     </style>
@@ -467,14 +529,19 @@
 
 <div id="editorView">
     <div class="editor-container">
+        
+        <div class="mobile-top-bar">
+            <select id="mobileLayoutSelect"></select>
+        </div>
+
         <div class="workspace">
             <div class="workspace-header">
-                <button class="btn" id="btnBack">← Back to Main</button>
+                <button class="btn" id="btnBack">← Back</button>
                 <div style="display:flex; gap:10px; align-items: center;">
                     <span style="font-size: 0.85rem; color:#acb5c3;">Zoom: Scroll Wheel | Pan: Click & Drag the empty space</span>
                     <button class="btn" id="btnResetZoom">Reset Zoom</button>
                 </div>
-                <button class="btn btn-primary" id="btnSaveImage">Save Pattern Image</button>
+                <button class="btn btn-primary" id="btnSaveImage">Save Pattern</button>
             </div>
             
             <div class="preview-area" id="previewArea">
@@ -495,7 +562,7 @@
 
                 <hr style="border: 0; border-top: 1px solid #f1f5f9; margin: 15px 0;">
 
-                <div class="tool-group">
+                <div class="tool-group" id="pcSelectorGroup">
                     <h4>Select Layout Principle</h4>
                     <div class="tool-row">
                         <label>Layout Rules</label>
@@ -503,7 +570,7 @@
                     </div>
                 </div>
 
-                <div class="tool-group">
+                <div class="tool-group" id="tab-grid">
                     <h4>Grid Expansion Setting</h4>
                     <div class="tool-row">
                         <label>Grid Columns</label>
@@ -522,7 +589,7 @@
                     </div>
                 </div>
 
-                <div class="tool-group">
+                <div class="tool-group" id="tab-draw">
                     <h4>Tile Studio</h4>
                     <div class="tool-row">
                         <input type="file" id="tileImageUpload" accept="image/*" style="font-size: 0.8rem; width:100%;">
@@ -562,6 +629,19 @@
                     </div>
 
                     <div class="tool-row">
+                        <label>Line Size</label>
+                        <div class="dot-size-container" id="dotSizeContainer">
+                            <div class="dot-option" data-value="2" title="Thin (2px)"><div class="dot-shape" style="width:4px; height:4px;"></div></div>
+                            <div class="dot-option active" data-value="5" title="Medium (5px)"><div class="dot-shape" style="width:8px; height:8px;"></div></div>
+                            <div class="dot-option" data-value="10" title="Thick (10px)"><div class="dot-shape" style="width:12px; height:12px;"></div></div>
+                            <div class="dot-option" data-value="18" title="Extra Thick (18px)"><div class="dot-shape" style="width:16px; height:16px;"></div></div>
+                        </div>
+                    </div>  
+                </div>
+
+                <div class="tool-group" id="tab-colors">
+                    <h4>Colors & Fills Studio</h4>
+                    <div class="tool-row">
                         <label>Stroke Line</label>
                         <div class="color-control-row">
                             <input type="checkbox" id="chkUseStroke" checked title="Enable/Disable Stroke Line">
@@ -592,18 +672,26 @@
                             <input type="color" id="bgColor" class="compact-color-picker" value="#ffffff">
                         </div>
                     </div>
-                    <div class="tool-row">
-                        <label>Line Size</label>
-                        <div class="dot-size-container" id="dotSizeContainer">
-                            <div class="dot-option" data-value="2" title="Thin (2px)"><div class="dot-shape" style="width:4px; height:4px;"></div></div>
-                            <div class="dot-option active" data-value="5" title="Medium (5px)"><div class="dot-shape" style="width:8px; height:8px;"></div></div>
-                            <div class="dot-option" data-value="10" title="Thick (10px)"><div class="dot-shape" style="width:12px; height:12px;"></div></div>
-                            <div class="dot-option" data-value="18" title="Extra Thick (18px)"><div class="dot-shape" style="width:16px; height:16px;"></div></div>
-                        </div>
-                    </div>  
                 </div>
+
             </div>
         </div>
+
+        <div class="mobile-app-nav">
+            <button class="nav-tab-item active" data-target="tab-grid">
+                <svg viewBox="0 0 24 24"><path d="M4,4H10V10H4V4M20,4V10H14V4H20M14,15H20V21H14V15M4,20V14H10V20H4M2,2V22H22V2H2Z"/></svg>
+                Grid
+            </button>
+            <button class="nav-tab-item" data-target="tab-draw">
+                <svg viewBox="0 0 24 24"><path d="M20.71,5.63L18.37,3.29C18,2.9 17.35,2.9 16.96,3.29L15.12,5.12L18.88,8.88L20.71,7.04C21.1,6.65 21.1,6 20.71,5.63M3,17.25V21H6.75L17.81,9.93L14.07,6.19L3,17.25Z"/></svg>
+                Draw
+            </button>
+            <button class="nav-tab-item" data-target="tab-colors">
+                <svg viewBox="0 0 24 24"><path d="M19,3H5C3.89,3 3,3.89 3,5V19C3,20.11 3.89,21 5,21H19C20.11,21 21,20.11 21,19V5C21,3.89 20.11,3 19,3M19,19H5V5H19V19M17,17H7V7H17V17Z"/></svg>
+                Fill/Bg
+            </button>
+        </div>
+
     </div>
 </div>
 
@@ -705,6 +793,7 @@
         setupToolsGrid();
         setupCanvasDefault();
         setupLineWidthSelector();
+        setupMobileTabs();
         bindEvents();
     }
 
@@ -752,12 +841,49 @@
 
     function setupDropdownOptions() {
         const select = document.getElementById('layoutSelect');
+        const mobileSelect = document.getElementById('mobileLayoutSelect');
+        
         patternsData.forEach(p => {
             const opt = document.createElement('option');
             opt.value = p.id;
             opt.textContent = p.title;
             select.appendChild(opt);
+
+            // Clone to mobile select box
+            const mobileOpt = opt.cloneNode(true);
+            mobileSelect.appendChild(mobileOpt);
         });
+    }
+
+    // Setup Smart Tabs for Mobile Editing Categories
+    function setupMobileTabs() {
+        const navItems = document.querySelectorAll('.nav-tab-item');
+        const toolGroups = document.querySelectorAll('.tool-group');
+
+        navItems.forEach(item => {
+            item.onclick = () => {
+                navItems.forEach(nav => nav.classList.remove('active'));
+                item.classList.add('active');
+
+                const targetTabId = item.getAttribute('data-target');
+                
+                // Hide or display proper blocks based on screen size breakpoint
+                if (window.innerWidth <= 991) {
+                    toolGroups.forEach(group => {
+                        if (group.id === targetTabId) {
+                            group.classList.add('active-tab');
+                        } else {
+                            group.classList.remove('active-tab');
+                        }
+                    });
+                }
+            };
+        });
+
+        // Initialize first tab view active trigger rule
+        if (window.innerWidth <= 991) {
+            document.getElementById('tab-grid').classList.add('active-tab');
+        }
     }
 
     // Bind drawing tools grid selector
@@ -915,7 +1041,6 @@
             });
         });
 
-        // แก้ไขส่วนอัปโหลดไฟล์ของ Tile Studio ให้รองรับการทำงานกับไฟล์ซ้ำได้
         document.getElementById('tileImageUpload').addEventListener('change', (e) => {
             handleImageUpload(e, (dataUrl) => {
                 const cropImg = document.getElementById('cropImageTag');
@@ -940,8 +1065,6 @@
                     });
                 }, 50);
 
-                // เคลียร์ค่า value ของ input ทันทีหลังจากอ่านเสร็จ
-                // ทำให้เบราว์เซอร์มองว่าเป็นเหตุการณ์เปลี่ยนไฟล์ใหม่ทุกครั้ง แม้จะเป็นไฟล์เดิมซ้ำก็ตาม
                 e.target.value = "";
             });
         });
@@ -1004,16 +1127,22 @@
             generateExplorerGrid();
         };
 
-        document.getElementById('layoutSelect').onchange = (e) => {
-            const found = patternsData.find(p => p.id == e.target.value);
+        // Sync Layout Selection change values between Desktop and Mobile layout selectors
+        function updateSelectedLayoutRule(targetId) {
+            const found = patternsData.find(p => p.id == targetId);
             if(found) {
                 activePattern = found;
                 document.getElementById('editPatternTitle').textContent = found.title;
                 document.getElementById('editPatternDesc').textContent = found.desc;
+                document.getElementById('layoutSelect').value = targetId;
+                document.getElementById('mobileLayoutSelect').value = targetId;
                 renderMiniPPreview(found);
                 renderTessellation();
             }
-        };
+        }
+
+        document.getElementById('layoutSelect').onchange = (e) => updateSelectedLayoutRule(e.target.value);
+        document.getElementById('mobileLayoutSelect').onchange = (e) => updateSelectedLayoutRule(e.target.value);
 
         syncInputs('gridCols', 'gridColsNum', renderTessellation);
         syncInputs('gridRows', 'gridRowsNum', renderTessellation);
@@ -1034,29 +1163,24 @@
         const panel = document.getElementById('toolsPanel');
         document.getElementById('panelToggle').onclick = function() {
             panel.classList.toggle('collapsed');
-            if(window.innerWidth > 991) {
-                this.textContent = panel.classList.contains('collapsed') ? "⮪" : "➔";
-            } else {
-                this.textContent = panel.classList.contains('collapsed') ? "⮪" : "➔";
-            }
+            this.textContent = panel.classList.contains('collapsed') ? "⮪" : "➔";
         };
 
         window.addEventListener('keydown', (e) => { if(e.key === 'Control') isCtrlPressed = true; });
         window.addEventListener('keyup', (e) => { if(e.key === 'Control') isCtrlPressed = false; });
 
-        // --- Mouse Event Listeners for Canvas ---
+        // --- Mouse Canvas Drawing Operations ---
         canvas.addEventListener('mousedown', startDrawing);
         canvas.addEventListener('mousemove', draw);
         canvas.addEventListener('mouseup', stopDrawing);
         canvas.addEventListener('mouseleave', stopDrawing);
 
-        // --- Touch Event Listeners for Mobile Canvas ---
+        // --- Mobile Touch Canvas Drawing Routing Engine ---
         canvas.addEventListener('touchstart', function(e) {
             e.preventDefault();
             const touch = e.touches[0];
             const mouseEvent = new MouseEvent('mousedown', {
-                clientX: touch.clientX,
-                clientY: touch.clientY
+                clientX: touch.clientX, clientY: touch.clientY
             });
             canvas.dispatchEvent(mouseEvent);
         }, { passive: false });
@@ -1065,17 +1189,14 @@
             e.preventDefault();
             const touch = e.touches[0];
             const mouseEvent = new MouseEvent('mousemove', {
-                clientX: touch.clientX,
-                clientY: touch.clientY
+                clientX: touch.clientX, clientY: touch.clientY
             });
             canvas.dispatchEvent(mouseEvent);
         }, { passive: false });
 
-        canvas.addEventListener('touchend', function(e) {
-            const mouseEvent = new MouseEvent('mouseup', {});
-            canvas.dispatchEvent(mouseEvent);
+        canvas.addEventListener('touchend', function() {
+            canvas.dispatchEvent(new MouseEvent('mouseup', {}));
         }, { passive: false });
-
 
         document.getElementById('btnUndo').onclick = () => { if(historyStep > 0) { historyStep--; restoreCanvasStep(); } };
         document.getElementById('btnRedo').onclick = () => { if(historyStep < drawingHistory.length - 1) { historyStep++; restoreCanvasStep(); } };
@@ -1085,7 +1206,7 @@
             updateTilesFromCanvas();
         };
 
-        // --- Preview Area Zoom & Pan (Desktop Wheel & Touch Safe Navigation) ---
+        // --- Zooming & Desktop Navigation Panning Rules ---
         const previewArea = document.getElementById('previewArea');
         previewArea.addEventListener('wheel', (e) => {
             e.preventDefault();
@@ -1103,7 +1224,6 @@
                 startPanY = e.clientY - panY;
             }
         });
-        
         window.addEventListener('mousemove', (e) => {
             if (!isPanning) return;
             panX = e.clientX - startPanX;
@@ -1112,7 +1232,7 @@
         });
         window.addEventListener('mouseup', () => { isPanning = false; });
 
-        // --- Mobile Touch Pan Support on Workspace ---
+        // --- Mobile Native Touch Pan Engine ---
         previewArea.addEventListener('touchstart', function(e) {
             if (e.target.classList.contains('preview-area') || e.target.id === 'tessellationOutput' || e.target.classList.contains('tile')) {
                 isPanning = true;
@@ -1130,15 +1250,25 @@
             applyTransform();
         }, { passive: true });
 
-        previewArea.addEventListener('touchend', function() {
-            isPanning = false;
-        });
+        previewArea.addEventListener('touchend', function() { isPanning = false; });
 
         document.getElementById('btnResetZoom').onclick = () => {
             scale = 1; panX = 0; panY = 0; applyTransform();
         };
 
         document.getElementById('btnSaveImage').onclick = saveOutputAsImage;
+
+        // Reset Tab configuration status upon responsive scaling modifications
+        window.addEventListener('resize', () => {
+            const groups = document.querySelectorAll('.tool-group');
+            if(window.innerWidth > 991) {
+                groups.forEach(g => g.style.display = 'block');
+                document.getElementById('pcSelectorGroup').style.display = 'block';
+            } else {
+                document.querySelector('.nav-tab-item.active').click();
+                document.getElementById('pcSelectorGroup').style.display = 'none';
+            }
+        });
     }
 
     function applyTransform() {
@@ -1161,6 +1291,7 @@
         document.getElementById('editorView').style.display = 'block';
 
         document.getElementById('layoutSelect').value = pattern.id;
+        document.getElementById('mobileLayoutSelect').value = pattern.id;
         document.getElementById('editPatternTitle').textContent = pattern.title;
         document.getElementById('editPatternDesc').textContent = pattern.desc;
         
@@ -1185,6 +1316,12 @@
             historyStep = -1;
             setupCanvasDefault();
             renderTessellation();
+        }
+
+        // Trigger dynamic tab sync update layout rules on mobile
+        if(window.innerWidth <= 991) {
+            document.querySelector('.nav-tab-item.active').click();
+            document.getElementById('pcSelectorGroup').style.display = 'none';
         }
     }
 
