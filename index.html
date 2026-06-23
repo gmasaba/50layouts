@@ -157,13 +157,13 @@
             justify-content: center;
             position: relative;
             background: #f1f5f9;
+            touch-action: none; /* ล็อคไม่ให้เลื่อนหน้าจอหลักขณะซูม/แพนภาพ preview */
         }
         .tessellation-output {
             display: grid;
             transform-origin: center center;
             background: #e2e8f0;
             gap: 0px;
-            pointer-events: none; /* ป้องกันไม่ให้รบกวนเหตุการณ์ลากครอบ Drag-Pan */
         }
 
         .btn-reset-zoom-floating {
@@ -198,8 +198,7 @@
         .tool-row label { font-size: 0.85rem; width: 100px; color: #64748b; flex-shrink: 0; }
         .tool-row input[type="range"] { flex: 1; }
         .num-input { width: 60px; padding: 6px; border: 1px solid #cbd5e1; border-radius: 6px; text-align: center; }
-        
-        .layout-selector-element { padding: 8px 12px; border-radius: 8px; border: 1px solid #cbd5e1; font-size: 0.95rem; width: 100%; background: #ffffff; }
+        select { padding: 8px 12px; border-radius: 8px; border: 1px solid #cbd5e1; font-size: 0.95rem; width: 100%; background: #ffffff; }
 
         /* Studio Panel Layout Grid */
         .studio-layout-container {
@@ -237,7 +236,7 @@
         .line-dot-opt.active .dot-shape { background: #fff; }
         .dot-shape { background: #475569; border-radius: 50%; }
 
-        /* Color Controls with Radio Buttons */
+        /* Color Controls with Checkboxes */
         .color-picker-wrapper { display: flex; flex-direction: column; gap: 4px; }
         .color-picker-circle-row { display: flex; align-items: center; gap: 6px; }
         .circle-color-picker {
@@ -246,10 +245,14 @@
         .circle-color-picker::-webkit-color-swatch-wrapper { padding: 0; }
         .circle-color-picker::-webkit-color-swatch { border: none; border-radius: 50%; }
         
-        .color-radio { cursor: pointer; width: 16px; height: 16px; accent-color: var(--text-color); margin: 0; }
+        /* Checkbox Styles */
+        .color-checkbox {
+            cursor: pointer; width: 16px; height: 16px; accent-color: var(--text-color); margin: 0;
+        }
+        
+        .color-name-text { display: inline-block; }
 
         .canvas-actions-row { display: flex; justify-content: center; gap: 6px; width: 100%; margin-top: 12px; }
-        .btn-clear-black { color: #000000 !important; border-color: #000000 !important; }
 
         .mini-preview-box { background: #f1f5f9; padding: 10px; border-radius: 8px; margin-top: 10px; display: flex; flex-direction: column; align-items: center; }
         .mini-preview-grid { display: grid; grid-template-columns: repeat(6, var(--mini-grid-size)); grid-template-rows: repeat(4, var(--mini-grid-size)); background: #e2e8f0; }
@@ -257,6 +260,9 @@
 
         .mobile-toggle-panel-btn { display: none; }
         .mobile-nav-bar { display: none; }
+        
+        /* ซ่อนแผงเลือกกติกากลางด้านบนของ Desktop ตอนเริ่มแรก */
+        #headerLayoutSelectWrapper { display: flex; flex: 1; justify-content: center; padding: 0 10px; }
 
         #cropModal {
             display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
@@ -275,45 +281,46 @@
             .patterns-container { grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 16px; }
 
             .editor-container { flex-direction: column; height: 100vh; width: 100vw; }
-            .workspace { height: calc(100vh - 310px); flex: none; width: 100%; }
             
-            .workspace-header { padding: 8px 12px; }
+            /* ล็อคขนาดส่วนอื่นๆ ไว้ ซูม/แพนได้เฉพาะพื้นที่นี้ */
+            .workspace { height: calc(100vh - 325px); flex: none; width: 100%; }
+            .workspace-header { padding: 8px 12px; gap: 8px; }
             .workspace-header span { display: none; }
             
-            /* ปรับแต่งแถบด้านบนของ Mobile: ดึงความกว้างของตัวเลือก Layout กึ่งกลางระหว่าง 2 ปุ่มไอคอน */
-            #headerSelectWrapper { display: block !important; flex: 1; max-width: 100%; }
-            #headerSelectWrapper select { height: 36px; padding: 4px 8px; font-size: 0.9rem; }
+            /* ปรับให้เลือกลำดับ Rule อยู่แถวบนสุดระหว่าง back และ save บนมือถือ */
+            #headerLayoutSelectWrapper { display: flex !important; visibility: visible !important; width: auto; max-width: 55%; }
+            #headerLayoutSelectWrapper select { height: 36px; padding: 4px 8px; font-size: 0.85rem; border-radius: 6px; }
 
-            /* Bottom Panel App Style */
+            /* Bottom Panel */
             .tools-panel {
                 width: 100% !important; min-width: 100% !important;
-                height: auto !important; max-height: 240px;
+                height: 230px !important; max-height: 230px;
                 border-left: none; border-top: 1px solid #e2e8f0;
                 position: fixed; bottom: 60px; left: 0; z-index: 1001;
-                background: #ffffff; transform: translateY(0); transition: transform 0.3s ease;
+                background: #ffffff; transform: translateY(0); transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             }
-            .tools-panel.collapsed { transform: translateY(100%); bottom: 60px; }
+            .tools-panel.collapsed { transform: translateY(100%); }
 
-            .panel-content { padding: 12px; overflow-y: auto; height: 100%; }
+            .panel-content { padding: 10px 12px 12px 12px; overflow-y: auto; height: 100%; }
             
-            /* ซ่อนแผงคำอธิบาย Layout Map และตัวเลือก Rules บน Panel Tools ขวา */
+            /* ซ่อนส่วนที่ไม่จำเป็นบน Mobile */
             #editPatternTitle, #editPatternDesc, .mini-preview-box, .desktop-tab-toggle, .tool-group h4, .tools-panel hr, #desktopPanelRulesZone { display: none !important; }
 
             .tool-group { margin-bottom: 0; }
             .tool-group.active-tab { display: block !important; }
 
-            /* ปรับเลย์เอาต์ Tile Studio ให้อยู่กึ่งกลาง พร้อมขยาย Canvas ให้มีขนาดใหญ่ขึ้นเต็มระนาบแผงควบคุม */
+            /* ปรับแต่งเลย์เอาต์ Tile Studio ให้สมดุล กึ่งกลางหน้าจอ และขยายขนาด Canvas ใหญ่ขึ้น */
             .studio-layout-container {
-                grid-template-columns: 65px 165px 105px; gap: 10px; margin-top: 5px; justify-content: center; align-content: center; width: 100%;
+                grid-template-columns: 65px 160px 85px; gap: 8px; margin-top: 2px; justify-content: center; align-content: center; width: 100%;
             }
-            .canvas-container { width: 165px; height: 165px; } /* ขยายขนาดแคนวาสขึ้น */
+            .canvas-container { width: 160px; height: 160px; } /* ขยายขนาด Canvas ให้ใหญ่เต็มพิกัดบนอุปกรณ์พกพา */
             .tools-grid-3x2 { gap: 4px; }
             .tool-btn-outline { height: 32px; }
             .line-size-horiz { margin-top: 2px; }
             .line-dot-opt { height: 22px; }
-            .studio-right-col { gap: 6px; }
+            .studio-right-col { gap: 6px; font-size: 0.75rem; }
             .circle-color-picker { width: 22px; height: 22px; }
-            .canvas-actions-row { margin-top: 6px; gap: 4px; }
+            .canvas-actions-row { margin-top: 5px; gap: 4px; }
             .canvas-actions-row .btn-outline { padding: 4px; }
             .canvas-actions-row .btn-outline svg { width: 16px; height: 16px; }
 
@@ -330,12 +337,15 @@
             .nav-tab-item svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 2; }
             .nav-tab-item.active { color: var(--text-color); background: #ffffff; font-weight: 600; }
 
+            /* ปรับแต่งปุ่มซ่อน panel: ให้อยู่ตรงกลางด้านบนของ panel พอดี ไม่ซ้อนทับหรือบังเครื่องมือ */
             .mobile-toggle-panel-btn {
-                display: flex; position: fixed; bottom: 65px; right: 15px; z-index: 1005;
-                background: var(--primary-color); color: #fff; border: none; width: 40px; height: 40px;
-                border-radius: 50%; box-shadow: 0 4px 10px rgba(0,0,0,0.2); align-items: center; justify-content: center; cursor: pointer;
+                display: flex; position: fixed; bottom: 290px; left: 50%; transform: translateX(-50%); z-index: 1005;
+                background: #ffffff; color: var(--text-color); border: 1px solid #e2e8f0; width: 50px; height: 24px;
+                border-radius: 12px 12px 0 0; border-bottom: none; box-shadow: 0 -3px 6px rgba(0,0,0,0.03); align-items: center; justify-content: center; cursor: pointer;
+                transition: bottom 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             }
-            .mobile-toggle-panel-btn svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 2; transition: transform 0.3s; }
+            .tools-panel.collapsed + .mobile-toggle-panel-btn { bottom: 60px; border-bottom: 1px solid #e2e8f0; border-radius: 12px 12px 12px 12px; box-shadow: 0 -2px 8px rgba(0,0,0,0.1); }
+            .mobile-toggle-panel-btn svg { width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-width: 2; transition: transform 0.3s; }
         }
     </style>
 </head>
@@ -367,7 +377,9 @@
                     <svg viewBox="0 0 24 24"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
                 </button>
 
-                <div style="display: none;" id="headerSelectWrapper"></div>
+                <div id="headerLayoutSelectWrapper">
+                    <select id="layoutSelect"></select>
+                </div>
 
                 <button class="btn-outline" id="btnSaveImage" title="Save Pattern Image" style="color: #2563eb;">
                     <svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>
@@ -384,14 +396,12 @@
 
         <div class="tools-panel" id="toolsPanel">
             <div class="panel-content">
-                <div style="margin-bottom: 20px;" id="desktopPanelRulesZone">
+                <div style="margin-bottom: 15px;" id="desktopPanelRulesZone">
                     <label style="font-size:0.85rem; font-weight:600; color:var(--primary-color); display:block; margin-bottom:6px;">Layout Rules</label>
-                    <div id="dynamicSelectHolder">
-                        <select id="layoutSelect" class="layout-selector-element"></select>
-                    </div>
+                    <div id="desktopSelectAnchor"></div>
                 </div>
 
-                <h3 id="editPatternTitle" style="color:var(--primary-color); margin-top:0; margin-bottom: 4px;">Layout Configuration</h3>
+                <h3 id="editPatternTitle" style="color:var(--primary-color); margin-top:0; margin-bottom: 4px; display:none;">Layout Configuration</h3>
                 <p id="editPatternDesc" style="font-size:0.85rem; color:#64748b; margin-bottom: 10px;"></p>
                 
                 <div class="mini-preview-box">
@@ -466,25 +476,25 @@
 
                         <div class="studio-right-col">
                             <div class="color-picker-wrapper">
-                                <span>Stroke Mode</span>
+                                <span class="color-name-text" data-desktop="Stroke Mode" data-mobile="Strk">Stroke Mode</span>
                                 <div class="color-picker-circle-row">
-                                    <input type="radio" name="drawMode" id="radStroke" class="color-radio" checked>
+                                    <input type="checkbox" id="chkUseStroke" class="color-checkbox" checked>
                                     <input type="color" id="strokeColor" class="circle-color-picker" value="#1e293b">
                                 </div>
                             </div>
                             <div class="color-picker-wrapper">
-                                <span>Inner Fill Mode</span>
+                                <span class="color-name-text" data-desktop="Inner Fill Mode" data-mobile="Fill">Inner Fill Mode</span>
                                 <div class="color-picker-circle-row">
-                                    <input type="radio" name="drawMode" id="radFill" class="color-radio">
+                                    <input type="checkbox" id="chkUseFill" class="color-checkbox" checked>
                                     <input type="color" id="fillColor" class="circle-color-picker" value="#7AA1E0">
                                 </div>
                             </div>
                             <div class="color-picker-wrapper">
-                                <span>Bucket Color</span>
+                                <span class="color-name-text" data-desktop="Bucket Color" data-mobile="Bckt">Bucket Color</span>
                                 <input type="color" id="bucketColor" class="circle-color-picker" value="#6D79AB">
                             </div>
                             <div class="color-picker-wrapper">
-                                <span>Canvas Bg</span>
+                                <span class="color-name-text" data-desktop="Canvas Bg" data-mobile="Bg">Canvas Bg</span>
                                 <input type="color" id="bgColor" class="circle-color-picker" value="#ffffff">
                             </div>
                         </div>
@@ -498,7 +508,7 @@
                         <button class="btn-outline" id="btnRedo" title="Redo Step">
                             <svg viewBox="0 0 24 24"><path d="M21 7v6h-6M3 17a9 9 0 0 1 9-9 9 9 0 0 1 6 2.3l3 4"/></svg>
                         </button>
-                        <button class="btn-outline btn-clear-black" id="btnClearCanvas" title="Clear Canvas Layer">
+                        <button class="btn-outline" id="btnClearCanvas" title="Clear Canvas Layer">
                             <svg viewBox="0 0 24 24"><path d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
                         </button>
                         <button class="btn-outline" id="btnResetToP" title="Reset Default P Blueprint">
@@ -512,7 +522,7 @@
         </div>
 
         <button class="mobile-toggle-panel-btn" id="mobileTogglePanel" title="Toggle Tool Shelf">
-            <svg id="arrowToggleSvg" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></svg>
+            <svg id="arrowToggleSvg" viewBox="0 0 24 24"><path d="M18 15l-6-6-6 6"/></svg>
         </button>
 
         <div class="mobile-nav-bar">
@@ -604,7 +614,7 @@
     let selectedLineWidth = 6;
     let cropper = null; 
 
-    // Canvas State
+    // Canvas Engine State
     const canvas = document.getElementById('tileCanvas');
     const ctx = canvas.getContext('2d');
     let isDrawing = false;
@@ -614,7 +624,7 @@
     let isCtrlPressed = false;
     let canvasSnapshot = null;
 
-    // View State
+    // Zoom/Pan Matrix Controls
     let scale = 1;
     let panX = 0, panY = 0;
     let isPanning = false;
@@ -622,31 +632,43 @@
 
     function init() {
         generateExplorerGrid();
+        setupDropdownOptions();
         setupToolsGrid();
         setupCanvasDefault();
         setupLineWidthSelector();
         setupMobileTabSystems();
         setupDesktopTabs();
         bindEvents();
-        setupResponsiveSelectLocation();
+        setupResponsiveLayoutEngine();
     }
 
-    // ฟังก์ชันย้ายตำแหน่ง Dropdown ตามขนาดหน้าจอ (แก้ไขตามเงื่อนไขใหม่)
-    function setupResponsiveSelectLocation() {
+    // ระบบตรวจจับและสลับรูปแบบข้อความ/เลย์เอาต์ตามขนาดหน้าจอแบบ Responsive
+    function setupResponsiveLayoutEngine() {
         const selectElement = document.getElementById('layoutSelect');
-        const headerWrapper = document.getElementById('headerSelectWrapper');
-        const desktopPanelZone = document.getElementById('desktopPanelRulesZone');
+        const headerContainer = document.getElementById('headerLayoutSelectWrapper');
+        const desktopPanelZone = document.getElementById('desktopSelectAnchor');
+        const textLabels = document.querySelectorAll('.color-name-text');
 
         if (window.innerWidth <= 991) {
-            // โหมด Mobile/Tablet: ปรับให้ตัวเลือกอยู่แถบบนระหว่าง backtomain กับ save pattern image
-            headerWrapper.appendChild(selectElement);
+            // โหมดพกพา: ย้ายเมนูเลือกไปแถบหัวข้อด้านบนสุดของหน้า Preview วิ่งระหว่าง back และ save
+            headerContainer.appendChild(selectElement);
+            
+            // แสดงชื่อสีแบบสั้น (ตัวย่อ)
+            textLabels.forEach(label => {
+                label.textContent = label.getAttribute('data-mobile');
+            });
         } else {
-            // โหมด Desktop: ปรับให้ตัวเลือก rules อยู่บน panel tools ขวามือ (แทนที่กล่องคำอธิบายชื่อเดิม)
+            // โหมดเดสก์ท็อป: ย้ายเมนูเลือกไปวางบน Panel ด้านขวาแทนที่หัวข้อ Rules เดิม
             desktopPanelZone.appendChild(selectElement);
+            
+            // แสดงชื่อสีเวอร์ชันเต็มปกติ
+            textLabels.forEach(label => {
+                label.textContent = label.getAttribute('data-desktop');
+            });
         }
     }
 
-    window.addEventListener('resize', setupResponsiveSelectLocation);
+    window.addEventListener('resize', setupResponsiveLayoutEngine);
 
     function generateExplorerGrid() {
         const wrapper = document.getElementById('patternsWrapper');
@@ -683,6 +705,16 @@
             card.appendChild(preview);
             card.appendChild(info);
             wrapper.appendChild(card);
+        });
+    }
+
+    function setupDropdownOptions() {
+        const select = document.getElementById('layoutSelect');
+        patternsData.forEach(p => {
+            const opt = document.createElement('option');
+            opt.value = p.id;
+            opt.textContent = p.title;
+            select.appendChild(opt);
         });
     }
 
@@ -927,6 +959,7 @@
             selectedTool = 'fill';
         };
 
+        // แผงกลไกซ่อน/เปิดแท็บเครื่องมือสไลด์
         const panel = document.getElementById('toolsPanel');
         const arrowToggleSvg = document.getElementById('arrowToggleSvg');
         document.getElementById('mobileTogglePanel').onclick = function() {
@@ -966,7 +999,7 @@
         document.getElementById('btnRedo').onclick = () => { if(historyStep < drawingHistory.length - 1) { historyStep++; restoreCanvasStep(); } };
         document.getElementById('btnClearCanvas').onclick = () => { ctx.clearRect(0, 0, canvas.width, canvas.height); saveCanvasState(); updateTilesFromCanvas(); };
 
-        // ผูกความสัมพันธ์ระบบ Zoom / Pan ให้จำกัดขอบเขตและทำงาน "เฉพาะบริเวณหน้า Preview เท่านั้น"
+        // จำกัดให้การเคลื่อนไหว Zoom / Pan ทำงานและผูกมัดเฉพาะแค่บนพิ้นที่ Preview เท่านั้น
         const previewArea = document.getElementById('previewArea');
         previewArea.addEventListener('wheel', (e) => {
             e.preventDefault();
@@ -979,9 +1012,7 @@
             isPanning = true;
             startPanX = e.clientX - panX; startPanY = e.clientY - panY;
         });
-
-        // ตรวจจับพิกัดเฉพาะเมื่อเลื่อนเมาส์ภายในบริเวณหน้า Preview Area
-        previewArea.addEventListener('mousemove', (e) => {
+        window.addEventListener('mousemove', (e) => {
             if (!isPanning) return;
             let targetX = e.clientX - startPanX;
             let targetY = e.clientY - startPanY;
@@ -992,7 +1023,6 @@
         });
         window.addEventListener('mouseup', () => { isPanning = false; });
 
-        // การลากนิ้วบนหน้าจอมือถือ (Touch Pan) ผูกเหตุการณ์เฉพาะตัว Element .preview-area
         previewArea.addEventListener('touchstart', function(e) {
             isPanning = true;
             const touch = e.touches[0];
@@ -1040,7 +1070,6 @@
         window.history.pushState({editing: true}, "");
 
         document.getElementById('layoutSelect').value = pattern.id;
-
         document.getElementById('editPatternTitle').textContent = pattern.title;
         document.getElementById('editPatternDesc').textContent = pattern.desc;
         
@@ -1067,7 +1096,7 @@
             drawingHistory = []; historyStep = -1; setupCanvasDefault(); renderTessellation();
         }
         scale = 1; panX = 0; panY = 0; applyTransform();
-        setupResponsiveSelectLocation(); // ตรวจสอบตำแหน่ง Dropdown ทันทีเมื่อเปิดหน้าต่างแก้ไข
+        setupResponsiveLayoutEngine();
     }
 
     function renderTessellation() {
@@ -1116,7 +1145,7 @@
         ctx.fillStyle = document.getElementById('fillColor').value;
         ctx.lineCap = "round"; ctx.lineJoin = "round";
 
-        if (selectedTool === 'brush' && document.getElementById('radStroke').checked) {
+        if (selectedTool === 'brush' && document.getElementById('chkUseStroke').checked) {
             ctx.beginPath(); ctx.moveTo(startX, startY);
         }
     }
@@ -1126,8 +1155,8 @@
         const rect = canvas.getBoundingClientRect();
         const currentX = (e.clientX - rect.left) * (canvas.width / rect.width);
         const currentY = (e.clientY - rect.top) * (canvas.height / rect.height);
-        const useFill = document.getElementById('radFill').checked;
-        const useStroke = document.getElementById('radStroke').checked;
+        const useFill = document.getElementById('chkUseFill').checked;
+        const useStroke = document.getElementById('chkUseStroke').checked;
 
         if (selectedTool === 'brush') {
             if (useStroke) { ctx.lineTo(currentX, currentY); ctx.stroke(); }
