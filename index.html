@@ -27,7 +27,7 @@
         }
 
         /* --- Main Page View --- */
-        #mainView { padding: 20px; overflow-y: auto; height: 100vh; -webkit-overflow-scrolling: touch; }
+        #mainView { padding: 20px; overflow-y: auto; -webkit-overflow-scrolling: touch; }
         header { text-align: center; margin-bottom: 40px; }
         .upload-zone {
             background: var(--card-bg);
@@ -47,13 +47,13 @@
             margin-top: 10px;
             flex-wrap: wrap;
         }
+
         .patterns-container {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
             gap: 30px;
             max-width: 1400px;
             margin: 0 auto;
-            padding-bottom: 40px;
         }
         .pattern-card {
             background: var(--card-bg);
@@ -96,12 +96,11 @@
             background-size: cover;
             background-position: center;
             background-repeat: no-repeat;
-            outline: 1px dashed rgba(0,0,0,0.15); 
-            outline-offset: -1px;
+            outline: 1px solid rgba(0,0,0,0.1);
         }
         .pattern-info { padding: 20px; font-size: 0.9rem; line-height: 1.5; flex-grow: 1; background: #ffffff; }
 
-        /* Transformation Classes */
+        /* --- Transformation Classes --- */
         .n { transform: none; }
         .r90 { transform: rotate(90deg); }
         .r180 { transform: rotate(180deg); }
@@ -139,41 +138,18 @@
             justify-content: space-between;
             align-items: center;
             z-index: 10;
+            gap: 15px;
         }
         
-        /* Outline Icons & Buttons Style */
+        /* Outline Icons & Buttons */
         .btn-outline {
-            background: transparent;
-            border: 1px solid var(--primary-color);
-            color: var(--primary-color);
-            padding: 6px 12px;
-            border-radius: 6px;
-            cursor: pointer;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            gap: 6px;
-            font-size: 0.9rem;
-            transition: all 0.2s;
+            background: transparent; border: 1px solid #cbd5e1; padding: 8px;
+            border-radius: 8px; cursor: pointer; display: flex; align-items: center; justify-content: center;
+            color: var(--text-color); transition: all 0.15s ease;
         }
-        .btn-outline:hover { background: rgba(50, 60, 75, 0.08); }
-        .btn-outline svg { width: 18px; height: 18px; fill: currentColor; }
+        .btn-outline:hover { background: #f1f5f9; border-color: #94a3b8; }
+        .btn-outline svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 2; }
 
-        .rules-select-container {
-            flex: 1;
-            max-width: 400px;
-            margin: 0 15px;
-        }
-        .rules-select {
-            width: 100%;
-            padding: 6px 12px;
-            border-radius: 6px;
-            border: 1px solid var(--border-color);
-            font-size: 0.95rem;
-            color: var(--text-color);
-            background-color: #fff;
-        }
-        
         .preview-area {
             flex: 1;
             overflow: hidden;
@@ -181,51 +157,28 @@
             align-items: center;
             justify-content: center;
             position: relative;
-            padding: 20px;
             background: #f1f5f9;
         }
-        .preview-content-wrapper {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            width: 100%;
-            height: 100%;
-            overflow: hidden;
-            cursor: grab;
-        }
-        .preview-content-wrapper:active { cursor: grabbing; }
-
         .tessellation-output {
             display: grid;
             transform-origin: center center;
             background: #e2e8f0;
-            gap: 1px; /* Minimum Gap */
+            gap: 0px;
         }
-        .tessellation-output .tile { outline: none; }
 
-        .floating-reset-zoom {
+        .btn-reset-zoom-floating {
             position: absolute;
             top: 15px;
             right: 15px;
             z-index: 20;
             background: #ffffff;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.15);
-            border: 1px solid var(--border-color);
-            width: 36px;
-            height: 36px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            color: var(--primary-color);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
         }
-        .floating-reset-zoom svg { width: 20px; height: 20px; fill: currentColor; }
 
-        /* Tools Panel (Desktop) */
+        /* Desktop Tools Panel */
         .tools-panel {
-            width: 450px;
-            min-width: 450px;
+            width: 480px;
+            min-width: 480px;
             background: #ffffff;
             border-left: 1px solid #e2e8f0;
             display: flex;
@@ -235,212 +188,136 @@
             transition: transform 0.3s ease;
         }
         .panel-content { flex: 1; overflow-y: auto; padding: 20px; }
-        
-        /* Desktop Mode Section Tabs Header */
-        .desktop-panel-tabs {
-            display: flex;
-            border-bottom: 1px solid #e2e8f0;
-            background: #f8fafc;
-        }
-        .desktop-tab-btn {
-            flex: 1;
-            padding: 12px;
-            border: none;
-            background: transparent;
-            font-weight: 600;
-            color: #64748b;
-            cursor: pointer;
-            border-bottom: 2px solid transparent;
-        }
-        .desktop-tab-btn.active {
-            color: var(--primary-color);
-            border-bottom-color: var(--primary-color);
-            background: #ffffff;
-        }
+        .desktop-tab-toggle { display: flex; gap: 5px; margin-bottom: 20px; border-bottom: 1px solid #e2e8f0; padding-bottom: 10px; }
+        .desktop-tab-btn { flex: 1; padding: 10px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 6px; cursor: pointer; font-weight: 600; color: #64748b; }
+        .desktop-tab-btn.active { background: #ffffff; border-color: var(--primary-color); color: var(--primary-color); }
 
-        .tool-group { display: none; margin-bottom: 20px; }
-        .tool-group.active { display: block; }
-        .tool-group h4 { margin: 0 0 15px 0; color: #1e293b; font-size: 1rem; }
+        .tool-group { margin-bottom: 20px; display: none; }
+        .tool-group.active-tab { display: block; }
         .tool-row { display: flex; gap: 10px; margin-bottom: 12px; align-items: center; }
         .tool-row label { font-size: 0.85rem; width: 100px; color: #64748b; flex-shrink: 0; }
         .tool-row input[type="range"] { flex: 1; }
-        .num-input { width: 60px; padding: 4px; border: 1px solid #cbd5e1; border-radius: 4px; text-align: center; }
+        .num-input { width: 60px; padding: 6px; border: 1px solid #cbd5e1; border-radius: 6px; text-align: center; }
+        select { padding: 8px 12px; border-radius: 8px; border: 1px solid #cbd5e1; font-size: 0.95rem; width: 100%; background: #ffffff; }
 
-        /* --- Studio Layout Design --- */
+        /* Studio Panel Layout Re-engineering */
         .studio-layout-container {
             display: grid;
-            grid-template-columns: 70px 220px 120px;
-            gap: 12px;
-            justify-content: center;
+            grid-template-columns: 80px 1fr 120px;
+            gap: 15px;
             align-items: start;
             margin-top: 15px;
         }
+        .studio-left-col { display: flex; flex-direction: column; gap: 10px; }
+        .studio-center-col { display: flex; flex-direction: column; align-items: center; }
+        .studio-right-col { display: flex; flex-direction: column; gap: 12px; font-size: 0.8rem; color: #64748b; }
 
-        /* Left Side: Vectors Grid 3x2 & Line Sizes */
-        .studio-left-pane {
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-        }
-        .vectors-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 6px;
-        }
-        .tool-btn {
-            height: 32px;
-            border: 1px solid var(--border-color);
-            background: #fff;
-            border-radius: 6px;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: #475569;
-        }
-        .tool-btn svg { width: 16px; height: 16px; fill: currentColor; }
-        .tool-btn.active {
-            background: var(--primary-color);
-            color: #fff;
-            border-color: var(--primary-color);
-        }
-
-        /* Line Size Icons Horizontal */
-        .line-size-row {
-            display: flex;
-            justify-content: space-between;
-            background: #f8fafc;
-            padding: 4px;
-            border-radius: 6px;
-            border: 1px solid #e2e8f0;
-        }
-        .dot-option {
-            flex: 1; height: 24px; display: flex; align-items: center; justify-content: center; cursor: pointer; border-radius: 4px;
-        }
-        .dot-option.active { background: #ffffff; box-shadow: 0 1px 3px rgba(0,0,0,0.15); }
-        .dot-shape { background: #1e293b; border-radius: 50%; }
-
-        /* Center Side: Square Canvas & Bottom Sub-controls */
-        .studio-center-pane {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 10px;
-        }
         .canvas-container {
-            width: 200px; height: 200px;
-            border: 2px dashed var(--primary-color); border-radius: 8px; overflow: hidden;
-            background: #fff;
+            position: relative; width: 220px; height: 220px; 
+            border: 1px solid #cbd5e1; border-radius: 8px; overflow: hidden; background: #fff;
         }
-        #tileCanvas { width: 200px; height: 200px; cursor: crosshair; touch-action: none; display: block; }
-        
-        .canvas-controls-row {
-            display: flex; justify-content: space-between; width: 100%; gap: 4px;
-        }
-        .icon-btn {
-            flex: 1; height: 30px; border: 1px solid var(--border-color); background: #fff;
-            border-radius: 4px; cursor: pointer; display: flex; align-items: center; justify-content: center; color: #475569;
-        }
-        .icon-btn svg { width: 16px; height: 16px; fill: currentColor; }
-        .icon-btn:hover { background: #f1f5f9; }
+        #tileCanvas { width: 100%; height: 100%; cursor: crosshair; touch-action: none; aspect-ratio: 1/1; }
 
-        /* Right Side: Circle Color Pickers Group */
-        .studio-right-pane {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
+        /* Outline Grid Icons 3x2 */
+        .tools-grid-3x2 {
+            display: grid; grid-template-columns: repeat(2, 1fr); gap: 6px;
         }
-        .color-circle-group {
-            display: flex;
-            flex-direction: column;
-            align-items: flex-start;
-            gap: 2px;
+        .tool-btn-outline {
+            height: 36px; background: transparent; border: 1px solid #cbd5e1; border-radius: 6px;
+            cursor: pointer; display: flex; align-items: center; justify-content: center; color: #475569;
         }
-        .color-circle-group span { font-size: 0.72rem; color: #64748b; font-weight: 500; }
-        .color-picker-wrapper {
-            display: flex; align-items: center; gap: 6px; width: 100%;
-        }
-        .circle-picker {
-            -webkit-appearance: none; -moz-appearance: none; appearance: none;
-            width: 28px; height: 28px; border: 2px solid #fff; border-radius: 50%;
-            cursor: pointer; box-shadow: 0 0 0 1px var(--border-color); padding: 0; background: none;
-        }
-        .circle-picker::-webkit-color-swatch-wrapper { padding: 0; }
-        .circle-picker::-webkit-color-swatch { border: none; border-radius: 50%; }
-        .circle-picker::-moz-color-swatch { border: none; border-radius: 50%; }
+        .tool-btn-outline:hover, .tool-btn-outline.active { border-color: var(--text-color); background: #f1f5f9; color: #0f172a; }
+        .tool-btn-outline svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 2; }
 
-        .mini-preview-box, .tools-panel hr, #editPatternTitle, #editPatternDesc { display: block; }
+        /* Line Size Horizonal */
+        .line-size-horiz { display: flex; gap: 4px; width: 100%; margin-top: 5px; }
+        .line-dot-opt { flex: 1; height: 28px; border: 1px solid #cbd5e1; border-radius: 4px; display: flex; align-items: center; justify-content: center; cursor: pointer; }
+        .line-dot-opt.active { background: #1e293b; border-color: #1e293b; }
+        .line-dot-opt.active .dot-shape { background: #fff; }
+        .dot-shape { background: #475569; border-radius: 50%; }
 
-        /* Toggle Slide Panel on Bottom (Mobile Overlay Button) */
-        .mobile-panel-toggle { display: none; }
+        /* Circle Color Pickers */
+        .color-picker-wrapper { display: flex; flex-direction: column; gap: 4px; }
+        .color-picker-circle-row { display: flex; align-items: center; gap: 8px; }
+        .circle-color-picker {
+            -webkit-appearance: none; border: 1px solid #cbd5e1; width: 30px; height: 30px; border-radius: 50%; cursor: pointer; background: none; overflow: hidden; padding: 0;
+        }
+        .circle-color-picker::-webkit-color-swatch-wrapper { padding: 0; }
+        .circle-color-picker::-webkit-color-swatch { border: none; border-radius: 50%; }
+
+        .canvas-actions-row { display: flex; justify-content: center; gap: 6px; width: 100%; margin-top: 12px; }
+
+        .mini-preview-box { background: #f1f5f9; padding: 10px; border-radius: 8px; margin-top: 10px; display: flex; flex-direction: column; align-items: center; }
+        .mini-preview-grid { display: grid; grid-template-columns: repeat(6, var(--mini-grid-size)); grid-template-rows: repeat(4, var(--mini-grid-size)); background: #e2e8f0; }
+        .mini-tile { width: var(--mini-grid-size); height: var(--mini-grid-size); display: flex; align-items: center; justify-content: center; font-size: 0.85rem; font-weight: bold; color: #323c4b; background: #ffffff; outline: 1px solid rgba(0,0,0,0.1); }
+
+        /* Floating Toggle Bottom for Mobile */
+        .mobile-toggle-panel-btn { display: none; }
+
+        #cropModal {
+            display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+            background: rgba(0,0,0,0.6); z-index: 2000; align-items: center; justify-content: center;
+        }
+        .crop-box { background: white; padding: 20px; border-radius: 12px; max-width: 600px; width: 90%; text-align: center; }
+        .crop-preview-container { max-height: 400px; margin: 15px 0; background: #eee; position: relative; overflow: hidden; }
+        #cropImageTag { max-width: 100%; display: block; }
+
         .mobile-nav-bar { display: none; }
+        .mobile-top-bar { display: none; }
 
-        /* ==========================================
-           --- MOBILE & TABLET INTERFACE (< 991px) ---
-           ========================================== */
+        /* ==========================================================================
+           --- MOBILE & TABLET RESPONSIVE STYLE (max-width: 991px) ---
+           ========================================================================== */
         @media (max-width: 991px) {
             body { overflow: hidden; position: fixed; width: 100%; height: 100%; }
-            .patterns-container { grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 12px; }
-            .pattern-preview { height: 130px; }
-            .tile { --grid-size: 35px; }
+            #mainView { height: 100vh; }
+            .patterns-container { grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 16px; }
 
-            .editor-container { flex-direction: column; height: 100vh; }
-            .workspace { height: calc(100vh - 290px); flex: none; width: 100%; }
+            .editor-container { flex-direction: column; height: 100vh; width: 100vw; }
+            .workspace { height: calc(100vh - 310px); flex: none; width: 100%; }
             
-            /* Rules Selector Overrides Workspace Header Title */
-            .rules-select-container { max-width: 60%; margin: 0 auto; }
+            .workspace-header { padding: 8px 12px; }
             .workspace-header span { display: none; }
-            .btn-outline span { display: none; } /* Show only icons on mobile header */
-            .btn-outline { padding: 6px 10px; }
+            
+            .mobile-top-bar {
+                display: flex; align-items: center; background: #ffffff; padding: 8px 12px; border-bottom: 1px solid #e2e8f0; gap: 10px; width: 100%;
+            }
+            .mobile-top-bar select { flex: 1; height: 36px; padding: 4px 8px; font-size: 0.9rem; }
 
-            /* Tools Panel as Bottom Docked Component */
+            /* Bottom Panel App Style */
             .tools-panel {
                 width: 100% !important; min-width: 100% !important;
-                height: 230px !important;
+                height: auto !important; max-height: 240px;
                 border-left: none; border-top: 1px solid #e2e8f0;
                 position: fixed; bottom: 60px; left: 0; z-index: 1001;
-                background: #ffffff;
-                transform: translateY(0);
-                transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+                background: #ffffff; transform: translateY(0); transition: transform 0.3s ease;
             }
             .tools-panel.collapsed { transform: translateY(100%); bottom: 60px; }
-            .desktop-panel-tabs { display: none; }
-            .panel-content { padding: 12px 15px; }
 
-            /* Studio Scale & Center Adjustments for Mobile Screen Layout */
-            .studio-layout-container {
-                grid-template-columns: 65px 160px 100px;
-                gap: 8px;
-                margin-top: 5px;
-            }
-            .canvas-container { width: 140px; height: 140px; }
-            #tileCanvas { width: 140px; height: 140px; }
-            .vectors-grid { gap: 4px; }
-            .tool-btn { height: 28px; }
-            .color-circle-group span { font-size: 0.65rem; }
-            .circle-picker { width: 24px; height: 24px; }
+            .panel-content { padding: 12px; overflow-y: auto; height: 100%; }
+            
+            /* Hide description, headers and map on mobile */
+            #editPatternTitle, #editPatternDesc, .mini-preview-box, .desktop-tab-toggle, .tool-group h4, .tools-panel hr { display: none !important; }
 
-            /* Hide descriptive text and blueprint grid entirely on mobile screen */
-            .mini-preview-box, .tools-panel hr, #editPatternTitle, #editPatternDesc { display: none !important; }
             .tool-group { margin-bottom: 0; }
-            .tool-group h4 { display: none; }
+            .tool-group.active-tab { display: block !important; }
 
-            /* Mobile Tab View Panel Controls Height Adaptation */
-            .tool-group#tabGridExpansion { height: auto; }
-            .tool-group#tabTileStudio { height: auto; }
-
-            /* Slide Up/Down Control Toggle Handles */
-            .mobile-panel-toggle {
-                display: flex; position: fixed; bottom: 290px; right: 15px; z-index: 1005;
-                background: var(--primary-color); color: #fff; border: none;
-                width: 40px; height: 40px; border-radius: 50%; align-items: center; justify-content: center;
-                box-shadow: 0 4px 10px rgba(0,0,0,0.2); cursor: pointer; transition: bottom 0.3s;
+            /* Studio Mobile Optimization Layout */
+            .studio-layout-container {
+                grid-template-columns: 70px 140px 1fr; gap: 8px; margin-top: 5px; justify-content: center;
             }
-            .tools-panel.collapsed + .mobile-panel-toggle { bottom: 75px; }
-            .mobile-panel-toggle svg { width: 20px; height: 20px; fill: currentColor; transition: transform 0.3s; }
-            .tools-panel.collapsed + .mobile-panel-toggle svg { transform: rotate(180deg); }
+            .canvas-container { width: 130px; height: 130px; }
+            .tools-grid-3x2 { gap: 4px; }
+            .tool-btn-outline { height: 32px; }
+            .line-size-horiz { margin-top: 2px; }
+            .line-dot-opt { height: 22px; }
+            .studio-right-col { gap: 6px; }
+            .circle-color-picker { width: 24px; height: 24px; }
+            .canvas-actions-row { margin-top: 6px; gap: 4px; }
+            .canvas-actions-row .btn-outline { padding: 4px; }
+            .canvas-actions-row .btn-outline svg { width: 16px; height: 16px; }
 
-            /* Bottom Fixed Safe Navigation Elements */
+            /* Tab Navigation Bar Bottom */
             .mobile-nav-bar {
                 display: flex; position: fixed; bottom: 0; left: 0; width: 100vw; height: 60px;
                 background: #f8fafc; border-top: 1px solid #e2e8f0; z-index: 1002;
@@ -450,9 +327,16 @@
                 flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center;
                 background: transparent; border: none; cursor: pointer; color: #64748b; font-size: 0.75rem; font-weight: 500; gap: 2px;
             }
-            .nav-tab-item svg { width: 18px; height: 18px; fill: #64748b; }
-            .nav-tab-item.active { color: var(--primary-color); font-weight: 600; background: #ffffff; }
-            .nav-tab-item.active svg { fill: var(--primary-color); }
+            .nav-tab-item svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 2; }
+            .nav-tab-item.active { color: var(--text-color); background: #ffffff; font-weight: 600; }
+
+            /* Floating Show/Hide Toggle Handle */
+            .mobile-toggle-panel-btn {
+                display: flex; position: fixed; bottom: 65px; right: 15px; z-index: 1005;
+                background: var(--primary-color); color: #fff; border: none; width: 40px; height: 40px;
+                border-radius: 50%; box-shadow: 0 4px 10px rgba(0,0,0,0.2); align-items: center; justify-content: center; cursor: pointer;
+            }
+            .mobile-toggle-panel-btn svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 2; transition: transform 0.3s; }
         }
     </style>
 </head>
@@ -465,10 +349,10 @@
 
    <div class="upload-zone">
         <strong>Upload Image Asset</strong><br>
-        <small>Click Layout to Edit mode</small>
+        <small>Click Layout Card to Enter Edit Mode</small>
         <div class="upload-actions">
             <input type="file" id="globalImageUpload" accept="image/*">
-            <button class="btn-outline" id="btnClearToP">Reset Image to Default</button>
+            <button class="btn-outline" id="btnClearToP" style="font-size: 0.85rem; padding: 6px 12px;">Reset Image to Default</button>
         </div>
     </div>
 
@@ -476,53 +360,48 @@
 </div>
 
 <div id="editorView">
+    <div class="mobile-top-bar" id="mobileTopBar"></div>
+
     <div class="editor-container">
         
         <div class="workspace">
             <div class="workspace-header">
-                <button class="btn-outline" id="btnBack">
-                    <svg viewBox="0 0 24 24"><path d="M20,11H7.83l5.59-5.59L12,4l-8,8l8,8l1.41-1.41L7.83,13H20V11Z"/></svg>
-                    <span>Back to Main</span>
+                <button class="btn-outline" id="btnBack" title="Back to Main">
+                    <svg viewBox="0 0 24 24"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
                 </button>
-                
-                <div class="rules-select-container">
-                    <select id="layoutSelect" class="rules-select"></select>
+
+                <div style="flex: 1; max-width: 300px;" id="desktopSelectContainer">
+                    <select id="layoutSelect"></select>
                 </div>
 
-                <button class="btn-outline" id="btnSaveImage" style="background: var(--primary-color); color: #fff;">
-                    <svg viewBox="0 0 24 24"><path d="M15,9H5V5H15M12,19A3,3 0 0,1 9,16A3,3 0 0,1 12,13A3,3 0 0,1 15,16A3,3 0 0,1 12,19M17,3H5C3.89,3 3,3.9 3,5V19A2,2 0 0,0 5,21H19A2,2 0 0,0 21,19V7L17,3Z"/></svg>
-                    <span>Save Pattern</span>
+                <button class="btn-outline" id="btnSaveImage" title="Save Pattern Image" style="color: #2563eb;">
+                    <svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>
                 </button>
             </div>
             
             <div class="preview-area" id="previewArea">
-                <div class="floating-reset-zoom" id="btnResetZoom" title="Reset Zoom & Pan">
-                    <svg viewBox="0 0 24 24"><path d="M10.5,4.5H13.5V7.5H10.5V4.5M10.5,16.5H13.5V19.5H10.5V16.5M4.5,10.5H7.5V13.5H4.5 Tri M16.5,10.5H19.5V13.5H16.5V10.5M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2M12,4A8,8 0 0,1 20,12A8,8 0 0,1 12,20A8,8 0 0,1 4,12A8,8 0 0,1 12,4Z"/></svg>
-                </div>
-                <div class="preview-content-wrapper" id="previewContentWrapper">
-                    <div class="tessellation-output" id="tessellationOutput"></div>
-                </div>
+                <button class="btn-outline btn-reset-zoom-floating" id="btnResetZoom" title="Reset View Zoom/Pan">
+                    <svg viewBox="0 0 24 24"><path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/></svg>
+                </button>
+                <div class="tessellation-output" id="tessellationOutput"></div>
             </div>
         </div>
 
         <div class="tools-panel" id="toolsPanel">
-            <div class="desktop-panel-tabs">
-                <button class="desktop-tab-btn active" data-target="tabGridExpansion">Grid Settings</button>
-                <button class="desktop-tab-btn" data-target="tabTileStudio">Tile Studio</button>
-            </div>
-
             <div class="panel-content">
-                <h3 id="editPatternTitle" style="color:var(--primary-color); margin-top:0; margin-bottom: 8px;">Layout Configuration</h3>
-                <p id="editPatternDesc" style="font-size:0.85rem; color:#64748b; line-height:1.4; margin-bottom: 10px;"></p>
+                <h3 id="editPatternTitle" style="color:var(--primary-color); margin-top:0; margin-bottom: 4px;">Layout Configuration</h3>
+                <p id="editPatternDesc" style="font-size:0.85rem; color:#64748b; margin-bottom: 10px;"></p>
                 
                 <div class="mini-preview-box">
-                    <span style="font-size:0.75rem; font-weight:bold; color:#475569; margin-bottom:6px;">P Layout Map</span>
                     <div class="mini-preview-grid" id="miniPreviewGrid"></div>
                 </div>
 
-                <hr style="border: 0; border-top: 1px solid #f1f5f9; margin: 15px 0;">
+                <div class="desktop-tab-toggle">
+                    <button class="desktop-tab-btn active" data-target="tabGridExpansion">Grid Expansion</button>
+                    <button class="desktop-tab-btn" data-target="tabTileStudio">Tile Studio</button>
+                </div>
 
-                <div class="tool-group active" id="tabGridExpansion">
+                <div class="tool-group active-tab" id="tabGridExpansion">
                     <h4>Grid Expansion Setting</h4>
                     <div class="tool-row">
                         <label>Grid Columns</label>
@@ -536,8 +415,8 @@
                     </div>
                     <div class="tool-row">
                         <label>Block Size (px)</label>
-                        <input type="range" id="gridSizeInput" value="80" min="30" max="200">
-                        <input type="number" id="gridSizeNum" class="num-input" value="80" min="30" max="200">
+                        <input type="range" id="gridSizeInput" value="80" min="20" max="200">
+                        <input type="number" id="gridSizeNum" class="num-input" value="80" min="20" max="200">
                     </div>
                 </div>
 
@@ -547,97 +426,100 @@
                     </div>
                     
                     <div class="studio-layout-container">
-                        <div class="studio-left-pane">
-                            <div class="vectors-grid" id="toolsGrid">
-                                <button class="tool-btn active" data-tool="brush" title="Free Brush">
-                                    <svg viewBox="0 0 24 24"><path d="M20.71,5.63L18.37,3.29C18,2.9 17.35,2.9 16.96,3.29L15.12,5.12L18.88,8.88L20.71,7.04C21.1,6.65 21.1,6 20.71,5.63M3,17.25V21H6.75L17.81,9.93L14.07,6.19L3,17.25Z"/></svg>
+                        
+                        <div class="studio-left-col">
+                            <div class="tools-grid-3x2" id="toolsGrid">
+                                <button class="tool-btn-outline active" data-tool="brush" title="Free Brush Line">
+                                    <svg viewBox="0 0 24 24"><path d="M12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2C6.47715 2 2 6.47715 2 12C2 14.7255 3.09032 17.1962 4.85857 19H12V22Z"/></svg>
                                 </button>
-                                <button class="tool-btn" data-tool="line" title="Straight Line">
-                                    <svg viewBox="0 0 24 24"><path d="M15,3V7.59L7.59,15H3V21H9V16.41L16.41,9H21V3M17,5H19V7H17M5,17H7V19H5"/></svg>
+                                <button class="tool-btn-outline" data-tool="line" title="Straight Vector Line">
+                                    <svg viewBox="0 0 24 24"><path d="M5 19L19 5M5 5h.01M19 19h.01"/></svg>
                                 </button>
-                                <button class="tool-btn" data-tool="rect" title="Rectangle">
-                                    <svg viewBox="0 0 24 24"><path d="M4,6H20V18H4V6M2,4V20H22V4H2Z"/></svg>
+                                <button class="tool-btn-outline" data-tool="rect" title="Rectangle Shape">
+                                    <svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/></svg>
                                 </button>
-                                <button class="tool-btn" data-tool="circle" title="Circle">
-                                    <svg viewBox="0 0 24 24"><path d="M12,20A8,8 0 0,1 4,12A8,8 0 0,1 12,4A8,8 0 0,1 20,12A8,8 0 0,1 12,20M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2Z"/></svg>
+                                <button class="tool-btn-outline" data-tool="circle" title="Perfect Circle Shape">
+                                    <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/></svg>
                                 </button>
-                                <button class="tool-btn" data-tool="triangle" title="Triangle">
-                                    <svg viewBox="0 0 24 24"><path d="M1,21H23L12,2L1,21M12,6L19.8,19H4.2L12,6Z"/></svg>
+                                <button class="tool-btn-outline" data-tool="triangle" title="Triangle Mesh">
+                                    <svg viewBox="0 0 24 24"><path d="M12 3L2 20h20L12 3z"/></svg>
                                 </button>
-                                <button class="tool-btn" id="btnBucketTool" data-tool="fill" title="Paint Bucket Tool">
-                                    <svg viewBox="0 0 24 24"><path d="M19,3H5C3.89,3 3,3.89 3,5V19A2,2 0 0,0 5,21H19A2,2 0 0,0 21,19V5C21,3.89 20.1,3 19,3M11,17H9V15H11V17M11,13H9V11H11V13M11,9H9V7H11V9M15,17H13V15H15V17M15,13H13V11H15V13M15,9H13V7H15V9Z"/></svg>
+                                <button class="tool-btn-outline" id="btnBucketTool" data-tool="fill" title="Flood Paint Fill Bucket">
+                                    <svg viewBox="0 0 24 24"><path d="M12 22a7 7 0 0 0 7-7c0-4.3-7-11-7-11S5 10.7 5 15a7 7 0 0 0 7 7z"/></svg>
                                 </button>
                             </div>
-                            
-                            <div class="line-size-row" id="dotSizeContainer">
-                                <div class="dot-option" data-value="2" title="Thin"><div class="dot-shape" style="width:3px; height:3px;"></div></div>
-                                <div class="dot-option active" data-value="5" title="Medium"><div class="dot-shape" style="width:6px; height:6px;"></div></div>
-                                <div class="dot-option" data-value="10" title="Thick"><div class="dot-shape" style="width:9px; height:9px;"></div></div>
-                                <div class="dot-option" data-value="18" title="Max"><div class="dot-shape" style="width:13px; height:13px;"></div></div>
+
+                            <div class="line-size-horiz" id="dotSizeContainer">
+                                <div class="line-dot-opt" data-value="2" title="Thin"><div class="dot-shape" style="width:3px; height:3px;"></div></div>
+                                <div class="line-dot-opt active" data-value="6" title="Med"><div class="dot-shape" style="width:6px; height:6px;"></div></div>
+                                <div class="line-dot-opt" data-value="12" title="Thick"><div class="dot-shape" style="width:10px; height:10px;"></div></div>
                             </div>
                         </div>
 
-                        <div class="studio-center-pane">
+                        <div class="studio-center-col">
                             <div class="canvas-container">
-                                <canvas id="tileCanvas" width="200" height="200"></canvas>
-                            </div>
-                            <div class="canvas-controls-row">
-                                <button class="icon-btn" id="btnUndo" title="Undo Step">
-                                    <svg viewBox="0 0 24 24"><path d="M12.5,8c-2.65,0-5.05,1-6.9,2.6L2,7v9h9l-3.62-3.62c1.39-1.16,3.16-1.88,5.12-1.88c3.54,0,6.55,2.31,7.6,5.5l2.37-0.78C21.08,11.03,17.15,8,12.5,8z"/></svg>
-                                </button>
-                                <button class="icon-btn" id="btnRedo" title="Redo Step">
-                                    <svg viewBox="0 0 24 24"><path d="M18.4,10.6C16.55,9,14.15,8,11.5,8c-4.65,0-8.58,3.03-9.96,7.22L3.9,16c1.05-3.19,4.05-5.5,7.6-5.5c1.95,0,3.73,0.72,5.12,1.88L13,16h9V7L18.4,10.6z"/></svg>
-                                </button>
-                                <button class="icon-btn" id="btnClearCanvas" title="Clear Canvas Layer">
-                                    <svg viewBox="0 0 24 24"><path d="M19,4H15.5L14.5,3H9.5L8.5,4H5V6H19M6,19A2,2 0 0,0 8,21H16A2,2 0 0,0 18,19V7H6V19Z"/></svg>
-                                </button>
-                                <button class="icon-btn" id="btnResetToP" title="Reset Blueprint Content to P Symbol">
-                                    <svg viewBox="0 0 24 24"><path d="M12,2A10,10 0 1,0 22,12A10,10 0 0,0 12,2M12,18A6,6 0 1,1 18,12A6,6 0 0,1 12,18Z"/></svg>
-                                </button>
+                                <canvas id="tileCanvas" width="240" height="240"></canvas>
                             </div>
                         </div>
 
-                        <div class="studio-right-pane">
-                            <div class="color-circle-group">
+                        <div class="studio-right-col">
+                            <div class="color-picker-wrapper">
                                 <span>Stroke</span>
-                                <div class="color-picker-wrapper">
+                                <div class="color-picker-circle-row">
                                     <input type="checkbox" id="chkUseStroke" checked>
-                                    <input type="color" id="strokeColor" class="circle-picker" value="#1e293b">
+                                    <input type="color" id="strokeColor" class="circle-color-picker" value="#1e293b">
                                 </div>
                             </div>
-                            <div class="color-circle-group">
-                                <span>Shape Fill</span>
-                                <div class="color-picker-wrapper">
+                            <div class="color-picker-wrapper">
+                                <span>Inner Fill</span>
+                                <div class="color-picker-circle-row">
                                     <input type="checkbox" id="chkUseFill" checked>
-                                    <input type="color" id="fillColor" class="circle-picker" value="#7AA1E0">
+                                    <input type="color" id="fillColor" class="circle-color-picker" value="#7AA1E0">
                                 </div>
                             </div>
-                            <div class="color-circle-group">
-                                <span>Bucket Color</span>
-                                <input type="color" id="bucketColor" class="circle-picker" value="#6D79AB">
+                            <div class="color-picker-wrapper">
+                                <span>Bucket</span>
+                                <input type="color" id="bucketColor" class="circle-color-picker" value="#6D79AB">
                             </div>
-                            <div class="color-circle-group">
-                                <span>Background</span>
-                                <input type="color" id="bgColor" class="circle-picker" value="#ffffff">
+                            <div class="color-picker-wrapper">
+                                <span>Canvas Bg</span>
+                                <input type="color" id="bgColor" class="circle-color-picker" value="#ffffff">
                             </div>
                         </div>
+
                     </div>
+
+                    <div class="canvas-actions-row">
+                        <button class="btn-outline" id="btnUndo" title="Undo Step">
+                            <svg viewBox="0 0 24 24"><path d="M3 7v6h6M21 17a9 9 0 0 0-9-9 9 9 0 0 0-6 2.3L3 13"/></svg>
+                        </button>
+                        <button class="btn-outline" id="btnRedo" title="Redo Step">
+                            <svg viewBox="0 0 24 24"><path d="M21 7v6h-6M3 17a9 9 0 0 1 9-9 9 9 0 0 1 6 2.3l3 4"/></svg>
+                        </button>
+                        <button class="btn-outline" id="btnClearCanvas" title="Clear Canvas Layer" style="color:#ef4444;">
+                            <svg viewBox="0 0 24 24"><path d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+                        </button>
+                        <button class="btn-outline" id="btnResetToP" title="Reset Default P Blueprint">
+                            <svg viewBox="0 0 24 24"><path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"/></svg>
+                        </button>
+                    </div>
+
                 </div>
 
             </div>
         </div>
 
-        <button class="mobile-panel-toggle" id="mobilePanelToggle" title="Toggle Toolbox Visibility">
-            <svg viewBox="0 0 24 24"><path d="M7.41,8.58L12,13.17L16.59,8.58L18,10L12,16L6,10L7.41,8.58Z"/></svg>
+        <button class="mobile-toggle-panel-btn" id="mobileTogglePanel" title="Toggle Tool Shelf">
+            <svg id="arrowToggleSvg" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></svg>
         </button>
 
         <div class="mobile-nav-bar">
             <button class="nav-tab-item active" data-target="tabGridExpansion">
-                <svg viewBox="0 0 24 24"><path d="M4,2H20A2,2 0 0,1 22,4V20A2,2 0 0,1 20,22H4A2,2 0 0,1 2,20V4A2,2 0 0,1 4,2M4,4V8H8V4H4M10,4V8H14V4H10M16,4V8H20V4H16M4,10V14H8V10H4M10,10V14H14V10H10M16,10V14H20V10H16M4,16V20H8V16H4M10,16V20H14V16H10M16,16V20H20V16H16Z"/></svg>
+                <svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M9 3v18M15 3v18M3 9h18M3 15h18"/></svg>
                 Grid Setting
             </button>
             <button class="nav-tab-item" data-target="tabTileStudio">
-                <svg viewBox="0 0 24 24"><path d="M14.06,9L15,9.94L5.92,19H5V18.08L14.06,9M17.66,3C17.41,3 17.15,4 16.96,4.18L15.13,6L18,8.87L19.82,7.04C20.21,6.65 20.21,6 19.82,5.61L18.39,4.18C18.2,4 17.93,3 17.66,3M14.06,7.19L3,18.25V21H5.75L16.81,9.94L14.06,7.19M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2Z"/></svg>
+                <svg viewBox="0 0 24 24"><path d="M12 20h9M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
                 Tile Studio
             </button>
         </div>
@@ -648,13 +530,13 @@
 <div id="cropModal">
     <div class="crop-box">
         <h3>Adjust Image Area Selection</h3>
-        <p style="font-size:0.85rem; color:#64748b;">Select section to crop.</p>
+        <p style="font-size:0.85rem; color:#64748b;">An uploaded image asset is detected. Adjust the box to select and scale your square section.</p>
         <div class="crop-preview-container">
             <img id="cropImageTag" src="" alt="preview">
         </div>
         <div style="display:flex; gap:10px; justify-content: center;">
-            <button class="btn-outline" id="btnCropSquare" style="background:var(--primary-color); color:white; border:none;">Confirm Crop (1:1)</button>
-            <button class="btn-outline" id="btnCropNone">Keep Original Aspect</button>
+            <button class="btn-outline" id="btnCropSquare" style="background:var(--primary-color); color:white;">Confirm Square Crop (1:1)</button>
+            <button class="btn-outline" id="btnCropNone">Keep Original Aspect (Stretch/Fit)</button>
         </div>
     </div>
 </div>
@@ -717,9 +599,10 @@
     let currentImageUrl = "";
     let activePattern = null;
     let selectedTool = "brush";
-    let selectedLineWidth = 5;
+    let selectedLineWidth = 6;
     let cropper = null; 
 
+    // Canvas Engine State
     const canvas = document.getElementById('tileCanvas');
     const ctx = canvas.getContext('2d');
     let isDrawing = false;
@@ -729,6 +612,7 @@
     let isCtrlPressed = false;
     let canvasSnapshot = null;
 
+    // Zoom and Pan Limits Controls
     let scale = 1;
     let panX = 0, panY = 0;
     let isPanning = false;
@@ -741,9 +625,8 @@
         setupCanvasDefault();
         setupLineWidthSelector();
         setupMobileTabSystems();
-        setupDesktopTabSystems();
+        setupDesktopTabs();
         bindEvents();
-        setupHistoryState();
     }
 
     function generateExplorerGrid() {
@@ -786,19 +669,29 @@
 
     function setupDropdownOptions() {
         const select = document.getElementById('layoutSelect');
-        select.innerHTML = "";
         patternsData.forEach(p => {
             const opt = document.createElement('option');
             opt.value = p.id;
             opt.textContent = p.title;
             select.appendChild(opt);
         });
+
+        // Mirror Cloned Native Selector directly into Mobile Top Bar
+        const mobileBar = document.getElementById('mobileTopBar');
+        const clonedSelect = select.cloneNode(true);
+        clonedSelect.id = "layoutSelectMobile";
+        clonedSelect.onchange = (e) => {
+            select.value = e.target.value;
+            select.dispatchEvent(new Event('change'));
+        };
+        mobileBar.appendChild(clonedSelect);
     }
 
     function setupToolsGrid() {
-        const buttons = document.querySelectorAll('.tool-btn');
+        const buttons = document.querySelectorAll('.tool-btn-outline');
         buttons.forEach(btn => {
             btn.onclick = () => {
+                if(btn.id === 'btnBucketTool') return;
                 buttons.forEach(b => b.classList.remove('active'));
                 btn.classList.add('active');
                 selectedTool = btn.getAttribute('data-tool');
@@ -807,7 +700,7 @@
     }
 
     function setupLineWidthSelector() {
-        const dots = document.querySelectorAll('#dotSizeContainer .dot-option');
+        const dots = document.querySelectorAll('#dotSizeContainer .line-dot-opt');
         dots.forEach(dot => {
             dot.onclick = () => {
                 dots.forEach(d => d.classList.remove('active'));
@@ -824,29 +717,37 @@
         navItems.forEach(item => {
             item.onclick = () => {
                 navItems.forEach(n => n.classList.remove('active'));
-                groups.forEach(g => g.classList.remove('active'));
+                groups.forEach(g => g.classList.remove('active-tab'));
                 
                 item.classList.add('active');
                 const targetId = item.getAttribute('data-target');
-                document.getElementById(targetId).classList.add('active');
-                
-                document.getElementById('toolsPanel').classList.remove('collapsed');
+                document.getElementById(targetId).classList.add('active-tab');
+
+                // Sync desktop selection indicators
+                document.querySelectorAll('.desktop-tab-btn').forEach(d => {
+                    d.classList.toggle('active', d.getAttribute('data-target') === targetId);
+                });
             };
         });
     }
 
-    function setupDesktopTabSystems() {
-        const tabBtns = document.querySelectorAll('.desktop-tab-btn');
+    function setupDesktopTabs() {
+        const dtTabs = document.querySelectorAll('.desktop-tab-btn');
         const groups = document.querySelectorAll('.tools-panel .tool-group');
 
-        tabBtns.forEach(btn => {
-            btn.onclick = () => {
-                tabBtns.forEach(b => b.classList.remove('active'));
-                groups.forEach(g => g.classList.remove('active'));
+        dtTabs.forEach(tab => {
+            tab.onclick = () => {
+                dtTabs.forEach(t => t.classList.remove('active'));
+                groups.forEach(g => g.classList.remove('active-tab'));
 
-                btn.classList.add('active');
-                const targetId = btn.getAttribute('data-target');
-                document.getElementById(targetId).classList.add('active');
+                tab.classList.add('active');
+                const targetId = tab.getAttribute('data-target');
+                document.getElementById(targetId).classList.add('active-tab');
+
+                // Sync Mobile Navigation Bottom Active indicators
+                document.querySelectorAll('.nav-tab-item').forEach(n => {
+                    n.classList.toggle('active', n.getAttribute('data-target') === targetId);
+                });
             };
         });
     }
@@ -854,7 +755,7 @@
     function setupCanvasDefault() {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
         canvas.style.backgroundColor = document.getElementById('bgColor').value;
-        ctx.font = "bold 110px sans-serif";
+        ctx.font = "bold 130px sans-serif";
         ctx.fillStyle = "#1e293b";
         ctx.textAlign = "center";
         ctx.textBaseline = "middle";
@@ -864,7 +765,7 @@
 
     function renderMiniPPreview(pattern) {
         const grid = document.getElementById('miniPreviewGrid');
-        if (!grid) return;
+        if(!grid) return;
         grid.innerHTML = "";
         pattern.matrix.forEach(transform => {
             const tile = document.createElement('div');
@@ -872,63 +773,6 @@
             tile.textContent = "P";
             grid.appendChild(tile);
         });
-    }
-
-    function setupHistoryState() {
-        window.addEventListener('popstate', function(e) {
-            if (document.getElementById('editorView').style.display === 'block') {
-                closeEditorWorkflow();
-                e.preventDefault();
-            }
-        });
-    }
-
-    function openEditor(pattern) {
-        activePattern = pattern;
-        document.getElementById('mainView').style.display = 'none';
-        document.getElementById('editorView').style.display = 'block';
-
-        document.getElementById('layoutSelect').value = pattern.id;
-        document.getElementById('editPatternTitle').textContent = pattern.title;
-        document.getElementById('editPatternDesc').textContent = pattern.desc;
-        
-        renderMiniPPreview(pattern);
-
-        // Responsive Adaptive Grid Scaling
-        if (window.innerWidth <= 991) {
-            document.getElementById('gridSizeInput').value = 40;
-            document.getElementById('gridSizeNum').value = 40;
-        } else {
-            document.getElementById('gridSizeInput').value = 80;
-            document.getElementById('gridSizeNum').value = 80;
-        }
-
-        window.history.pushState({editing: true}, "");
-
-        if(currentImageUrl) {
-            const img = new Image();
-            img.onload = () => {
-                ctx.clearRect(0, 0, canvas.width, canvas.height);
-                ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-                drawingHistory = [];
-                historyStep = -1;
-                saveCanvasState();
-                renderTessellation();
-            };
-            img.src = currentImageUrl;
-        } else {
-            drawingHistory = [];
-            historyStep = -1;
-            setupCanvasDefault();
-            renderTessellation();
-        }
-    }
-
-    function closeEditorWorkflow() {
-        currentImageUrl = canvas.toDataURL();
-        document.getElementById('editorView').style.display = 'none';
-        document.getElementById('mainView').style.display = 'block';
-        generateExplorerGrid();
     }
 
     function floodFill(startX, startY, fillColor) {
@@ -955,20 +799,12 @@
             const index = (y * canvas.width + x) * 4;
             return [data[index], data[index + 1], data[index + 2], data[index + 3]];
         }
-
         function setPixelColor(x, y, color) {
             const index = (y * canvas.width + x) * 4;
-            data[index] = color[0];
-            data[index + 1] = color[1];
-            data[index + 2] = color[2];
-            data[index + 3] = 255;
+            data[index] = color[0]; data[index + 1] = color[1]; data[index + 2] = color[2]; data[index + 3] = 255;
         }
-
         function colorsMatch(c1, c2) {
-            return Math.abs(c1[0] - c2[0]) < 15 && 
-                   Math.abs(c1[1] - c2[1]) < 15 && 
-                   Math.abs(c1[2] - c2[2]) < 15 &&
-                   Math.abs(c1[3] - c2[3]) < 15;
+            return Math.abs(c1[0] - c2[0]) < 15 && Math.abs(c1[1] - c2[1]) < 15 && Math.abs(c1[2] - c2[2]) < 15;
         }
     }
 
@@ -980,45 +816,38 @@
     function syncInputs(sliderId, numId, callback) {
         const slider = document.getElementById(sliderId);
         const num = document.getElementById(numId);
-        
-        slider.oninput = function() {
-            num.value = this.value;
-            callback();
-        };
+        slider.oninput = function() { num.value = this.value; callback(); };
         num.oninput = function() {
             let val = parseInt(this.value);
             if (isNaN(val)) val = parseInt(slider.min);
-            if (val < parseInt(slider.min)) val = parseInt(slider.min);
-            if (val > parseInt(slider.max)) val = parseInt(slider.max);
-            this.value = val;
             slider.value = val;
             callback();
         };
     }
 
     function getTransformWithPeriod(matrix, r, c) {
-        const blueprintCols = 6;
-        const blueprintRows = 4;
+        const blueprintCols = 6; const blueprintRows = 4;
         const br = r % blueprintRows;
         const rowElements = [];
-        for (let i = 0; i < blueprintCols; i++) {
-            rowElements.push(matrix[br * blueprintCols + i]);
-        }
+        for (let i = 0; i < blueprintCols; i++) rowElements.push(matrix[br * blueprintCols + i]);
         let pX = blueprintCols;
         for (let p = 1; p < blueprintCols; p++) {
             let isMatch = true;
-            for (let i = 0; i < blueprintCols; i++) {
-                if (rowElements[i] !== rowElements[i % p]) {
-                    isMatch = false;
-                    break;
-                }
-            }
+            for (let i = 0; i < blueprintCols; i++) { if (rowElements[i] !== rowElements[i % p]) { isMatch = false; break; } }
             if (isMatch) { pX = p; break; }
         }
         return rowElements[c % pX] || "n";
     }
 
     function bindEvents() {
+        // Handle Browser Native History Back States to Exit Editor Mode
+        window.addEventListener('popstate', (e) => {
+            if(document.getElementById('editorView').style.display === 'block') {
+                e.preventDefault();
+                closeEditorRoutine();
+            }
+        });
+
         document.getElementById('btnClearToP').onclick = () => {
             currentImageUrl = "";
             document.getElementById('globalImageUpload').value = "";
@@ -1026,10 +855,7 @@
         };
 
         document.getElementById('globalImageUpload').addEventListener('change', (e) => {
-            handleImageUpload(e, (dataUrl) => {
-                currentImageUrl = dataUrl;
-                generateExplorerGrid();
-            });
+            handleImageUpload(e, (dataUrl) => { currentImageUrl = dataUrl; generateExplorerGrid(); });
         });
 
         document.getElementById('tileImageUpload').addEventListener('change', (e) => {
@@ -1038,15 +864,9 @@
                 cropImg.src = dataUrl;
                 document.getElementById('cropModal').style.display = 'flex';
                 if (cropper) cropper.destroy();
-
                 setTimeout(() => {
-                    cropper = new Cropper(cropImg, {
-                        aspectRatio: 1, viewMode: 1, movable: true, zoomable: true,
-                        scalable: false, rotatable: false, cropBoxMovable: true,
-                        cropBoxResizable: true, background: true
-                    });
+                    cropper = new Cropper(cropImg, { aspectRatio: 1, viewMode: 1, background: true });
                 }, 50);
-                e.target.value = "";
             });
         });
 
@@ -1055,38 +875,37 @@
             const croppedCanvas = cropper.getCroppedCanvas({ width: canvas.width, height: canvas.height });
             ctx.clearRect(0, 0, canvas.width, canvas.height);
             ctx.drawImage(croppedCanvas, 0, 0, canvas.width, canvas.height);
-            saveCanvasState();
-            renderTessellation();
+            saveCanvasState(); updateTilesFromCanvas();
             document.getElementById('cropModal').style.display = 'none';
-            cropper.destroy();
-            cropper = null;
+            cropper.destroy(); cropper = null;
         };
 
         document.getElementById('btnCropNone').onclick = () => {
             document.getElementById('cropModal').style.display = 'none';
             const originalSrc = document.getElementById('cropImageTag').src;
             if (cropper) { cropper.destroy(); cropper = null; }
-
             const img = new Image();
             img.onload = function() {
                 ctx.clearRect(0, 0, canvas.width, canvas.height);
                 ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-                saveCanvasState();
-                renderTessellation();
+                saveCanvasState(); updateTilesFromCanvas();
             };
             img.src = originalSrc;
         };
 
         document.getElementById('btnResetToP').onclick = () => {
             drawingHistory = []; historyStep = -1;
-            document.getElementById('tileImageUpload').value = "";
-            setupCanvasDefault();
-            renderTessellation();
+            setupCanvasDefault(); updateTilesFromCanvas();
         };
 
-        document.getElementById('btnBack').onclick = () => {
-            window.history.back();
-        };
+        function closeEditorRoutine() {
+            currentImageUrl = canvas.toDataURL();
+            document.getElementById('editorView').style.display = 'none';
+            document.getElementById('mainView').style.display = 'block';
+            generateExplorerGrid();
+        }
+
+        document.getElementById('btnBack').onclick = () => { closeEditorRoutine(); };
 
         document.getElementById('layoutSelect').onchange = (e) => {
             const found = patternsData.find(p => p.id == e.target.value);
@@ -1094,8 +913,9 @@
                 activePattern = found;
                 document.getElementById('editPatternTitle').textContent = found.title;
                 document.getElementById('editPatternDesc').textContent = found.desc;
-                renderMiniPPreview(found);
-                renderTessellation();
+                const mobSel = document.getElementById('layoutSelectMobile');
+                if(mobSel) mobSel.value = e.target.value;
+                renderMiniPPreview(found); renderTessellation();
             }
         };
 
@@ -1109,103 +929,98 @@
         };
 
         document.getElementById('btnBucketTool').onclick = () => {
-            const buttons = document.querySelectorAll('.tool-btn');
-            buttons.forEach(b => b.classList.remove('active'));
+            document.querySelectorAll('.tool-btn-outline').forEach(b => b.classList.remove('active'));
             document.getElementById('btnBucketTool').classList.add('active');
             selectedTool = 'fill';
         };
 
-        // Mobile Toolbox Expansion/Collapse Toggle Control Drawer
-        const mToggle = document.getElementById('mobilePanelToggle');
-        mToggle.onclick = function() {
-            const panel = document.getElementById('toolsPanel');
+        // Mobile Shell Collapse/Expand System
+        const panel = document.getElementById('toolsPanel');
+        const arrowToggleSvg = document.getElementById('arrowToggleSvg');
+        document.getElementById('mobileTogglePanel').onclick = function() {
             panel.classList.toggle('collapsed');
+            if(panel.classList.contains('collapsed')) {
+                arrowToggleSvg.style.transform = "rotate(180deg)";
+            } else {
+                arrowToggleSvg.style.transform = "rotate(0deg)";
+            }
         };
 
         window.addEventListener('keydown', (e) => { if(e.key === 'Control') isCtrlPressed = true; });
         window.addEventListener('keyup', (e) => { if(e.key === 'Control') isCtrlPressed = false; });
 
+        // Pointer Setup
         canvas.addEventListener('mousedown', startDrawing);
         canvas.addEventListener('mousemove', draw);
         canvas.addEventListener('mouseup', stopDrawing);
         canvas.addEventListener('mouseleave', stopDrawing);
 
-        // Native Mobile Finger Touch Coordinates Engine Mapping
         canvas.addEventListener('touchstart', function(e) {
-            e.preventDefault();
             const touch = e.touches[0];
-            const mouseEvent = new MouseEvent('mousedown', { clientX: touch.clientX, clientY: touch.clientY });
-            canvas.dispatchEvent(mouseEvent);
-        }, { passive: false });
+            const mEvent = new MouseEvent('mousedown', { clientX: touch.clientX, clientY: touch.clientY });
+            canvas.dispatchEvent(mEvent);
+        }, { passive: true });
 
         canvas.addEventListener('touchmove', function(e) {
-            e.preventDefault();
             const touch = e.touches[0];
-            const mouseEvent = new MouseEvent('mousemove', { clientX: touch.clientX, clientY: touch.clientY });
-            canvas.dispatchEvent(mouseEvent);
-        }, { passive: false });
+            const mEvent = new MouseEvent('mousemove', { clientX: touch.clientX, clientY: touch.clientY });
+            canvas.dispatchEvent(mEvent);
+        }, { passive: true });
 
-        canvas.addEventListener('touchend', function(e) {
-            const mouseEvent = new MouseEvent('mouseup', {});
-            canvas.dispatchEvent(mouseEvent);
-        }, { passive: false });
+        canvas.addEventListener('touchend', function() {
+            canvas.dispatchEvent(new MouseEvent('mouseup', {}));
+        }, { passive: true });
 
         document.getElementById('btnUndo').onclick = () => { if(historyStep > 0) { historyStep--; restoreCanvasStep(); } };
         document.getElementById('btnRedo').onclick = () => { if(historyStep < drawingHistory.length - 1) { historyStep++; restoreCanvasStep(); } };
-        document.getElementById('btnClearCanvas').onclick = () => {
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-            saveCanvasState();
-            renderTessellation();
-        };
+        document.getElementById('btnClearCanvas').onclick = () => { ctx.clearRect(0, 0, canvas.width, canvas.height); saveCanvasState(); updateTilesFromCanvas(); };
 
-        // Zoom & Pan inside specialized containment wrapper bounds bounds
-        const wrapper = document.getElementById('previewContentWrapper');
-        wrapper.addEventListener('wheel', (e) => {
+        // Rigid Bound Checking Pan/Zoom Surface Logic
+        const previewArea = document.getElementById('previewArea');
+        previewArea.addEventListener('wheel', (e) => {
             e.preventDefault();
-            const factor = 1.1;
-            if (e.deltaY < 0) scale *= factor; else scale /= factor;
+            if (e.deltaY < 0) scale *= 1.1; else scale /= 1.1;
             scale = Math.min(Math.max(0.3, scale), 4);
             applyTransform();
         }, { passive: false });
 
-        wrapper.addEventListener('mousedown', (e) => {
+        previewArea.addEventListener('mousedown', (e) => {
             isPanning = true;
-            startPanX = e.clientX - panX;
-            startPanY = e.clientY - panY;
+            startPanX = e.clientX - panX; startPanY = e.clientY - panY;
         });
         window.addEventListener('mousemove', (e) => {
             if (!isPanning) return;
-            panX = e.clientX - startPanX;
-            panY = e.clientY - startPanY;
-            
-            // Boundary constraints checking logic locking viewport from escaping frame
-            const maxPan = 600;
-            panX = Math.min(Math.max(-maxPan, panX), maxPan);
-            panY = Math.min(Math.max(-maxPan, panY), maxPan);
+            // Lock tracking dimensions constraint viewport boxes boundaries
+            let targetX = e.clientX - startPanX;
+            let targetY = e.clientY - startPanY;
+            const maxW = window.innerWidth * 0.8; const maxH = window.innerHeight * 0.8;
+            panX = Math.min(Math.max(-maxW, targetX), maxW);
+            panY = Math.min(Math.max(-maxH, targetY), maxH);
             applyTransform();
         });
         window.addEventListener('mouseup', () => { isPanning = false; });
 
-        // Touch Interaction Mapping
-        wrapper.addEventListener('touchstart', function(e) {
+        previewArea.addEventListener('touchstart', function(e) {
             isPanning = true;
             const touch = e.touches[0];
-            startPanX = touch.clientX - panX;
-            startPanY = touch.clientY - panY;
+            startPanX = touch.clientX - panX; startPanY = touch.clientY - panY;
         }, { passive: true });
 
-        wrapper.addEventListener('touchmove', function(e) {
+        previewArea.addEventListener('touchmove', function(e) {
             if (!isPanning) return;
             const touch = e.touches[0];
-            panX = touch.clientX - startPanX;
-            panY = touch.clientY - startPanY;
+            let targetX = touch.clientX - startPanX;
+            let targetY = touch.clientY - startPanY;
+            const maxW = window.innerWidth * 0.8; const maxH = window.innerHeight * 0.8;
+            panX = Math.min(Math.max(-maxW, targetX), maxW);
+            panY = Math.min(Math.max(-maxH, targetY), maxH);
             applyTransform();
         }, { passive: true });
 
-        wrapper.addEventListener('touchend', function() { isPanning = false; });
+        previewArea.addEventListener('touchend', function() { isPanning = false; });
 
-        document.getElementById('btnResetZoom').onclick = () => {
-            scale = 1; panX = 0; panY = 0; applyTransform();
+        document.getElementById('btnResetZoom').onclick = (e) => {
+            e.stopPropagation(); scale = 1; panX = 0; panY = 0; applyTransform();
         };
 
         document.getElementById('btnSaveImage').onclick = saveOutputAsImage;
@@ -1225,9 +1040,47 @@
         }
     }
 
+    function openEditor(pattern) {
+        activePattern = pattern;
+        document.getElementById('mainView').style.display = 'none';
+        document.getElementById('editorView').style.display = 'block';
+        window.history.pushState({editing: true}, "");
+
+        document.getElementById('layoutSelect').value = pattern.id;
+        const mobSel = document.getElementById('layoutSelectMobile');
+        if(mobSel) mobSel.value = pattern.id;
+
+        document.getElementById('editPatternTitle').textContent = pattern.title;
+        document.getElementById('editPatternDesc').textContent = pattern.desc;
+        
+        renderMiniPPreview(pattern);
+        canvas.style.backgroundColor = document.getElementById('bgColor').value;
+
+        // Mobile Specific Optimization
+        if (window.innerWidth <= 991) {
+            document.getElementById('gridSizeInput').value = 40;
+            document.getElementById('gridSizeNum').value = 40;
+        } else {
+            document.getElementById('gridSizeInput').value = 80;
+            document.getElementById('gridSizeNum').value = 80;
+        }
+
+        if(currentImageUrl) {
+            const img = new Image();
+            img.onload = () => {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+                drawingHistory = []; historyStep = -1; saveCanvasState(); renderTessellation();
+            };
+            img.src = currentImageUrl;
+        } else {
+            drawingHistory = []; historyStep = -1; setupCanvasDefault(); renderTessellation();
+        }
+        scale = 1; panX = 0; panY = 0; applyTransform();
+    }
+
     function renderTessellation() {
         if (!activePattern) return;
-
         const cols = parseInt(document.getElementById('gridCols').value) || 8;
         const rows = parseInt(document.getElementById('gridRows').value) || 6;
         const tileSize = parseInt(document.getElementById('gridSizeInput').value) || 80;
@@ -1235,25 +1088,24 @@
 
         const outputZone = document.getElementById('tessellationOutput');
         outputZone.innerHTML = "";
-        
         outputZone.style.gridTemplateColumns = `repeat(${cols}, ${tileSize}px)`;
         outputZone.style.gridTemplateRows = `repeat(${rows}, ${tileSize}px)`;
 
         const dataUrl = canvas.toDataURL();
-
         for (let r = 0; r < rows; r++) {
             for (let c = 0; c < cols; c++) {
                 const transformClass = getTransformWithPeriod(activePattern.matrix, r, c);
                 const tile = document.createElement('div');
                 tile.className = `tile ${transformClass}`;
-                tile.style.width = `${tileSize}px`;
-                tile.style.height = `${tileSize}px`;
+                tile.style.width = `${tileSize}px`; tile.style.height = `${tileSize}px`;
                 tile.style.backgroundImage = `url('${dataUrl}')`;
                 tile.style.backgroundColor = currentBg;
                 outputZone.appendChild(tile);
             }
         }
     }
+
+    function updateTilesFromCanvas() { renderTessellation(); }
 
     function startDrawing(e) {
         const rect = canvas.getBoundingClientRect();
@@ -1263,23 +1115,18 @@
         if (selectedTool === 'fill') {
             const paintColor = hexToRgb(document.getElementById('bucketColor').value);
             floodFill(Math.floor(startX), Math.floor(startY), paintColor);
-            saveCanvasState();
-            renderTessellation();
-            return;
+            saveCanvasState(); updateTilesFromCanvas(); return;
         }
 
         isDrawing = true;
         canvasSnapshot = ctx.getImageData(0, 0, canvas.width, canvas.height);
-        
         ctx.lineWidth = selectedLineWidth;
         ctx.strokeStyle = document.getElementById('strokeColor').value;
         ctx.fillStyle = document.getElementById('fillColor').value;
-        ctx.lineCap = "round";
-        ctx.lineJoin = "round";
+        ctx.lineCap = "round"; ctx.lineJoin = "round";
 
         if (selectedTool === 'brush' && document.getElementById('chkUseStroke').checked) {
-            ctx.beginPath();
-            ctx.moveTo(startX, startY);
+            ctx.beginPath(); ctx.moveTo(startX, startY);
         }
     }
 
@@ -1288,32 +1135,23 @@
         const rect = canvas.getBoundingClientRect();
         const currentX = (e.clientX - rect.left) * (canvas.width / rect.width);
         const currentY = (e.clientY - rect.top) * (canvas.height / rect.height);
-        
         const useFill = document.getElementById('chkUseFill').checked;
         const useStroke = document.getElementById('chkUseStroke').checked;
 
         if (selectedTool === 'brush') {
-            if (useStroke) {
-                ctx.lineTo(currentX, currentY);
-                ctx.stroke();
-            }
+            if (useStroke) { ctx.lineTo(currentX, currentY); ctx.stroke(); }
         } else if (selectedTool !== 'fill') {
             ctx.putImageData(canvasSnapshot, 0, 0);
             ctx.beginPath();
-            
-            let width = currentX - startX;
-            let height = currentY - startY;
+            let width = currentX - startX; let height = currentY - startY;
 
             if (isCtrlPressed) {
                 const maxLen = Math.max(Math.abs(width), Math.abs(height));
-                width = width >= 0 ? maxLen : -maxLen;
-                height = height >= 0 ? maxLen : -maxLen;
+                width = width >= 0 ? maxLen : -maxLen; height = height >= 0 ? maxLen : -maxLen;
             }
 
             if (selectedTool === 'line') {
-                if (useStroke) {
-                    ctx.moveTo(startX, startY); ctx.lineTo(currentX, currentY); ctx.stroke();
-                }
+                if (useStroke) { ctx.moveTo(startX, startY); ctx.lineTo(currentX, currentY); ctx.stroke(); }
             } else if (selectedTool === 'rect') {
                 ctx.rect(startX, startY, width, height);
                 if (useFill) ctx.fill(); if (useStroke) ctx.stroke();
@@ -1322,64 +1160,40 @@
                 ctx.arc(startX, startY, radius, 0, 2 * Math.PI);
                 if (useFill) ctx.fill(); if (useStroke) ctx.stroke();
             } else if (selectedTool === 'triangle') {
-                ctx.moveTo(startX + width / 2, startY);
-                ctx.lineTo(startX + width, startY + height);
-                ctx.lineTo(startX, startY + height);
-                ctx.closePath();
+                ctx.moveTo(startX + width / 2, startY); ctx.lineTo(startX + width, startY + height); ctx.lineTo(startX, startY + height); ctx.closePath();
                 if (useFill) ctx.fill(); if (useStroke) ctx.stroke();
             }
         }
-        renderTessellation();
+        updateTilesFromCanvas();
     }
 
-    function stopDrawing() {
-        if (!isDrawing) return;
-        isDrawing = false;
-        saveCanvasState();
-    }
-
+    function stopDrawing() { if (!isDrawing) return; isDrawing = false; saveCanvasState(); }
     function saveCanvasState() {
-        if (historyStep < drawingHistory.length - 1) {
-            drawingHistory = drawingHistory.slice(0, historyStep + 1);
-        }
+        if (historyStep < drawingHistory.length - 1) drawingHistory = drawingHistory.slice(0, historyStep + 1);
         drawingHistory.push(ctx.getImageData(0, 0, canvas.width, canvas.height));
         historyStep++;
     }
-
-    function restoreCanvasStep() {
-        if (historyStep >= 0 && historyStep < drawingHistory.length) {
-            ctx.putImageData(drawingHistory[historyStep], 0, 0);
-            renderTessellation();
-        }
-    }
+    function restoreCanvasStep() { if (historyStep >= 0 && historyStep < drawingHistory.length) { ctx.putImageData(drawingHistory[historyStep], 0, 0); updateTilesFromCanvas(); } }
 
     function saveOutputAsImage() {
         if(!activePattern) return;
         const cols = parseInt(document.getElementById('gridCols').value) || 8;
         const rows = parseInt(document.getElementById('gridRows').value) || 6;
         const tileSize = parseInt(document.getElementById('gridSizeInput').value) || 80;
-        const currentBg = document.getElementById('bgColor').value;
-
         const exportCanvas = document.createElement('canvas');
-        exportCanvas.width = cols * tileSize;
-        exportCanvas.height = rows * tileSize;
+        exportCanvas.width = cols * tileSize; exportCanvas.height = rows * tileSize;
         const eCtx = exportCanvas.getContext('2d');
-
-        eCtx.fillStyle = currentBg;
+        eCtx.fillStyle = document.getElementById('bgColor').value;
         eCtx.fillRect(0, 0, exportCanvas.width, exportCanvas.height);
 
         const sourceTileImg = new Image();
         sourceTileImg.src = canvas.toDataURL();
-
         sourceTileImg.onload = function() {
             for (let r = 0; r < rows; r++) {
                 for (let c = 0; c < cols; c++) {
                     const transform = getTransformWithPeriod(activePattern.matrix, r, c);
                     eCtx.save();
-                    const posX = c * tileSize + tileSize / 2;
-                    const posY = r * tileSize + tileSize / 2;
-                    eCtx.translate(posX, posY);
-
+                    eCtx.translate(c * tileSize + tileSize / 2, r * tileSize + tileSize / 2);
                     if (transform === 'r90')  eCtx.rotate(90 * Math.PI / 180);
                     if (transform === 'r180') eCtx.rotate(180 * Math.PI / 180);
                     if (transform === 'r270') eCtx.rotate(270 * Math.PI / 180);
@@ -1388,15 +1202,13 @@
                     if (transform === 'mxy')  eCtx.scale(-1, -1);
                     if (transform === 'mx90') { eCtx.scale(-1, 1); eCtx.rotate(90 * Math.PI / 180); }
                     if (transform === 'my90') { eCtx.scale(1, -1); eCtx.rotate(90 * Math.PI / 180); }
-
                     eCtx.drawImage(sourceTileImg, -tileSize/2, -tileSize/2, tileSize, tileSize);
                     eCtx.restore();
                 }
             }
             const link = document.createElement('a');
             link.download = `Tessellation-${activePattern.title}.png`;
-            link.href = exportCanvas.toDataURL('image/png');
-            link.click();
+            link.href = exportCanvas.toDataURL('image/png'); link.click();
         };
     }
 
