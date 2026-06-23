@@ -163,6 +163,7 @@
             transform-origin: center center;
             background: #e2e8f0;
             gap: 0px;
+            pointer-events: none; /* ป้องกันไม่ให้รบกวนเหตุการณ์ลากครอบ Drag-Pan */
         }
 
         .btn-reset-zoom-floating {
@@ -197,7 +198,8 @@
         .tool-row label { font-size: 0.85rem; width: 100px; color: #64748b; flex-shrink: 0; }
         .tool-row input[type="range"] { flex: 1; }
         .num-input { width: 60px; padding: 6px; border: 1px solid #cbd5e1; border-radius: 6px; text-align: center; }
-        select { padding: 8px 12px; border-radius: 8px; border: 1px solid #cbd5e1; font-size: 0.95rem; width: 100%; background: #ffffff; }
+        
+        .layout-selector-element { padding: 8px 12px; border-radius: 8px; border: 1px solid #cbd5e1; font-size: 0.95rem; width: 100%; background: #ffffff; }
 
         /* Studio Panel Layout Grid */
         .studio-layout-container {
@@ -244,10 +246,7 @@
         .circle-color-picker::-webkit-color-swatch-wrapper { padding: 0; }
         .circle-color-picker::-webkit-color-swatch { border: none; border-radius: 50%; }
         
-        /* Styled Radio Buttons */
-        .color-radio {
-            cursor: pointer; width: 16px; height: 16px; accent-color: var(--text-color); margin: 0;
-        }
+        .color-radio { cursor: pointer; width: 16px; height: 16px; accent-color: var(--text-color); margin: 0; }
 
         .canvas-actions-row { display: flex; justify-content: center; gap: 6px; width: 100%; margin-top: 12px; }
         .btn-clear-black { color: #000000 !important; border-color: #000000 !important; }
@@ -258,7 +257,6 @@
 
         .mobile-toggle-panel-btn { display: none; }
         .mobile-nav-bar { display: none; }
-        .mobile-top-bar { display: none; }
 
         #cropModal {
             display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
@@ -281,10 +279,10 @@
             
             .workspace-header { padding: 8px 12px; }
             .workspace-header span { display: none; }
-            #desktopSelectContainer { display: none !important; } /* ซ่อนตัวเลือกด้านบนของ Desktop */
             
-            /* ดึงแถบ Dropdown บนสุดออกตามเงื่อนไขโมบาย */
-            .mobile-top-bar { display: none !important; } 
+            /* ปรับแต่งแถบด้านบนของ Mobile: ดึงความกว้างของตัวเลือก Layout กึ่งกลางระหว่าง 2 ปุ่มไอคอน */
+            #headerSelectWrapper { display: block !important; flex: 1; max-width: 100%; }
+            #headerSelectWrapper select { height: 36px; padding: 4px 8px; font-size: 0.9rem; }
 
             /* Bottom Panel App Style */
             .tools-panel {
@@ -298,17 +296,17 @@
 
             .panel-content { padding: 12px; overflow-y: auto; height: 100%; }
             
-            /* ซ่อนคำอธิบาย หัวข้อ และ Layout Map */
-            #editPatternTitle, #editPatternDesc, .mini-preview-box, .desktop-tab-toggle, .tool-group h4, .tools-panel hr { display: none !important; }
+            /* ซ่อนแผงคำอธิบาย Layout Map และตัวเลือก Rules บน Panel Tools ขวา */
+            #editPatternTitle, #editPatternDesc, .mini-preview-box, .desktop-tab-toggle, .tool-group h4, .tools-panel hr, #desktopPanelRulesZone { display: none !important; }
 
             .tool-group { margin-bottom: 0; }
             .tool-group.active-tab { display: block !important; }
 
-            /* ปรับแต่งเลย์เอาต์เครื่องมือและแคนวาสให้อยู่กึ่งกลางหน้าจอ พร้อมขยายแคนวาส */
+            /* ปรับเลย์เอาต์ Tile Studio ให้อยู่กึ่งกลาง พร้อมขยาย Canvas ให้มีขนาดใหญ่ขึ้นเต็มระนาบแผงควบคุม */
             .studio-layout-container {
-                grid-template-columns: 65px 145px 105px; gap: 8px; margin-top: 5px; justify-content: center; align-content: center; width: 100%;
+                grid-template-columns: 65px 165px 105px; gap: 10px; margin-top: 5px; justify-content: center; align-content: center; width: 100%;
             }
-            .canvas-container { width: 145px; height: 145px; } /* ขยาย Canvas เล็กน้อยสำหรับเวอร์ชันมือถือ */
+            .canvas-container { width: 165px; height: 165px; } /* ขยายขนาดแคนวาสขึ้น */
             .tools-grid-3x2 { gap: 4px; }
             .tool-btn-outline { height: 32px; }
             .line-size-horiz { margin-top: 2px; }
@@ -332,7 +330,6 @@
             .nav-tab-item svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 2; }
             .nav-tab-item.active { color: var(--text-color); background: #ffffff; font-weight: 600; }
 
-            /* ปุ่มซ่อน/แสดงแผงควบคุมสไลด์ */
             .mobile-toggle-panel-btn {
                 display: flex; position: fixed; bottom: 65px; right: 15px; z-index: 1005;
                 background: var(--primary-color); color: #fff; border: none; width: 40px; height: 40px;
@@ -362,8 +359,6 @@
 </div>
 
 <div id="editorView">
-    <div class="mobile-top-bar" id="mobileTopBar"></div>
-
     <div class="editor-container">
         
         <div class="workspace">
@@ -372,8 +367,7 @@
                     <svg viewBox="0 0 24 24"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
                 </button>
 
-                <!-- สำหรับแสดงผลในพื้นที่จำกัดของ Desktop -->
-                <div style="flex: 1; max-width: 260px;" id="desktopSelectContainer"></div>
+                <div style="display: none;" id="headerSelectWrapper"></div>
 
                 <button class="btn-outline" id="btnSaveImage" title="Save Pattern Image" style="color: #2563eb;">
                     <svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>
@@ -390,10 +384,11 @@
 
         <div class="tools-panel" id="toolsPanel">
             <div class="panel-content">
-                <!-- แทรกจุด Dropdown เลือก Layout แทนตำแหน่งชื่อเดิมของเวอร์ชัน Desktop -->
-                <div style="margin-bottom: 15px;" id="desktopPanelRulesZone">
+                <div style="margin-bottom: 20px;" id="desktopPanelRulesZone">
                     <label style="font-size:0.85rem; font-weight:600; color:var(--primary-color); display:block; margin-bottom:6px;">Layout Rules</label>
-                    <select id="layoutSelect"></select>
+                    <div id="dynamicSelectHolder">
+                        <select id="layoutSelect" class="layout-selector-element"></select>
+                    </div>
                 </div>
 
                 <h3 id="editPatternTitle" style="color:var(--primary-color); margin-top:0; margin-bottom: 4px;">Layout Configuration</h3>
@@ -408,7 +403,6 @@
                     <button class="desktop-tab-btn" data-target="tabTileStudio">Tile Studio</button>
                 </div>
 
-                <!-- BLOCK TAB 1: Grid Setting -->
                 <div class="tool-group active-tab" id="tabGridExpansion">
                     <h4>Grid Expansion Setting</h4>
                     <div class="tool-row">
@@ -428,7 +422,6 @@
                     </div>
                 </div>
 
-                <!-- BLOCK TAB 2: Tile Studio -->
                 <div class="tool-group" id="tabTileStudio">
                     <div class="tool-row" style="margin-bottom:8px;">
                         <input type="file" id="tileImageUpload" accept="image/*" style="font-size: 0.8rem; width:100%;">
@@ -436,10 +429,8 @@
                     
                     <div class="studio-layout-container">
                         
-                        <!-- ซ้าย: 3x2 Grid Outline Icons และแถบหนาเส้นแนวนอนด้านล่าง -->
                         <div class="studio-left-col">
                             <div class="tools-grid-3x2" id="toolsGrid">
-                                <!-- เปลี่ยนไอคอน Free Brush เป็นดินสอ -->
                                 <button class="tool-btn-outline active" data-tool="brush" title="Pencil Free Brush">
                                     <svg viewBox="0 0 24 24"><path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"/></svg>
                                 </button>
@@ -455,7 +446,6 @@
                                 <button class="tool-btn-outline" data-tool="triangle" title="Triangle Mesh">
                                     <svg viewBox="0 0 24 24"><path d="M12 3L2 20h20L12 3z"/></svg>
                                 </button>
-                                <!-- เปลี่ยนไอคอน Fill เป็นรูปถังสี -->
                                 <button class="tool-btn-outline" id="btnBucketTool" data-tool="fill" title="Flood Paint Fill Bucket">
                                     <svg viewBox="0 0 24 24"><path d="M12 22a7 7 0 0 0 7-7c0-4.3-7-11-7-11S5 10.7 5 15a7 7 0 0 0 7 7z"/></svg>
                                 </button>
@@ -468,14 +458,12 @@
                             </div>
                         </div>
 
-                        <!-- กลาง: Canvas สี่เหลี่ยมจัตุรัส จัดวางกึ่งกลางสมมาตร -->
                         <div class="studio-center-col">
                             <div class="canvas-container">
                                 <canvas id="tileCanvas" width="240" height="240"></canvas>
                             </div>
                         </div>
 
-                        <!-- ขวา: วงกลมสลับสีพร้อมระบุประเภท และปรับ Checkbox เป็น Radio Button -->
                         <div class="studio-right-col">
                             <div class="color-picker-wrapper">
                                 <span>Stroke Mode</span>
@@ -503,7 +491,6 @@
 
                     </div>
 
-                    <!-- ใต้ Canvas: ปุ่มคำสั่งประวัติย้อนกลับ ทำความสะอาดด้วยเส้นสีดำ -->
                     <div class="canvas-actions-row">
                         <button class="btn-outline" id="btnUndo" title="Undo Step">
                             <svg viewBox="0 0 24 24"><path d="M3 7v6h6M21 17a9 9 0 0 0-9-9 9 9 0 0 0-6 2.3L3 13"/></svg>
@@ -511,7 +498,6 @@
                         <button class="btn-outline" id="btnRedo" title="Redo Step">
                             <svg viewBox="0 0 24 24"><path d="M21 7v6h-6M3 17a9 9 0 0 1 9-9 9 9 0 0 1 6 2.3l3 4"/></svg>
                         </button>
-                        <!-- แก้ไขปุ่ม Clear Canvas ให้แสดงผลโครงสร้างเส้นสีดำ -->
                         <button class="btn-outline btn-clear-black" id="btnClearCanvas" title="Clear Canvas Layer">
                             <svg viewBox="0 0 24 24"><path d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
                         </button>
@@ -559,7 +545,6 @@
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.6.2/cropper.min.js"></script>
 <script>
-    // ข้อมูลจำลอง Layout Patterns ทั้ง 50 แบบจากไฟล์ 6.html[span_0](start_span)[span_0](end_span)
     const patternsData = [
         { id: 1, title: "1. Regular Grid (Pure Translation)", desc: "Simple row-and-column alignment with no rotations or reflections. Patterns expand by repeating seamlessly.", matrix: ["n","n","n","n","n","n","n","n","n","n","n","n","n","n","n","n","n","n","n","n","n","n","n","n"] },
         { id: 2, title: "2. Horizontal Mirror (Reflective Alternation)", desc: "Alternating X-axis mirrors horizontally to build symmetry along horizontal structures.", matrix: ["n","mx","n","mx","n","mx","n","mx","n","mx","n","mx","n","mx","n","mx","n","mx","n","mx","n","mx","n","mx"] },
@@ -637,7 +622,6 @@
 
     function init() {
         generateExplorerGrid();
-        setupDropdownOptions();
         setupToolsGrid();
         setupCanvasDefault();
         setupLineWidthSelector();
@@ -647,18 +631,18 @@
         setupResponsiveSelectLocation();
     }
 
-    // ฟังก์ชันจัดการย้ายตำแหน่ง Dropdown ตามขนาดหน้าจอ
+    // ฟังก์ชันย้ายตำแหน่ง Dropdown ตามขนาดหน้าจอ (แก้ไขตามเงื่อนไขใหม่)
     function setupResponsiveSelectLocation() {
         const selectElement = document.getElementById('layoutSelect');
-        const desktopContainer = document.getElementById('desktopSelectContainer');
+        const headerWrapper = document.getElementById('headerSelectWrapper');
         const desktopPanelZone = document.getElementById('desktopPanelRulesZone');
 
         if (window.innerWidth <= 991) {
-            // โหมด Mobile: ดึงไปใส่ในแผงควบคุมสไลด์โดยตรง (และซ่อนแถบบนสุดตามคำสั่ง)
-            desktopPanelZone.appendChild(selectElement);
+            // โหมด Mobile/Tablet: ปรับให้ตัวเลือกอยู่แถบบนระหว่าง backtomain กับ save pattern image
+            headerWrapper.appendChild(selectElement);
         } else {
-            // โหมด Desktop: เอาไปใส่ตรงปุ่มเครื่องมือด้านบน workspace-header ตามคำสั่งแรกสุด
-            desktopContainer.appendChild(selectElement);
+            // โหมด Desktop: ปรับให้ตัวเลือก rules อยู่บน panel tools ขวามือ (แทนที่กล่องคำอธิบายชื่อเดิม)
+            desktopPanelZone.appendChild(selectElement);
         }
     }
 
@@ -699,16 +683,6 @@
             card.appendChild(preview);
             card.appendChild(info);
             wrapper.appendChild(card);
-        });
-    }
-
-    function setupDropdownOptions() {
-        const select = document.getElementById('layoutSelect');
-        patternsData.forEach(p => {
-            const opt = document.createElement('option');
-            opt.value = p.id;
-            opt.textContent = p.title;
-            select.appendChild(opt);
         });
     }
 
@@ -992,6 +966,7 @@
         document.getElementById('btnRedo').onclick = () => { if(historyStep < drawingHistory.length - 1) { historyStep++; restoreCanvasStep(); } };
         document.getElementById('btnClearCanvas').onclick = () => { ctx.clearRect(0, 0, canvas.width, canvas.height); saveCanvasState(); updateTilesFromCanvas(); };
 
+        // ผูกความสัมพันธ์ระบบ Zoom / Pan ให้จำกัดขอบเขตและทำงาน "เฉพาะบริเวณหน้า Preview เท่านั้น"
         const previewArea = document.getElementById('previewArea');
         previewArea.addEventListener('wheel', (e) => {
             e.preventDefault();
@@ -1004,7 +979,9 @@
             isPanning = true;
             startPanX = e.clientX - panX; startPanY = e.clientY - panY;
         });
-        window.addEventListener('mousemove', (e) => {
+
+        // ตรวจจับพิกัดเฉพาะเมื่อเลื่อนเมาส์ภายในบริเวณหน้า Preview Area
+        previewArea.addEventListener('mousemove', (e) => {
             if (!isPanning) return;
             let targetX = e.clientX - startPanX;
             let targetY = e.clientY - startPanY;
@@ -1015,6 +992,7 @@
         });
         window.addEventListener('mouseup', () => { isPanning = false; });
 
+        // การลากนิ้วบนหน้าจอมือถือ (Touch Pan) ผูกเหตุการณ์เฉพาะตัว Element .preview-area
         previewArea.addEventListener('touchstart', function(e) {
             isPanning = true;
             const touch = e.touches[0];
@@ -1089,6 +1067,7 @@
             drawingHistory = []; historyStep = -1; setupCanvasDefault(); renderTessellation();
         }
         scale = 1; panX = 0; panY = 0; applyTransform();
+        setupResponsiveSelectLocation(); // ตรวจสอบตำแหน่ง Dropdown ทันทีเมื่อเปิดหน้าต่างแก้ไข
     }
 
     function renderTessellation() {
