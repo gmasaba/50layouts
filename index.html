@@ -1,0 +1,1315 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>50 Layout Patterns Generator & Explorer</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.6.2/cropper.min.css">
+    <style>
+        :root {
+            --bg-color: #f5f7fb;
+            --card-bg: #ffffff;
+            --text-color: #1e293b;
+            --primary-color: #323c4b;
+            --border-color: #cbd5e1;
+            --grid-size: 60px;
+            --mini-grid-size: 25px;
+        }
+
+        * { box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            margin: 0;
+            padding: 0;
+            overflow-x: hidden;
+        }
+
+        /* --- Main Page View --- */
+        #mainView { padding: 15px; }
+        header { text-align: center; margin-bottom: 25px; }
+        header h1 { font-size: 1.8rem; margin: 10px 0; }
+        
+        .upload-zone {
+            background: var(--card-bg);
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            max-width: 650px; 
+            margin: 0 auto 30px auto;
+            text-align: center;
+            border: 2px dashed var(--border-color);
+        }
+        .upload-actions {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 15px;
+            flex-wrap: wrap;
+        }
+        .upload-actions input[type="file"] {
+            margin: 0;
+            max-width: 100%;
+        }
+
+        .patterns-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 20px;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        .pattern-card {
+            background: var(--card-bg);
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 10px 15px -3px rgba(0,0,0,0.05);
+            display: flex;
+            flex-direction: column;
+            border: 1px solid #e2e8f0;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        @media (min-width: 769px) {
+            .pattern-card:hover {
+                transform: translateY(-5px);
+                box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1);
+            }
+        }
+        .pattern-header { padding: 15px 20px; background: #f8fafc; border-bottom: 1px solid #e2e8f0; }
+        .pattern-title { margin: 0; font-size: 1.05rem; color: var(--primary-color); }
+        .pattern-preview {
+            background: #eeeeee;
+            height: 200px;
+            display: grid;
+            grid-template-columns: repeat(6, var(--grid-size));
+            grid-template-rows: repeat(4, var(--grid-size));
+            justify-content: center;
+            align-content: center;
+            overflow: hidden;
+            position: relative;
+        }
+        .tile {
+            width: var(--grid-size);
+            height: var(--grid-size);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: #1e293b;
+            background-color: #ffffff;
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            outline: 1px dashed rgba(0,0,0,0.15); 
+            outline-offset: -1px;
+        }
+        .pattern-info { padding: 15px 20px; font-size: 0.85rem; line-height: 1.5; flex-grow: 1; background: #ffffff; }
+
+        /* --- Transformation Classes --- */
+        .n { transform: none; }
+        .r90 { transform: rotate(90deg); }
+        .r180 { transform: rotate(180deg); }
+        .r270 { transform: rotate(270deg); }
+        .mx { transform: scaleX(-1); }
+        .my { transform: scaleY(-1); }
+        .mxy { transform: scale(-1); }
+        .mx90 { transform: scaleX(-1) rotate(90deg); }
+        .my90 { transform: scaleY(-1) rotate(90deg); }
+
+        /* --- Editor View (Responsive Layout) --- */
+        #editorView {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100vw; height: 100vh;
+            background: #ffffff;
+            z-index: 1000;
+        }
+        .editor-container { 
+            display: flex; 
+            flex-direction: row;
+            width: 100%; 
+            height: 100%; 
+        }
+        
+        /* Left Workspace */
+        .workspace {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            background: #f8fafc;
+            position: relative;
+            height: 100%;
+            overflow: hidden;
+        }
+        .workspace-header {
+            background: #ffffff;
+            padding: 10px 15px;
+            border-bottom: 1px solid #e2e8f0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 10;
+            gap: 10px;
+        }
+        .btn {
+            background: #ffffff; border: 1px solid #cbd5e1; padding: 8px 14px;
+            border-radius: 6px; cursor: pointer; font-size: 0.9rem;
+            transition: all 0.15s ease;
+            white-space: nowrap;
+            touch-action: manipulation;
+        }
+        .btn:hover { background: #f1f5f9; }
+        .btn-primary { background: var(--primary-color); color: white; border: none; }
+        .btn-primary:hover { background: #4338ca; }
+        
+        /* Preview Area & Zooming */
+        .preview-area {
+            flex: 1;
+            overflow: auto;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: grab;
+            user-select: none;
+            padding: 20px;
+            touch-action: none; /* ป้องกันการเลื่อนหน้าจอปกติทับซ้อนกับการซูม/แพน */
+        }
+        .preview-area:active { cursor: grabbing; }
+        .tessellation-output {
+            display: grid;
+            transform-origin: center center;
+            transition: transform 0.05s ease-out;
+            background: #e2e8f0;
+            gap: 0px;
+        }
+        .tessellation-output .tile { outline: 1px solid rgba(0,0,0,0.1); }
+
+        /* Right Panel (Collapsible & Mobile Responsive) */
+        .tools-panel {
+            width: 400px;
+            min-width: 400px;
+            background: #ffffff;
+            border-left: 1px solid #e2e8f0;
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+        }
+        .panel-toggle {
+            position: absolute; left: -14px; top: 50%; transform: translateY(-50%);
+            width: 28px; height: 28px; background: white; border: 1px solid #e2e8f0;
+            border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.15); font-weight: bold; z-index: 100;
+            user-select: none; color: var(--primary-color);
+        }
+        .panel-content {
+            flex: 1; overflow-y: auto; padding: 20px; width: 100%;
+        }
+        .tools-panel.collapsed { width: 0px; min-width: 0px; overflow: hidden; }
+        
+        /* Tools group UI */
+        .tool-group { margin-bottom: 20px; border-bottom: 1px solid #f1f5f9; padding-bottom: 20px; }
+        .tool-group h4 { margin: 0 0 12px 0; color: #1e293b; font-size: 1rem; }
+        .tool-row { display: flex; gap: 10px; margin-bottom: 12px; align-items: center; }
+        .tool-row label { font-size: 0.85rem; width: 110px; color: #64748b; flex-shrink: 0; }
+        
+        .tool-row input[type="text"], .tool-row select {
+            flex: 1; padding: 8px; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 0.9rem;
+        }
+        .tool-row input[type="range"] {
+            flex: 1;
+            height: 38px; /* เพิ่มความสูงให้เลื่อนง่ายบนมือถือ */
+        }
+        .num-input {
+            width: 60px;
+            padding: 6px;
+            border: 1px solid #cbd5e1;
+            border-radius: 4px;
+            font-size: 0.85rem;
+            text-align: center;
+        }
+
+        /* Color Control Compact Row */
+        .color-control-row {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex: 1;
+        }
+        .color-control-row input[type="checkbox"] {
+            cursor: pointer;
+            margin: 0;
+            width: 20px;
+            height: 20px;
+        }
+        .compact-color-picker {
+            flex: 1;
+            height: 35px;
+            border: 1px solid #cbd5e1;
+            border-radius: 4px;
+            padding: 0;
+            cursor: pointer;
+            background: none;
+        }
+
+        /* Dot Size Selector */
+        .dot-size-container {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 5px;
+            flex: 1;
+            background: #f8fafc;
+            padding: 4px;
+            border-radius: 6px;
+            border: 1px solid #e2e8f0;
+            height: 40px;
+        }
+        .dot-option {
+            flex: 1;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            border-radius: 4px;
+            transition: all 0.15s ease;
+        }
+        .dot-option:hover { background: #e2e8f0; }
+        .dot-option.active { background: #ffffff; box-shadow: 0 1px 3px rgba(0,0,0,0.15); border: 1px solid #cbd5e1; }
+        .dot-shape { background: #1e293b; border-radius: 50%; }
+
+        /* Mini Preview Box inside Edit Panel */
+        .mini-preview-box {
+            background: #f1f5f9;
+            padding: 10px;
+            border-radius: 8px;
+            margin-top: 10px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            border: 1px solid #e2e8f0;
+        }
+        .mini-preview-grid {
+            display: grid;
+            grid-template-columns: repeat(6, var(--mini-grid-size));
+            grid-template-rows: repeat(4, var(--mini-grid-size));
+            background: #e2e8f0;
+            border: 1px solid #cbd5e1;
+        }
+        .mini-tile {
+            width: var(--mini-grid-size);
+            height: var(--mini-grid-size);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.85rem;
+            font-weight: bold;
+            color: #323c4b;
+            background: #ffffff;
+            outline: 1px dashed rgba(0,0,0,0.15);
+        }
+        
+        /* Minimalist Row Drawing Tools Selector */
+        .tools-row-grid {
+            display: flex;
+            justify-content: space-between;
+            gap: 6px;
+            margin-bottom: 15px;
+            background: #f8fafc;
+            padding: 6px;
+            border-radius: 8px;
+            border: 1px solid #e2e8f0;
+        }
+        .tool-btn {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 42px;
+            border: none;
+            background: transparent;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.15s ease;
+        }
+        .tool-btn svg {
+            width: 22px;
+            height: 22px;
+            fill: #475569;
+        }
+        .tool-btn:hover { background: #e2e8f0; }
+        .tool-btn.active {
+            background: #ffffff;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.06);
+        }
+        .tool-btn.active svg {
+            fill: #0f172a;
+        }
+        
+        /* Drawing Canvas Area */
+        .canvas-container {
+            position: relative; width: 220px; height: 220px; margin: 15px auto;
+            border: 2px dashed var(--primary-color); border-radius: 8px; overflow: hidden;
+            touch-action: none; /* สำคัญ: ป้องกันหน้าจอเลื่อนเวลาเอานิ้ววาดรูป */
+        }
+        #tileCanvas { width: 100%; height: 100%; cursor: crosshair; }
+
+        /* Crop Modal */
+        #cropModal {
+            display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+            background: rgba(0,0,0,0.6); z-index: 2000; align-items: center; justify-content: center;
+            padding: 10px;
+        }
+        .crop-box { background: white; padding: 20px; border-radius: 12px; max-width: 600px; width: 100%; text-align: center; box-shadow: 0 20px 25px -5px rgba(0,0,0,0.3); }
+        .crop-preview-container { max-height: 50vh; margin: 15px 0; background: #eee; position: relative; border-radius: 6px; overflow: hidden; }
+        #cropImageTag { max-width: 100%; display: block; }
+        .crop-box .btn { margin: 5px; }
+
+        /* --- Responsive Breakpoint สำหรับ มือถือและแท็บเล็ตแนวตั้ง --- */
+        @media (max-width: 768px) {
+            .editor-container {
+                flex-direction: column; /* เปลี่ยนจากซ้าย-ขวา เป็น บน-ล่าง */
+            }
+            .workspace {
+                height: 55vh; /* พื้นที่พรีวิวเอาไป 55% ของจอ */
+            }
+            .tools-panel {
+                width: 100%;
+                min-width: 100%;
+                height: 45vh; /* แผงเครื่องมือเอาไป 45% ของจอ */
+                border-left: none;
+                border-top: 1px solid #e2e8f0;
+            }
+            .panel-toggle {
+                display: none; /* ซ่อนปุ่มย่อแผงบนมือถือเพื่อตัดความสับสน */
+            }
+            .panel-content {
+                padding: 15px;
+            }
+            .workspace-header span {
+                display: none; /* ซ่อน Text อธิบาย Zoom/Pan รกๆ บนมือถือ */
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div id="mainView">
+    <header>
+        <h1>Layout Patterns 50 Principles</h1>
+    </header>
+
+   <div class="upload-zone">
+        <strong>Upload Image Asset</strong><br>
+        <small>Click Layout to Edit mode</small>
+        
+        <div class="upload-actions">
+            <input type="file" id="globalImageUpload" accept="image/*">
+            <button class="btn" id="btnClearToP">Reset Image to Default</button>
+        </div>
+    </div>
+
+    <div class="patterns-container" id="patternsWrapper"></div>
+</div>
+
+<div id="editorView">
+    <div class="editor-container">
+        <div class="workspace">
+            <div class="workspace-header">
+                <button class="btn" id="btnBack">← Back</button>
+                <div style="display:flex; gap:10px; align-items: center;">
+                    <span style="font-size: 0.85rem; color:#acb5c3;">Zoom: Scroll Wheel | Pan: Click & Drag</span>
+                    <button class="btn" id="btnResetZoom">Reset Zoom</button>
+                </div>
+                <button class="btn btn-primary" id="btnSaveImage">Save Image</button>
+            </div>
+            
+            <div class="preview-area" id="previewArea">
+                <div class="tessellation-output" id="tessellationOutput"></div>
+            </div>
+        </div>
+
+        <div class="tools-panel" id="toolsPanel">
+            <div class="panel-toggle" id="panelToggle">➔</div>
+            <div class="panel-content">
+                <h3 id="editPatternTitle" style="color:var(--primary-color); margin-top:0; margin-bottom: 8px;">Layout Configuration</h3>
+                <p id="editPatternDesc" style="font-size:0.85rem; color:#64748b; line-height:1.4; margin-bottom: 10px;"></p>
+                
+                <div class="mini-preview-box">
+                    <span style="font-size:0.75rem; font-weight:bold; color:#475569; margin-bottom:6px;">P Layout Map</span>
+                    <div class="mini-preview-grid" id="miniPreviewGrid"></div>
+                </div>
+
+                <hr style="border: 0; border-top: 1px solid #f1f5f9; margin: 15px 0;">
+
+                <div class="tool-group">
+                    <h4>Select Layout Principle</h4>
+                    <div class="tool-row">
+                        <label>Layout Rules</label>
+                        <select id="layoutSelect"></select>
+                    </div>
+                </div>
+
+                <div class="tool-group">
+                    <h4>Grid Expansion Setting</h4>
+                    <div class="tool-row">
+                        <label>Grid Columns</label>
+                        <input type="range" id="gridCols" value="8" min="1" max="30">
+                        <input type="number" id="gridColsNum" class="num-input" value="8" min="1" max="30">
+                    </div>
+                    <div class="tool-row">
+                        <label>Grid Rows</label>
+                        <input type="range" id="gridRows" value="6" min="1" max="30">
+                        <input type="number" id="gridRowsNum" class="num-input" value="6" min="1" max="30">
+                    </div>
+                    <div class="tool-row">
+                        <label>Block Size (px)</label>
+                        <input type="range" id="gridSizeInput" value="80" min="30" max="200">
+                        <input type="number" id="gridSizeNum" class="num-input" value="80" min="30" max="200">
+                    </div>
+                </div>
+
+                <div class="tool-group">
+                    <h4>Tile Studio</h4>
+                    <div class="tool-row">
+                        <input type="file" id="tileImageUpload" accept="image/*" style="font-size: 0.8rem; width:100%;">
+                    </div>
+                    
+                    <div class="canvas-container">
+                        <canvas id="tileCanvas" width="200" height="200"></canvas>
+                    </div>
+
+                    <div class="tool-row" style="justify-content: center; gap:5px; margin-bottom: 6px;">
+                        <button class="btn" id="btnUndo" style="font-size:0.8rem; padding:6px 10px;">Undo</button>
+                        <button class="btn" id="btnRedo" style="font-size:0.8rem; padding:6px 10px;">Redo</button>
+                        <button class="btn" id="btnClearCanvas" style="font-size:0.8rem; padding:6px 10px;">Clear</button>
+                    </div>
+                    
+                    <div class="tool-row" style="justify-content: center; margin-bottom: 12px;">
+                        <button class="btn" id="btnResetToP" style="font-size:0.8rem; padding:6px 10px;">Reset to P</button>
+                    </div>
+
+                    <div style="margin-bottom: 6px;"><label style="font-size: 0.85rem; color: #64748b;">Drawing Vectors</label></div>
+                    <div class="tools-row-grid" id="toolsGrid">
+                        <button class="tool-btn active" data-tool="brush" title="Free Brush">
+                            <svg viewBox="0 0 24 24"><path d="M20.71,5.63L18.37,3.29C18,2.9 17.35,2.9 16.96,3.29L15.12,5.12L18.88,8.88L20.71,7.04C21.1,6.65 21.1,6 20.71,5.63M3,17.25V21H6.75L17.81,9.93L14.07,6.19L3,17.25Z"/></svg>
+                        </button>
+                        <button class="tool-btn" data-tool="line" title="Straight Line">
+                            <svg viewBox="0 0 24 24"><path d="M15,3V7.59L7.59,15H3V21H9V16.41L16.41,9H21V3M17,5H19V7H17M5,17H7V19H5"/></svg>
+                        </button>
+                        <button class="tool-btn" data-tool="rect" title="Rectangle">
+                            <svg viewBox="0 0 24 24"><path d="M4,6H20V18H4V6M2,4V20H22V4H2Z"/></svg>
+                        </button>
+                        <button class="tool-btn" data-tool="circle" title="Circle">
+                            <svg viewBox="0 0 24 24"><path d="M12,20A8,8 0 0,1 4,12A8,8 0 0,1 12,4A8,8 0 0,1 20,12A8,8 0 0,1 12,20M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2Z"/></svg>
+                        </button>
+                        <button class="tool-btn" data-tool="triangle" title="Triangle">
+                            <svg viewBox="0 0 24 24"><path d="M1,21H23L12,2L1,21M12,6L19.8,19H4.2L12,6Z"/></svg>
+                        </button>
+                    </div>
+
+                    <div class="tool-row">
+                        <label>Stroke Line</label>
+                        <div class="color-control-row">
+                            <input type="checkbox" id="chkUseStroke" checked title="Enable/Disable Stroke Line">
+                            <input type="color" id="strokeColor" class="compact-color-picker" value="#1e293b">
+                        </div>
+                    </div>
+                    <div class="tool-row">
+                        <label>Inner Fill Shape</label>
+                        <div class="color-control-row">
+                            <input type="checkbox" id="chkUseFill" checked title="Enable/Disable Inner Shape Fill">
+                            <input type="color" id="fillColor" class="compact-color-picker" value="#7AA1E0">
+                        </div>
+                    </div>
+                    
+                    <div class="tool-row">
+                        <label>Paint Bucket</label>
+                        <div style="display:flex; gap:8px; flex:1; align-items:center;">
+                            <button class="btn" id="btnBucketTool" style="flex:2; display:flex; align-items:center; justify-content:center; gap:4px; height:35px; font-size:0.85rem; padding:0 4px;">
+                                Use Bucket
+                            </button>
+                            <input type="color" id="bucketColor" class="compact-color-picker" value="#6D79AB" style="flex:1;">
+                        </div>
+                    </div>
+                    <div class="tool-row">
+                        <label>Background</label>
+                        <div class="color-control-row">
+                            <span style="width:16px;"></span>
+                            <input type="color" id="bgColor" class="compact-color-picker" value="#ffffff">
+                        </div>
+                    </div>
+                    <div class="tool-row">
+                        <label>Line Size</label>
+                        <div class="dot-size-container" id="dotSizeContainer">
+                            <div class="dot-option" data-value="2" title="Thin (2px)"><div class="dot-shape" style="width:4px; height:4px;"></div></div>
+                            <div class="dot-option active" data-value="5" title="Medium (5px)"><div class="dot-shape" style="width:8px; height:8px;"></div></div>
+                            <div class="dot-option" data-value="10" title="Thick (10px)"><div class="dot-shape" style="width:12px; height:12px;"></div></div>
+                            <div class="dot-option" data-value="18" title="Extra Thick (18px)"><div class="dot-shape" style="width:16px; height:16px;"></div></div>
+                        </div>
+                    </div>  
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="cropModal">
+    <div class="crop-box">
+        <h3>Adjust Image Area Selection</h3>
+        <p style="font-size:0.85rem; color:#64748b;">An uploaded image asset is detected. Adjust the box to select and scale your square section.</p>
+        <div class="crop-preview-container">
+            <img id="cropImageTag" src="" alt="preview">
+        </div>
+        <div style="display:flex; gap:10px; justify-content: center; flex-wrap: wrap;">
+            <button class="btn btn-primary" id="btnCropSquare">Confirm Square Crop (1:1)</button>
+            <button class="btn" id="btnCropNone">Keep Original Aspect</button>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.6.2/cropper.min.js"></script>
+<script>
+    // [ข้อมูล patternsData ทั้งหมดคงเดิมเหมือนโค้ดต้นฉบับของคุณเพื่อรักษาฟังก์ชันการทำงานหลักไว้]
+    const patternsData = [
+        { id: 1, title: "1. Regular Grid (Pure Translation)", desc: "Simple row-and-column alignment with no rotations or reflections. Patterns expand by repeating seamlessly.", matrix: ["n","n","n","n","n","n","n","n","n","n","n","n","n","n","n","n","n","n","n","n","n","n","n","n"] },
+        { id: 2, title: "2. Horizontal Mirror (Reflective Alternation)", desc: "Alternating X-axis mirrors horizontally to build symmetry along horizontal structures.", matrix: ["n","mx","n","mx","n","mx","n","mx","n","mx","n","mx","n","mx","n","mx","n","mx","n","mx","n","mx","n","mx"] },
+        { id: 3, title: "3. Vertical Mirror (Up-Down Alternation)", desc: "Alternating Y-axis mirrors vertically, offering flawless continuous flows from top to bottom.", matrix: ["n","n","n","n","n","n","my","my","my","my","my","my","n","n","n","n","n","n","my","my","my","my","my","my"] },
+        { id: 4, title: "4. Checkerboard Mirror (Grid Reflection)", desc: "Swaps both X and Y axis reflections diagonally like standard checkerboards or tiling layouts.", matrix: ["n","mx","n","mx","n","mx","my","mxy","my","mxy","my","mxy","n","mx","n","mx","n","mx","my","mxy","my","mxy","my","mxy"] },
+        { id: 5, title: "5. Pinwheel 90 (Radial Rotation)", desc: "Rotates clockwise by 90 degrees sequentially (0, 90, 180, 270) creating a central focal core spinning outward.", matrix: ["n","r90","r180","r270","n","r90","r90","r180","r270","n","r90","r180","r180","r270","n","r90","r180","r270","r270","n","r90","r180","r270","n"] },
+        { id: 6, title: "6. Alternating 180 (Inverted Row-Spin)", desc: "Alternating rows flip entirely upside down at 180 degrees, allowing complex boundaries to interlock tightly.", matrix: ["n","n","n","n","n","n","r180","r180","r180","r180","r180","r180","n","n","n","n","n","n","r180","r180","r180","r180","r180","r180"] },
+        { id: 7, title: "7. Brick Wall Slide (Offset 180 Rotation)", desc: "Offsets successive horizontal bricks combined with a 180-degree flip to add dynamic staggered depth.", matrix: ["n","r180","n","r180","n","r180","r180","n","r180","n","r180","n","n","r180","n","r180","n","r180","r180","n","r180","n","r180","n"] },
+        { id: 8, title: "8. Herringbone Rotate (Perpendicular Twill)", desc: "Swaps 90-degree rotations in pairs to construct iconic woven herringbone styles spinning infinitely.", matrix: ["n","r90","n","r90","n","r90","n","r90","n","r90","n","r90","r90","n","r90","n","r90","n","r90","n","r90","n","r90","n"] },
+        { id: 9, title: "9. Cross Mirror (4-Directional Hub)", desc: "Utilizes crossed mirrored matrices inside 2x2 grids to map quad-balanced nodes.", matrix: ["n","mx","my","mxy","n","mx","my","mxy","n","mx","my","mxy","n","mx","my","mxy","n","mx","my","mxy","n","mx","my","mxy"] },
+        { id: 10, title: "10. Basketweave Layout (Intertwined Pairs)", desc: "Groups twin upright tiles abutting twin horizontal units to emulate classic wicker basket arrays.", matrix: ["n","n","r90","r90","n","n","n","n","r90","r90","n","n","r90","r90","n","n","r90","r90","r90","r90","n","n","r90","r90"] },
+        { id: 11, title: "11. Windmill Spin", desc: "Alternates between clockwise and counter-clockwise rotations across diagonal axes.", matrix: ["n","r90","r270","n","n","r90","r270","n","n","r90","r270","n","n","r90","r270","n","n","r90","r270","n","n","r90","r270","n"] },
+        { id: 12, title: "12. Double Mirror Horizontal", desc: "Mirrors horizontally on every two blocks, lengthening the horizontal rhythm of designs.", matrix: ["n","n","mx","mx","n","n","n","n","mx","mx","n","n","n","n","mx","mx","n","n","n","n","mx","mx","n","n"] },
+        { id: 13, title: "13. Double Mirror Vertical", desc: "Mirrors vertically on every two blocks, widening the wave rhythm across vertical bounds.", matrix: ["n","mx","n","mx","n","mx","my","mxy","my","mxy","my","mxy","my","mxy","my","mxy","my","mxy","n","mx","n","mx","n","mx"] },
+        { id: 14, title: "14. Diagonal Glide", desc: "Combines 90-degree rotations with an X-axis flip for crisp diagonal glide patterns.", matrix: ["n","mx90","n","mx90","n","mx90","mx90","n","mx90","n","mx90","n","n","mx90","n","mx90","n","mx90","mx90","n","mx90","n","mx90","n"] },
+        { id: 15, title: "15. Quad-Center Rotation", desc: "Sets up symmetric rotation vertices for every 4 tiles, drawing shapes inward to a unified node.", matrix: ["n","mx","mxy","my","n","mx","my","mxy","n","mx","mxy","my","n","mx","my","mxy","n","mx","mxy","my","n","mx","my","mxy"] },
+        { id: 16, title: "16. Step-Down Reflection", desc: "Reflects while descending down grid tiers, mimicking stairs casting shadows downward.", matrix: ["n","n","n","mx","mx","mx","my","my","my","mxy","mxy","mxy","n","n","n","mx","mx","mx","my","my","my","mxy","mxy","mxy"] },
+        { id: 17, title: "17. Centered Kaleidoscope", desc: "Emulates kaleidoscope glass view lines by drawing all 2x2 elements toward a shared origin point.", matrix: ["mxy","my","mxy","my","mxy","my","mx","n","mx","n","mx","n","mxy","my","mxy","my","mxy","my","mx","n","mx","n","mx","n"] },
+        { id: 18, title: "18. Vertical Stripe Spin", desc: "Splits grid lanes vertically, locking one lane straight while spinning the next by 180 degrees.", matrix: ["n","r180","n","r180","n","r180","n","r180","n","r180","n","r180","n","r180","n","r180","n","r180","n","r180","n","r180","n","r180"] },
+        { id: 19, title: "19. Horizontal Stripe Spin", desc: "Splits grid lanes horizontally, stacking native rows over 180-degree flipped rows indefinitely.", matrix: ["n","n","n","n","n","n","r180","r180","r180","r180","r180","r180","n","n","n","n","n","n","r180","r180","r180","r180","r180","r180"] },
+        { id: 20, title: "20. Wave Form Mirror", desc: "Creates wave oscillations across surfaces by refracting alternating vector reflections.", matrix: ["n","my","n","my","n","my","mx","mxy","mx","mxy","mx","mxy","n","my","n","my","n","my","mx","mxy","mx","mxy","mx","mxy"] },
+        { id: 21, title: "21. Shifted Chevron", desc: "Constructs arrowhead tracking channels moving left and right down adjacent horizontal lines.", matrix: ["mx90","my90","mx90","my90","mx90","my90","my90","mx90","my90","mx90","my90","mx90","mx90","my90","mx90","my90","mx90","my90","my90","mx90","my90","mx90","my90","mx90"] },
+        { id: 22, title: "22. Interlocking Blocks", desc: "Steps onward using nested blocks that rotate 90 degrees forward with every grid iteration.", matrix: ["n","r90","r180","r270","n","r90","r270","n","r90","r180","r270","n","r180","r270","n","r90","r180","r270","n","r90","r180","r270","n","r90"] },
+        { id: 23, title: "23. Maze Grid", desc: "Swivel steps the 'P' graphics until boundaries align into interconnected labyrinth channels.", matrix: ["r90","n","r90","n","r90","n","n","r270","n","r270","n","r270","r90","n","r90","n","r90","n","n","r270","n","r270","n","r270"] },
+        { id: 24, title: "24. Offset Reflection", desc: "Scatters off-axis reflections over the grid coordinates to soften seams.", matrix: ["mx","n","mx","n","mx","n","n","my","n","my","n","my","mx","n","mx","n","mx","n","n","my","n","my","n","my"] },
+        { id: 25, title: "25. Diamond Structure", desc: "Blends rotational parameters to assemble central rhombus structures inside grid quadrants.", matrix: ["r180","n","r180","n","r180","n","n","r180","n","r180","n","r180","r180","n","r180","n","r180","n","n","r180","n","r180","n","r180"] },
+        { id: 26, title: "26. Concentric Ripple", desc: "Cascades transform angles outward toward edges like ripples expanding on water.", matrix: ["n","r90","r180","r270","n","r90","r270","n","r90","r180","r270","n","r180","r270","n","r90","r180","r270","n","r90","r180","r270","n","r90"] },
+        { id: 27, title: "27. Mirror Stripe Mix", desc: "Employs vertical mirrors on columns while shifting horizontal positions linearly.", matrix: ["n","mx","n","mx","n","mx","n","mx","n","mx","n","mx","my","mxy","my","mxy","my","mxy","my","mxy","my","mxy","my","mxy"] },
+        { id: 28, title: "28. Double Block Spin", desc: "Combines 2x2 cluster components and spins them together 180 degrees for sweeping motion.", matrix: ["n","n","r180","r180","n","n","n","n","r180","r180","n","n","r180","r180","n","n","r180","r180","r180","r180","n","n","r180","r180"] },
+        { id: 29, title: "29. Mirror Diamond Check", desc: "Alternates cross-axis reflections to mirror classic diamond crystal frameworks.", matrix: ["my90","mx90","my90","mx90","my90","mx90","mx90","my90","mx90","my90","mx90","my90","my90","mx90","my90","mx90","my90","mx90","mx90","my90","mx90","my90","mx90","my90"] },
+        { id: 30, title: "30. Staircase Mirror", desc: "Climbs diagonally step-by-step by pushing the reflection matrix down 1 block per row.", matrix: ["n","my","mx","mxy","n","my","my","mx","mxy","n","my","mx","mx","mxy","n","my","mx","mxy","mxy","n","my","mx","mxy","n"] },
+        { id: 31, title: "31. Quad Mirror Invert", desc: "Flashes quad-directional reflection passes while inverting values across intersecting nodes.", matrix: ["mxy","mx","my","n","mxy","mx","my","n","mxy","mx","my","n","mxy","mx","my","n","mxy","mx","my","n","mxy","mx","my","n"] },
+        { id: 32, title: "32. Spiral Spin", desc: "Spreads modules in a logarithmic helix curve so shapes roll outward continuously.", matrix: ["n","r90","r90","r180","r180","r270","r270","n","n","r90","r90","r180","r180","r270","r270","n","n","r90","r90","r180","r180","r270","r270","n"] },
+        { id: 33, title: "33. Basket Horizontal Slant", desc: "Modified basketweave design that biases structural expansion horizontally.", matrix: ["n","r90","n","r90","n","r90","r90","n","r90","n","r90","n","n","r90","n","r90","n","r90","r90","n","r90","n","r90","n"] },
+        { id: 34, title: "34. Vertical Blocks Split", desc: "Splits column sets sideways to push left-and-right patterns away from center paths.", matrix: ["mx","mx","n","n","mx","mx","n","n","mx","mx","n","n","mx","mx","n","n","mx","mx","n","n","mx","mx","n","n"] },
+        { id: 35, title: "35. Tri-Rotation Wave", desc: "Balances 90-degree and 270-degree values to build clean fluid lines across grids.", matrix: ["r90","r270","r90","r270","r90","r270","r270","r90","r270","r90","r270","r90","r90","r270","r90","r270","r90","r270","r270","r90","r270","r90","r270","r90"] },
+        { id: 36, title: "36. Center Core Focus", desc: "Directs all graphic paths inward toward row centerlines to anchor visual attention.", matrix: ["mx","n","mx","n","mx","n","my","mxy","my","mxy","my","mxy","mx","n","mx","n","mx","n","my","mxy","my","mxy","my","mxy"] },
+        { id: 37, title: "37. Alternate Cross Fill", desc: "Fills negative spaces using inverse diagonal rotations scattered over vacant grids.", matrix: ["n","mxy","n","mxy","n","mxy","mxy","n","mxy","n","mxy","n","n","mxy","n","mxy","n","mxy","mxy","n","mxy","n","mxy","n"] },
+        { id: 38, title: "38. Chevron Flow V2", desc: "Creates sharp arrow configurations that dive vertically down screens without interruption.", matrix: ["r90","mx90","r90","mx90","r90","mx90","r90","mx90","r90","mx90","r90","mx90","r90","mx90","r90","mx90","r90","mx90","r90","mx90","r90","mx90","r90","mx90"] },
+        { id: 39, title: "39. Asymmetric Glide Symmetry", desc: "Slightly shifted translation paths frequently featured in modern architectural masonry.", matrix: ["n","my","r180","mx","n","my","r180","mx","n","my","r180","mx","n","my","r180","mx","n","my","r180","mx","n","my","r180","mx"] },
+        { id: 40, title: "40. Fish Scale Layout", desc: "Overlaps modules conceptually to simulate scale arrays fanning outward.", matrix: ["my90","n","my90","n","my90","n","n","my90","n","my90","n","my90","my90","n","my90","n","my90","n","n","my90","n","my90","n","my90"] },
+        { id: 41, title: "41. Matrix Inversion", desc: "Swaps independent X and Y axis orientations on odd/even coordinates sequentially.", matrix: ["mx","my","mx","my","mx","my","my","mx","my","mx","my","mx","mx","my","mx","my","mx","my","my","mx","my","mx","my","mx"] },
+        { id: 42, title: "42. Offset Brick Mirror", desc: "Half-stepped running bond brick offsets coupled with mirrors to slice seam visibility.", matrix: ["n","mx","n","mx","n","mx","mx","n","mx","n","mx","n","n","mx","n","mx","n","mx","mx","n","mx","n","mx","n"] },
+        { id: 43, title: "43. Corner Lock", desc: "Hooks perimeter nodes together around four corner coordinates to secure interlocking edges.", matrix: ["r90","r180","n","r270","r90","r180","n","r270","r90","r180","n","r270","r90","r180","n","r270","r90","r180","n","r270","r90","r180","n","r270"] },
+        { id: 44, title: "44. Parallel Reflection Rows", desc: "Locks continuous horizontal lanes that face and reflect each other symmetrically.", matrix: ["n","n","n","n","n","n","my","my","my","my","my","my","my","my","my","my","my","my","n","n","n","n","n","n"] },
+        { id: 45, title: "45. Parallel Reflection Columns", desc: "Locks continuous vertical lanes that face and reflect each other symmetrically.", matrix: ["n","mx","n","mx","n","mx","n","mx","n","mx","n","mx","n","mx","n","mx","n","mx","n","mx","n","mx","n","mx"] },
+        { id: 46, title: "46. Pinwheel Inverted", desc: "Reverses pinwheel vectors to produce a centrifugal layout drawing attention outward.", matrix: ["r270","r180","r90","n","r270","r180","r180","q90","n","r270","r180","r90","n","r270","r180","r90","n","r270","r180","r90","n","r270","r180","r90"] },
+        { id: 47, title: "47. Double Diagonal Slide", desc: "Two-tier diagonal glides that distribute elements seamlessly across all directions.", matrix: ["n","n","r90","r90","n","n","r90","r90","n","n","r90","r90","n","n","r90","r90","n","n","r90","r90","n","n","r90","r90"] },
+        { id: 48, title: "48. Maze Flow V2", desc: "Advanced labyrinth path flow utilizing a complex mixture of X/Y reflection offsets.", matrix: ["mx","my","mx","my","mx","my","r180","n","r180","n","r180","n","mx","my","mx","my","mx","my","r180","n","r180","n","r180","n"] },
+        { id: 49, title: "49. Infinite Cross Grid", desc: "Symmetric grid structure that stacks cross-rotations exponentially across the field.", matrix: ["mxy","n","mxy","n","mxy","n","n","mxy","n","mxy","n","mxy","mxy","n","mxy","n","mxy","n","n","mxy","n","mxy","n","mxy"] },
+        { id: 50, title: "50. Perfect Chaos Symmetry", desc: "Complex appearance, yet 4x4 clusters register together perfectly to scale across bounds infinitely.", matrix: ["n","r90","mx","my","r180","r270","mxy","n","mx","my","n","r90","mxy","n","r180","r270","n","r90","mx","my","r180","r270","mxy","n"] }
+    ];
+
+    let currentImageUrl = "";
+    let activePattern = null;
+    let selectedTool = "brush";
+    let selectedLineWidth = 5;
+    let cropper = null; 
+
+    // Canvas State & History
+    const canvas = document.getElementById('tileCanvas');
+    const ctx = canvas.getContext('2d');
+    let isDrawing = false;
+    let startX = 0, startY = 0;
+    let drawingHistory = [];
+    let historyStep = -1;
+    let isCtrlPressed = false;
+    let canvasSnapshot = null;
+
+    // Zoom and Pan State
+    let scale = 1;
+    let panX = 0, panY = 0;
+    let isPanning = false;
+    let startPanX = 0, startPanY = 0;
+    let sourceImageForCrop = null;
+
+    function init() {
+        generateExplorerGrid();
+        setupDropdownOptions();
+        setupToolsGrid();
+        setupCanvasDefault();
+        setupLineWidthSelector();
+        bindEvents();
+    }
+
+    function generateExplorerGrid() {
+        const wrapper = document.getElementById('patternsWrapper');
+        wrapper.innerHTML = "";
+        patternsData.forEach(pattern => {
+            const card = document.createElement('div');
+            card.className = 'pattern-card';
+            card.onclick = () => openEditor(pattern);
+
+            const header = document.createElement('div');
+            header.className = 'pattern-header';
+            header.innerHTML = `<h3 class="pattern-title">${pattern.title}</h3>`;
+
+            const preview = document.createElement('div');
+            preview.className = 'pattern-preview';
+
+            pattern.matrix.forEach(transformClass => {
+                const tile = document.createElement('div');
+                tile.className = `tile ${transformClass}`;
+                if (currentImageUrl) {
+                    tile.style.backgroundImage = `url('${currentImageUrl}')`;
+                    tile.style.backgroundColor = document.getElementById('bgColor')?.value || "#ffffff";
+                    tile.textContent = "";
+                } else {
+                    tile.textContent = "P";
+                    tile.style.backgroundImage = "none";
+                    tile.style.backgroundColor = "#ffffff";
+                }
+                preview.appendChild(tile);
+            });
+
+            const info = document.createElement('div');
+            info.className = 'pattern-info';
+            info.innerHTML = `<strong>Rule:</strong> ${pattern.desc}`;
+
+            card.appendChild(header);
+            card.appendChild(preview);
+            card.appendChild(info);
+            wrapper.appendChild(card);
+        });
+    }
+
+    function setupDropdownOptions() {
+        const select = document.getElementById('layoutSelect');
+        patternsData.forEach(p => {
+            const opt = document.createElement('option');
+            opt.value = p.id;
+            opt.textContent = p.title;
+            select.appendChild(opt);
+        });
+    }
+
+    function setupToolsGrid() {
+        const buttons = document.querySelectorAll('.tool-btn');
+        buttons.forEach(btn => {
+            btn.onclick = () => {
+                buttons.forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                selectedTool = btn.getAttribute('data-tool');
+            };
+        });
+    }
+
+    function setupLineWidthSelector() {
+        const dots = document.querySelectorAll('#dotSizeContainer .dot-option');
+        dots.forEach(dot => {
+            dot.onclick = () => {
+                dots.forEach(d => d.classList.remove('active'));
+                dot.classList.add('active');
+                selectedLineWidth = parseInt(dot.getAttribute('data-value'));
+            };
+        });
+    }
+
+    function setupCanvasDefault() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        canvas.style.backgroundColor = document.getElementById('bgColor').value;
+        ctx.font = "bold 110px sans-serif";
+        ctx.fillStyle = "#1e293b";
+        ctx.textAlign = "center";
+        ctx.textBaseline = "middle";
+        ctx.fillText("P", canvas.width / 2, canvas.height / 2);
+        saveCanvasState();
+    }
+
+    function renderMiniPPreview(pattern) {
+        const grid = document.getElementById('miniPreviewGrid');
+        grid.innerHTML = "";
+        pattern.matrix.forEach(transform => {
+            const tile = document.createElement('div');
+            tile.className = `mini-tile ${transform}`;
+            tile.textContent = "P";
+            grid.appendChild(tile);
+        });
+    }
+
+    function floodFill(startX, startY, fillColor) {
+        const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+        const data = imageData.data;
+        const targetColor = getPixelColor(startX, startY);
+        
+        if (colorsMatch(targetColor, fillColor)) return;
+
+        const queue = [[startX, startY]];
+        while (queue.length > 0) {
+            const [x, y] = queue.shift();
+            if (x < 0 || x >= canvas.width || y < 0 || y >= canvas.height) continue;
+
+            const currentColor = getPixelColor(x, y);
+            if (colorsMatch(currentColor, targetColor)) {
+                setPixelColor(x, y, fillColor);
+                queue.push([x + 1, y], [x - 1, y], [x, y + 1], [x, y - 1]);
+            }
+        }
+        ctx.putImageData(imageData, 0, 0);
+
+        function getPixelColor(x, y) {
+            const index = (y * canvas.width + x) * 4;
+            return [data[index], data[index + 1], data[index + 2], data[index + 3]];
+        }
+
+        function setPixelColor(x, y, color) {
+            const index = (y * canvas.width + x) * 4;
+            data[index] = color[0];
+            data[index + 1] = color[1];
+            data[index + 2] = color[2];
+            data[index + 3] = 255;
+        }
+
+        function colorsMatch(c1, c2) {
+            return Math.abs(c1[0] - c2[0]) < 15 && 
+                   Math.abs(c1[1] - c2[1]) < 15 && 
+                   Math.abs(c1[2] - c2[2]) < 15 &&
+                   Math.abs(c1[3] - c2[3]) < 15;
+        }
+    }
+
+    function hexToRgb(hex) {
+        const bigint = parseInt(hex.slice(1), 16);
+        return [(bigint >> 16) & 255, (bigint >> 8) & 255, bigint & 255];
+    }
+
+    function syncInputs(sliderId, numId, callback) {
+        const slider = document.getElementById(sliderId);
+        const num = document.getElementById(numId);
+        
+        slider.oninput = function() {
+            num.value = this.value;
+            callback();
+        };
+        num.oninput = function() {
+            let val = parseInt(this.value);
+            if (isNaN(val)) val = parseInt(slider.min);
+            if (val < parseInt(slider.min)) val = parseInt(slider.min);
+            if (val > parseInt(slider.max)) val = parseInt(slider.max);
+            this.value = val;
+            slider.value = val;
+            callback();
+        };
+    }
+
+    function getTransformWithPeriod(matrix, r, c) {
+        const blueprintCols = 6;
+        const blueprintRows = 4;
+        const br = r % blueprintRows;
+        
+        const rowElements = [];
+        for (let i = 0; i < blueprintCols; i++) {
+            rowElements.push(matrix[br * blueprintCols + i]);
+        }
+        
+        let pX = blueprintCols;
+        for (let p = 1; p < blueprintCols; p++) {
+            let isMatch = true;
+            for (let i = 0; i < blueprintCols; i++) {
+                if (rowElements[i] !== rowElements[i % p]) {
+                    isMatch = false;
+                    break;
+                }
+            }
+            if (isMatch) {
+                pX = p;
+                break;
+            }
+        }
+        return rowElements[c % pX] || "n";
+    }
+
+    // ฟังก์ชันช่วยหาพิกัดสำหรับการวาดรูป (รองรับทั้งเมาส์และทัชสกรีน)
+    function getCanvasCoordinates(e) {
+        const rect = canvas.getBoundingClientRect();
+        let clientX, clientY;
+        
+        if (e.touches && e.touches.length > 0) {
+            clientX = e.touches[0].clientX;
+            clientY = e.touches[0].clientY;
+        } else {
+            clientX = e.clientX;
+            clientY = e.clientY;
+        }
+        
+        return {
+            x: (clientX - rect.left) * (canvas.width / rect.width),
+            y: (clientY - rect.top) * (canvas.height / rect.height)
+        };
+    }
+
+    function bindEvents() {
+        document.getElementById('btnClearToP').onclick = () => {
+            currentImageUrl = "";
+            document.getElementById('globalImageUpload').value = "";
+            generateExplorerGrid();
+        };
+
+        document.getElementById('globalImageUpload').addEventListener('change', (e) => {
+            handleImageUpload(e, (dataUrl) => {
+                currentImageUrl = dataUrl;
+                generateExplorerGrid();
+            });
+        });
+
+        document.getElementById('tileImageUpload').addEventListener('change', (e) => {
+            handleImageUpload(e, (dataUrl) => {
+                const cropImg = document.getElementById('cropImageTag');
+                cropImg.src = dataUrl;
+                document.getElementById('cropModal').style.display = 'flex';
+                
+                if (cropper) {
+                    cropper.destroy();
+                }
+
+                setTimeout(() => {
+                    cropper = new Cropper(cropImg, {
+                        aspectRatio: 1,
+                        viewMode: 1,
+                        movable: true,
+                        zoomable: true,
+                        scalable: false,
+                        rotatable: false,
+                        cropBoxMovable: true,
+                        cropBoxResizable: true,
+                        background: true
+                    });
+                }, 50);
+
+                e.target.value = "";
+            });
+        });
+
+        document.getElementById('btnCropSquare').onclick = () => {
+            if (!cropper) return;
+            
+            const croppedCanvas = cropper.getCroppedCanvas({
+                width: canvas.width,
+                height: canvas.height
+            });
+            
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.drawImage(croppedCanvas, 0, 0, canvas.width, canvas.height);
+            
+            saveCanvasState();
+            updateTilesFromCanvas();
+            
+            document.getElementById('cropModal').style.display = 'none';
+            cropper.destroy();
+            cropper = null;
+        };
+
+        document.getElementById('btnCropNone').onclick = () => {
+            document.getElementById('cropModal').style.display = 'none';
+            const originalSrc = document.getElementById('cropImageTag').src;
+            
+            if (cropper) {
+                cropper.destroy();
+                cropper = null;
+            }
+
+            const img = new Image();
+            img.onload = function() {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                const hRatio = canvas.width / img.width;
+                const vRatio = canvas.height / img.height;
+                const ratio  = Math.min(hRatio, vRatio);
+                const shiftX = (canvas.width - img.width * ratio) / 2;
+                const shiftY = (canvas.height - img.height * ratio) / 2;
+                ctx.drawImage(img, 0, 0, img.width, img.height, shiftX, shiftY, img.width * ratio, img.height * ratio);
+                saveCanvasState();
+                updateTilesFromCanvas();
+            };
+            img.src = originalSrc;
+        };
+
+        document.getElementById('btnResetToP').onclick = () => {
+            drawingHistory = [];
+            historyStep = -1;
+            document.getElementById('tileImageUpload').value = "";
+            setupCanvasDefault();
+            updateTilesFromCanvas();
+        };
+
+        document.getElementById('btnBack').onclick = () => {
+            currentImageUrl = canvas.toDataURL();
+            document.getElementById('editorView').style.display = 'none';
+            document.getElementById('mainView').style.display = 'block';
+            generateExplorerGrid();
+        };
+
+        document.getElementById('layoutSelect').onchange = (e) => {
+            const found = patternsData.find(p => p.id == e.target.value);
+            if(found) {
+                activePattern = found;
+                document.getElementById('editPatternTitle').textContent = found.title;
+                document.getElementById('editPatternDesc').textContent = found.desc;
+                renderMiniPPreview(found);
+                renderTessellation();
+            }
+        };
+
+        syncInputs('gridCols', 'gridColsNum', renderTessellation);
+        syncInputs('gridRows', 'gridRowsNum', renderTessellation);
+        syncInputs('gridSizeInput', 'gridSizeNum', renderTessellation);
+        
+        document.getElementById('bgColor').oninput = () => {
+            const currentBg = document.getElementById('bgColor').value;
+            canvas.style.backgroundColor = currentBg;
+            renderTessellation();
+        };
+
+        document.getElementById('btnBucketTool').onclick = () => {
+            const buttons = document.querySelectorAll('.tool-btn');
+            buttons.forEach(b => b.classList.remove('active'));
+            selectedTool = 'fill';
+        };
+
+        const panel = document.getElementById('toolsPanel');
+        document.getElementById('panelToggle').onclick = function() {
+            panel.classList.toggle('collapsed');
+            this.textContent = panel.classList.contains('collapsed') ? "⮪" : "➔";
+        };
+
+        window.addEventListener('keydown', (e) => { if(e.key === 'Control') isCtrlPressed = true; });
+        window.addEventListener('keyup', (e) => { if(e.key === 'Control') isCtrlPressed = false; });
+
+        // รองรับทั้ง Mouse และ Touch events สำหรับวาดรูปบนมือถือ
+        canvas.addEventListener('mousedown', startDrawing);
+        canvas.addEventListener('mousemove', draw);
+        canvas.addEventListener('mouseup', stopDrawing);
+        canvas.addEventListener('mouseleave', stopDrawing);
+
+        canvas.addEventListener('touchstart', (e) => { e.preventDefault(); startDrawing(e); }, {passive: false});
+        canvas.addEventListener('touchmove', (e) => { e.preventDefault(); draw(e); }, {passive: false});
+        canvas.addEventListener('touchend', stopDrawing);
+
+        document.getElementById('btnUndo').onclick = () => { if(historyStep > 0) { historyStep--; restoreCanvasStep(); } };
+        document.getElementById('btnRedo').onclick = () => { if(historyStep < drawingHistory.length - 1) { historyStep++; restoreCanvasStep(); } };
+        document.getElementById('btnClearCanvas').onclick = () => {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            saveCanvasState();
+            updateTilesFromCanvas();
+        };
+
+        const previewArea = document.getElementById('previewArea');
+        previewArea.addEventListener('wheel', (e) => {
+            e.preventDefault();
+            const zoomFactor = 1.1;
+            if (e.deltaY < 0) scale *= zoomFactor;
+            else scale /= zoomFactor;
+            scale = Math.min(Math.max(0.2, scale), 5);
+            applyTransform();
+        }, {passive: false});
+
+        // ควบคุมระบบ Pan บนหน้าพรีวิว (เมาส์)
+        previewArea.addEventListener('mousedown', (e) => {
+            if(e.target.classList.contains('preview-area') || e.target.id === 'tessellationOutput') {
+                isPanning = true;
+                startPanX = e.clientX - panX;
+                startPanY = e.clientY - panY;
+            }
+        });
+        window.addEventListener('mousemove', (e) => {
+            if (!isPanning) return;
+            panX = e.clientX - startPanX;
+            panY = e.clientY - startPanY;
+            applyTransform();
+        });
+        window.addEventListener('mouseup', () => { isPanning = false; });
+
+        // ควบคุมระบบ Pan บนหน้าพรีวิว (ทัชสกรีนมือถือ)
+        previewArea.addEventListener('touchstart', (e) => {
+            if((e.target.classList.contains('preview-area') || e.target.id === 'tessellationOutput') && e.touches.length === 1) {
+                isPanning = true;
+                startPanX = e.touches[0].clientX - panX;
+                startPanY = e.touches[0].clientY - panY;
+            }
+        }, {passive: true});
+        previewArea.addEventListener('touchmove', (e) => {
+            if (!isPanning || e.touches.length !== 1) return;
+            panX = e.touches[0].clientX - startPanX;
+            panY = e.touches[0].clientY - startPanY;
+            applyTransform();
+        }, {passive: true});
+        previewArea.addEventListener('touchend', () => { isPanning = false; });
+
+        document.getElementById('btnResetZoom').onclick = () => {
+            scale = 1; panX = 0; panY = 0; applyTransform();
+        };
+
+        document.getElementById('btnSaveImage').onclick = saveOutputAsImage;
+    }
+
+    function applyTransform() {
+        const output = document.getElementById('tessellationOutput');
+        output.style.transform = `translate(${panX}px, ${panY}px) scale(${scale})`;
+    }
+
+    function handleImageUpload(e, callback) {
+        const file = e.target.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = (event) => callback(event.target.result);
+            reader.readAsDataURL(file);
+        }
+    }
+
+    function openEditor(pattern) {
+        activePattern = pattern;
+        document.getElementById('mainView').style.display = 'none';
+        document.getElementById('editorView').style.display = 'block';
+
+        document.getElementById('layoutSelect').value = pattern.id;
+        document.getElementById('editPatternTitle').textContent = pattern.title;
+        document.getElementById('editPatternDesc').textContent = pattern.desc;
+        
+        renderMiniPPreview(pattern);
+
+        const currentBg = document.getElementById('bgColor').value;
+        canvas.style.backgroundColor = currentBg;
+
+        if(currentImageUrl) {
+            const img = new Image();
+            img.onload = () => {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+                drawingHistory = [];
+                historyStep = -1;
+                saveCanvasState();
+                renderTessellation();
+            };
+            img.src = currentImageUrl;
+        } else {
+            drawingHistory = [];
+            historyStep = -1;
+            setupCanvasDefault();
+            renderTessellation();
+        }
+    }
+
+    function renderTessellation() {
+        if (!activePattern) return;
+
+        const cols = parseInt(document.getElementById('gridCols').value) || 8;
+        const rows = parseInt(document.getElementById('gridRows').value) || 6;
+        const tileSize = parseInt(document.getElementById('gridSizeInput').value) || 80;
+        const currentBg = document.getElementById('bgColor').value;
+
+        const outputZone = document.getElementById('tessellationOutput');
+        outputZone.innerHTML = "";
+        
+        outputZone.style.gridTemplateColumns = `repeat(${cols}, ${tileSize}px)`;
+        outputZone.style.gridTemplateRows = `repeat(${rows}, ${tileSize}px)`;
+
+        const dataUrl = canvas.toDataURL();
+
+        for (let r = 0; r < rows; r++) {
+            for (let c = 0; c < cols; c++) {
+                const transformClass = getTransformWithPeriod(activePattern.matrix, r, c);
+
+                const tile = document.createElement('div');
+                tile.className = `tile ${transformClass}`;
+                tile.style.width = `${tileSize}px`;
+                tile.style.height = `${tileSize}px`;
+                tile.style.backgroundImage = `url('${dataUrl}')`;
+                tile.style.backgroundColor = currentBg;
+                tile.textContent = ""; 
+                outputZone.appendChild(tile);
+            }
+        }
+    }
+
+    function updateTilesFromCanvas() {
+        renderTessellation();
+    }
+
+    function startDrawing(e) {
+        const coords = getCanvasCoordinates(e);
+        startX = coords.x;
+        startY = coords.y;
+        
+        if (selectedTool === 'fill') {
+            const paintColor = hexToRgb(document.getElementById('bucketColor').value);
+            floodFill(Math.floor(startX), Math.floor(startY), paintColor);
+            saveCanvasState();
+            updateTilesFromCanvas();
+            return;
+        }
+
+        isDrawing = true;
+        canvasSnapshot = ctx.getImageData(0, 0, canvas.width, canvas.height);
+        
+        ctx.lineWidth = selectedLineWidth;
+        ctx.strokeStyle = document.getElementById('strokeColor').value;
+        ctx.fillStyle = document.getElementById('fillColor').value;
+        ctx.lineCap = "round";
+        ctx.lineJoin = "round";
+
+        if (selectedTool === 'brush' && document.getElementById('chkUseStroke').checked) {
+            ctx.beginPath();
+            ctx.moveTo(startX, startY);
+        }
+    }
+
+    function draw(e) {
+        if (!isDrawing) return;
+        const coords = getCanvasCoordinates(e);
+        const currentX = coords.x;
+        const currentY = coords.y;
+        
+        const useFill = document.getElementById('chkUseFill').checked;
+        const useStroke = document.getElementById('chkUseStroke').checked;
+
+        if (selectedTool === 'brush') {
+            if (useStroke) {
+                ctx.lineTo(currentX, currentY);
+                ctx.stroke();
+            }
+        } else if (selectedTool !== 'fill') {
+            ctx.putImageData(canvasSnapshot, 0, 0);
+            ctx.beginPath();
+            
+            let width = currentX - startX;
+            let height = currentY - startY;
+
+            if (isCtrlPressed && (selectedTool === 'rect' || selectedTool === 'circle' || selectedTool === 'triangle')) {
+                const maxLen = Math.max(Math.abs(width), Math.abs(height));
+                width = width >= 0 ? maxLen : -maxLen;
+                height = height >= 0 ? maxLen : -maxLen;
+            }
+
+            if (selectedTool === 'line') {
+                if (useStroke) {
+                    ctx.moveTo(startX, startY);
+                    ctx.lineTo(currentX, currentY);
+                    ctx.stroke();
+                }
+            } else if (selectedTool === 'rect') {
+                ctx.rect(startX, startY, width, height);
+                if (useFill) ctx.fill();
+                if (useStroke) ctx.stroke();
+            } else if (selectedTool === 'circle') {
+                const radius = Math.sqrt(width * width + height * height);
+                ctx.arc(startX, startY, radius, 0, 2 * Math.PI);
+                if (useFill) ctx.fill();
+                if (useStroke) ctx.stroke();
+            } else if (selectedTool === 'triangle') {
+                ctx.moveTo(startX + width / 2, startY);
+                ctx.lineTo(startX + width, startY + height);
+                ctx.lineTo(startX, startY + height);
+                ctx.closePath();
+                if (useFill) ctx.fill();
+                if (useStroke) ctx.stroke();
+            }
+        }
+        updateTilesFromCanvas();
+    }
+
+    function stopDrawing() {
+        if (!isDrawing) return;
+        isDrawing = false;
+        saveCanvasState();
+    }
+
+    function saveCanvasState() {
+        if (historyStep < drawingHistory.length - 1) {
+            drawingHistory = drawingHistory.slice(0, historyStep + 1);
+        }
+        drawingHistory.push(ctx.getImageData(0, 0, canvas.width, canvas.height));
+        historyStep++;
+    }
+
+    function restoreCanvasStep() {
+        if (historyStep >= 0 && historyStep < drawingHistory.length) {
+            ctx.putImageData(drawingHistory[historyStep], 0, 0);
+            updateTilesFromCanvas();
+        }
+    }
+
+    function saveOutputAsImage() {
+        if(!activePattern) return;
+        
+        const cols = parseInt(document.getElementById('gridCols').value) || 8;
+        const rows = parseInt(document.getElementById('gridRows').value) || 6;
+        const tileSize = parseInt(document.getElementById('gridSizeInput').value) || 80;
+        const currentBg = document.getElementById('bgColor').value;
+
+        const exportCanvas = document.createElement('canvas');
+        exportCanvas.width = cols * tileSize;
+        exportCanvas.height = rows * tileSize;
+        const eCtx = exportCanvas.getContext('2d');
+
+        eCtx.fillStyle = currentBg;
+        eCtx.fillRect(0, 0, exportCanvas.width, exportCanvas.height);
+
+        const sourceTileImg = new Image();
+        sourceTileImg.src = canvas.toDataURL();
+
+        sourceTileImg.onload = function() {
+            for (let r = 0; r < rows; r++) {
+                for (let c = 0; c < cols; c++) {
+                    const transform = getTransformWithPeriod(activePattern.matrix, r, c);
+
+                    eCtx.save();
+                    const posX = c * tileSize + tileSize / 2;
+                    const posY = r * tileSize + tileSize / 2;
+                    eCtx.translate(posX, posY);
+
+                    if (transform === 'r90')  eCtx.rotate(90 * Math.PI / 180);
+                    if (transform === 'r180') eCtx.rotate(180 * Math.PI / 180);
+                    if (transform === 'r270') eCtx.rotate(270 * Math.PI / 180);
+                    if (transform === 'mx')   eCtx.scale(-1, 1);
+                    if (transform === 'my')   eCtx.scale(1, -1);
+                    if (transform === 'mxy')  eCtx.scale(-1, -1);
+                    if (transform === 'mx90') { eCtx.scale(-1, 1); eCtx.rotate(90 * Math.PI / 180); }
+                    if (transform === 'my90') { eCtx.scale(1, -1); eCtx.rotate(90 * Math.PI / 180); }
+
+                    eCtx.drawImage(sourceTileImg, -tileSize/2, -tileSize/2, tileSize, tileSize);
+                    eCtx.restore();
+                }
+            }
+
+            const link = document.createElement('a');
+            link.download = `Tessellation-${activePattern.title}.png`;
+            link.href = exportCanvas.toDataURL('image/png');
+            link.click();
+        };
+    }
+
+    window.onload = init;
+</script>
+
+</body>
+</html>
+
