@@ -164,7 +164,6 @@
             cursor: grab;
             user-select: none;
             padding: 50px;
-            position: relative;
         }
         .preview-area:active { cursor: grabbing; }
         .tessellation-output {
@@ -243,6 +242,22 @@
             cursor: pointer;
             background: none;
         }
+
+        /* Circle Color Picker */
+        .circle-picker {
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            appearance: none;
+            width: 34px;
+            height: 34px;
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            border-radius: 50%;
+            padding: 0;
+        }
+        .circle-picker::-webkit-color-swatch-wrapper { padding: 0; }
+        .circle-picker::-webkit-color-swatch { border: 2px solid #cbd5e1; border-radius: 50%; }
 
         /* Dot Size Selector */
         .dot-size-container {
@@ -354,143 +369,120 @@
         .crop-preview-container { max-height: 400px; margin: 15px 0; background: #eee; position: relative; border-radius: 6px; overflow: hidden; }
         #cropImageTag { max-width: 100%; display: block; }
 
-        /* Mobile Layout Elements Override */
-        .mobile-nav-bar { display: none; }
+        /* Mobile Layout Elements Defaults */
         .mobile-top-bar { display: none; }
-        .mobile-toggle-tools { display: none; }
-        #mobileResetZoomBtn { display: none; }
+        .mobile-nav-bar { display: none; }
+        .btn-toggle-panel { display: none; }
+        .mobile-outline-btn { display: none; }
 
         /* ==========================================================================
            --- MOBILE & TABLET RESPONSIVE APPLICATION INTERFACE (max-width: 991px) ---
            ========================================================================== */
         @media (max-width: 991px) {
-            body { overflow-y: auto !important; position: relative !important; width: 100%; height: auto; }
-            #mainView { overflow-y: visible; padding: 12px; }
+            body { overflow-y: auto !important; }
+            #mainView { padding: 12px; }
             .patterns-container { grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 16px; }
 
-            #editorView {
-                position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
-                height: -webkit-fill-available; display: none; background: #ffffff; z-index: 1000;
-                overflow: hidden;
-            }
-            .editor-container { flex-direction: column; height: 100%; width: 100vw; position: relative; }
+            /* Editor View Control Restructure */
+            .editor-container { flex-direction: column; height: 100vh; width: 100vw; overflow: hidden; position: fixed; top:0; left:0; }
+            .workspace { height: calc(100vh - 310px); flex: none; width: 100%; transition: height 0.3s ease; }
             
-            /* Workspace area setup */
-            .workspace { height: 50vh; flex: none; width: 100%; position: relative; background: #f1f5f9; }
-            .workspace-header { padding: 8px 12px; border-bottom: 1px solid #cbd5e1; }
+            /* Workspace Header with Icons */
+            .workspace-header { padding: 8px 12px; height: 50px; }
             .workspace-header span { display: none; } 
-            #btnResetZoom { display: none !important; }
-            
-            /* Integrated Mobile Floating Zoom Control */
-            #mobileResetZoomBtn {
-                display: flex; position: absolute; top: 60px; right: 12px; z-index: 99;
-                background: rgba(255, 255, 255, 0.9); border: 1px solid #cbd5e1; border-radius: 50%;
-                width: 36px; height: 36px; align-items: center; justify-content: center; cursor: pointer;
-                box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+            #btnResetZoom { display: none; } 
+            #btnBack, #btnSaveImage { display: none !important; } 
+            .mobile-outline-btn {
+                display: flex !important; align-items: center; justify-content: center;
+                background: transparent; border: 1px solid var(--primary-color);
+                width: 36px; height: 36px; border-radius: 6px; padding: 0; cursor: pointer;
             }
-            #mobileResetZoomBtn svg { width: 18px; height: 18px; fill: #475569; }
+            .mobile-outline-btn svg { width: 20px; height: 20px; fill: var(--primary-color); }
+            
+            /* Floating Reset Zoom Icon inside Preview Area */
+            .preview-area { padding: 10px; position: relative; }
+            #btnResetZoomMobile {
+                display: flex !important; position: absolute; top: 10px; right: 10px; z-index: 20;
+                background: rgba(255,255,255,0.9); border: 1px solid #cbd5e1;
+                width: 34px; height: 34px; border-radius: 6px; align-items: center; justify-content: center; cursor: pointer;
+            }
+            #btnResetZoomMobile svg { width: 18px; height: 18px; fill: #475569; }
 
-            .preview-area { padding: 0; width: 100%; height: 100%; overflow: hidden; position: relative; }
-
-            /* Minimal Mobile Top Rule Navigator */
+            /* Mobile Top Selector Bar */
             .mobile-top-bar {
                 display: flex; align-items: center; background: #ffffff;
-                padding: 6px 12px; border-bottom: 1px solid #e2e8f0; gap: 8px; width: 100%;
+                padding: 6px 12px; border-bottom: 1px solid #e2e8f0; gap: 10px; height: 46px;
             }
-            .mobile-top-bar label { font-size: 0.8rem; font-weight: 600; color: #64748b; white-space: nowrap; }
-            .mobile-top-bar select { flex: 1; height: 32px; padding: 4px 8px; font-size: 0.85rem !important; border-radius: 6px; border: 1px solid #cbd5e1; background: #f8fafc; }
+            .mobile-top-bar select {
+                flex: 1; height: 34px; padding: 4px 8px; font-size: 0.85rem; border-radius: 6px; border: 1px solid #cbd5e1; background: #fff;
+            }
 
-            /* App Bottom Panel Controls System */
+            /* Bottom Tools Panel Slideable & Flexible */
             .tools-panel {
                 width: 100% !important; min-width: 100% !important;
-                height: calc(50vh - 55px) !important; max-height: calc(50vh - 55px);
+                height: 200px; max-height: 200px;
                 border-left: none; border-top: 1px solid #e2e8f0;
-                position: absolute; bottom: 55px; left: 0; z-index: 1001;
-                background: #ffffff; transition: transform 0.3s ease;
+                position: fixed; bottom: 64px; left: 0; z-index: 1001;
+                background: #ffffff; transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             }
-            .tools-panel.collapsed { transform: translateY(100%); height: calc(50vh - 55px) !important; width: 100% !important; }
+            .tools-panel.collapsed-mobile { transform: translateY(200px); }
             .panel-toggle { display: none !important; } 
 
-            /* Panel Collapse Slide Control Layer */
-            .mobile-toggle-tools {
-                display: flex; position: absolute; top: -32px; left: 50%; transform: translateX(-50%);
-                background: #ffffff; border: 1px solid #cbd5e1; border-bottom: none;
-                border-radius: 8px 8px 0 0; padding: 4px 16px; font-size: 0.75rem; font-weight: bold;
-                color: #475569; box-shadow: 0 -3px 6px rgba(0,0,0,0.05); cursor: pointer; z-index: 1005;
+            /* Floating Show/Hide Controller Button */
+            .btn-toggle-panel {
+                display: flex; position: fixed; bottom: 274px; right: 16px; z-index: 1010;
+                width: 40px; height: 40px; border-radius: 50%; background: var(--primary-color);
+                box-shadow: 0 4px 10px rgba(0,0,0,0.2); border: none; align-items: center; justify-content: center; cursor: pointer;
+                transition: bottom 0.3s ease;
             }
+            .btn-toggle-panel.panel-collapsed-active { bottom: 80px; }
+            .btn-toggle-panel svg { width: 20px; height: 20px; fill: white; transition: transform 0.3s; }
+            .btn-toggle-panel.panel-collapsed-active svg { transform: rotate(180deg); }
 
-            .panel-content { width: 100%; padding: 12px; overflow-y: auto; height: 100%; -webkit-overflow-scrolling: touch; }
-            
+            .panel-content { width: 100%; padding: 12px; overflow-y: auto; height: 100%; }
             #editPatternTitle, #editPatternDesc, .mini-preview-box, .tools-panel hr, .tool-group-select { display: none !important; }
 
-            /* Tab Systems Settings */
-            .tool-group { border-bottom: none; padding-bottom: 0; margin-bottom: 0; display: none; width: 100%; }
+            /* Modules tab routing logic */
+            .tool-group { border-bottom: none; padding-bottom: 0; margin-bottom: 0; display: none; }
             .tool-group.active-mobile-tab { display: block !important; }
             .tool-group h4 { display: none; } 
 
-            /* --- Grid Extension Settings Layout (No Gaps) --- */
-            #tabGridExpansion { padding: 4px 0; }
-            #tabGridExpansion .tool-row { gap: 6px; margin-bottom: 6px; }
-            #tabGridExpansion .tool-row label { width: 85px; font-size: 0.8rem; }
-            #tabGridExpansion input[type="range"] { height: 28px; }
-            #tabGridExpansion .num-input { width: 50px; height: 28px; font-size: 0.8rem !important; padding: 2px; }
+            /* Studio Workspace Matrix Redraw Layout */
+            .mobile-studio-layout {
+                display: grid; grid-template-columns: 44px 1fr 44px; gap: 10px; align-items: center; width: 100%;
+            }
+            .mobile-studio-left { display: flex; flex-direction: column; gap: 6px; }
+            .mobile-studio-center { display: flex; flex-direction: column; align-items: center; justify-content: center; }
+            .mobile-studio-right { display: flex; flex-direction: column; align-items: center; gap: 8px; }
 
-            /* --- Advanced Mobile Studio Matrix (Side Panels) --- */
-            #tabTileStudio { position: relative; width: 100%; padding-top: 4px; }
-            #tabTileStudio .tool-row:first-of-type { margin-bottom: 8px; }
+            /* UI Scaling adjustments */
+            .canvas-container { width: 110px; height: 110px; margin: 0 auto 6px auto; border-width: 1px; }
+            .tools-row-grid { display: grid; grid-template-columns: 1fr; gap: 4px; background: transparent; padding: 0; border: none; margin-bottom: 0; width: 100%; }
+            .tool-btn { height: 32px; width: 38px; border: 1px solid #e2e8f0; background: #f8fafc; border-radius: 6px; }
+            .tool-btn.active { background: var(--primary-color); border-color: var(--primary-color); }
+            .tool-btn.active svg { fill: #ffffff; }
             
-            /* Center Huge Canvas layout */
-            .canvas-container {
-                width: 155px; height: 155px; margin: 0 auto; 
-                display: block; float: none; border: 2px solid #323c4b;
+            /* Line Dot Tool Sidebar adjustment */
+            .mobile-studio-left .dot-size-container {
+                flex-direction: column; height: auto; width: 38px; padding: 4px 0; gap: 6px; background: transparent; border: none;
             }
-            
-            /* Studio elements container wrapper */
-            .mobile-studio-wrap {
-                display: flex; justify-content: center; align-items: center; gap: 10px; margin: 8px 0;
-            }
-            .mobile-side-controls {
-                display: flex; flex-direction: column; gap: 5px; justify-content: center;
-            }
+            .dot-option { width: 30px; height: 30px; }
 
-            /* Tool Vector Grid compact sidebar layout */
-            .tools-row-grid {
-                display: grid; grid-template-columns: repeat(2, 34px); gap: 4px;
-                padding: 2px; background: #f1f5f9; border-radius: 6px; margin: 0;
-            }
-            .tool-btn { height: 34px; width: 34px; padding: 0; }
-            .tool-btn svg { width: 16px; height: 16px; }
+            /* Action Control Rows */
+            .mobile-studio-actions { display: flex; justify-content: center; gap: 8px; width: 100%; }
+            .mobile-studio-actions .btn { width: 32px; height: 32px; padding: 0; display: flex; align-items: center; justify-content: center; }
+            .mobile-studio-actions .btn svg { width: 16px; height: 16px; fill: #475569; }
 
-            /* Line Sizes side control stack */
-            .dot-size-container {
-                display: flex; flex-direction: column; height: auto; width: 34px;
-                padding: 4px 0; gap: 6px; background: #f1f5f9; border-radius: 6px;
-            }
-            .dot-option { width: 26px; height: 26px; }
+            /* Native slider spacing specs */
+            .tool-row { gap: 8px; margin-bottom: 10px; }
+            .tool-row label { width: 85px; font-size: 0.8rem; }
+            input[type="range"] { height: 28px; }
+            .num-input { width: 50px; height: 30px; font-size: 0.8rem; }
 
-            /* Color Pickers Round Uniform Styles */
-            .mobile-color-stack { display: flex; flex-direction: column; gap: 6px; align-items: center; }
-            .color-circle-wrapper { position: relative; width: 30px; height: 30px; border-radius: 50%; border: 1px solid #cbd5e1; overflow: hidden; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
-            .color-circle-wrapper input[type="color"] {
-                position: absolute; top: -5px; left: -5px; width: 40px; height: 40px;
-                padding: 0; border: none; cursor: pointer; background: none; -webkit-appearance: none;
-            }
-            .color-circle-wrapper input[type="checkbox"] { display: none; } /* Simplified */
-
-            /* Under Canvas Action Strip Control Row */
-            .mobile-action-strip {
-                display: flex; justify-content: center; gap: 8px; margin-top: 8px; width: 100%; clear: both;
-            }
-            .mobile-icon-btn {
-                background: #ffffff; border: 1px solid #cbd5e1; border-radius: 6px;
-                width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; cursor: pointer;
-            }
-            .mobile-icon-btn svg { width: 18px; height: 18px; fill: #475569; }
-
-            /* Fixed Tab Navigation Footer Bar */
+            /* Tab bar systems bottom */
             .mobile-nav-bar {
-                display: flex; position: absolute; bottom: 0; left: 0; width: 100%; height: 55px;
-                background: #f8fafc; border-top: 1px solid #cbd5e1; z-index: 1002;
+                display: flex; position: fixed; bottom: 0; left: 0; width: 100vw; height: 64px;
+                background: #f8fafc; border-top: 1px solid #e2e8f0; z-index: 1002;
                 padding-bottom: env(safe-area-inset-bottom);
             }
             .nav-tab-item {
@@ -526,39 +518,40 @@
 <div id="editorView">
     <div class="editor-container">
         
-        <div class="mobile-top-bar" id="mobileTopBar">
-            <label>Layout Rules</label>
-        </div>
+        <div class="mobile-top-bar" id="mobileTopBar"></div>
 
-        <div class="workspace">
+        <div class="workspace" id="workspaceArea">
             <div class="workspace-header">
-                <button class="btn" id="btnBack" style="display: inline-flex; align-items: center; justify-content: center; padding: 6px 10px;">
-                    <span class="desktop-text">← Back to Main</span>
-                    <svg class="mobile-icon" style="display:none; width:20px; height:20px; fill:#323c4b;" viewBox="0 0 24 24"><path d="M20,11H7.83l5.59-5.59L12,4l-8,8l8,8l1.41-1.41L7.83,13H20V11z"/></svg>
+                <button class="btn" id="btnBack">← Back to Main</button>
+                <button class="mobile-outline-btn" id="btnBackMobile" title="Back to Main">
+                    <svg viewBox="0 0 24 24"><path d="M20,11H7.83L13.41,5.41L12,4L4,12L12,20L13.41,18.59L7.83,13H20V11Z"/></svg>
                 </button>
+
                 <div style="display:flex; gap:10px; align-items: center;">
                     <span style="font-size: 0.85rem; color:#acb5c3;">Zoom: Scroll Wheel | Pan: Click & Drag the empty space</span>
                     <button class="btn" id="btnResetZoom">Reset Zoom</button>
                 </div>
-                <button class="btn btn-primary" id="btnSaveImage" style="display: inline-flex; align-items: center; justify-content: center; padding: 6px 10px;">
-                    <span class="desktop-text">Save Pattern Image</span>
-                    <svg class="mobile-icon" style="display:none; width:20px; height:20px; fill:#323c4b;" viewBox="0 0 24 24"><path d="M19,12v7H5v-7H3v7c0,1.1,0.9,2,2,2h14c1.1,0,2-0.9,2-2v-7H19z M13,12.67l2.59-2.59L17,11.5l-5,5l-5-5l1.41-1.41L11,12.67V3h2V12.67z"/></svg>
+
+                <button class="btn btn-primary" id="btnSaveImage">Save Pattern Image</button>
+                <button class="mobile-outline-btn" id="btnSaveMobile" title="Save Image">
+                    <svg viewBox="0 0 24 24"><path d="M5,20H19V18H5M19,9H15V3H9V9H5L12,16L19,9Z"/></svg>
                 </button>
             </div>
             
-            <div id="mobileResetZoomBtn" title="Reset Workspace Target">
-                <svg viewBox="0 0 24 24"><path d="M12,2C6.48,2,2,6.48,2,12s4.48,10,10,10s10-4.48,10-10S17.52,2,12,2z M12,18c-3.31,0-6-2.69-6-6s2.69-6,6-6s6,2.69,6,6S15.31,18,12,18z M12,8c-2.21,0-4,1.79-4,4s1.79,4,4,4s4-1.79,4-4S14.21,8,12,8z"/></svg>
-            </div>
-
             <div class="preview-area" id="previewArea">
+                <button id="btnResetZoomMobile" style="display: none;" title="Reset Zoom">
+                    <svg viewBox="0 0 24 24"><path d="M10.59,12L14.59,16H11V22H9V16H5.41L9.41,12H10.59M19,12C19,14.61 17.44,16.87 15.18,17.88L15.93,19.4C18.82,18.1 21,15.22 21,11.83C21,7.3 17.5,3.57 13,3.08V5.12C16.37,5.6 19,8.5 19,12M3,11.83C3,15.22 5.18,18.1 8.07,19.4L8.82,17.88C6.56,16.87 5,14.61 5,12C5,8.5 7.63,5.6 11,5.12V3.08C6.5,3.57 3,7.3 3,11.83Z"/></svg>
+                </button>
                 <div class="tessellation-output" id="tessellationOutput"></div>
             </div>
         </div>
 
+        <button class="btn-toggle-panel" id="btnTogglePanelMobile" title="Toggle Controls Panel">
+            <svg viewBox="0 0 24 24"><path d="M7.41,8.58L12,13.17L16.59,8.58L18,10L12,16L6,10L7.41,8.58Z"/></svg>
+        </button>
+
         <div class="tools-panel" id="toolsPanel">
-            <div class="mobile-toggle-tools" id="mobileToggleTools">▼ HIDE TOOLS</div>
             <div class="panel-toggle" id="panelToggle">➔</div>
-            
             <div class="panel-content">
                 <h3 id="editPatternTitle" style="color:var(--primary-color); margin-top:0; margin-bottom: 8px;">Layout Configuration</h3>
                 <p id="editPatternDesc" style="font-size:0.85rem; color:#64748b; line-height:1.4; margin-bottom: 10px;"></p>
@@ -599,13 +592,13 @@
 
                 <div class="tool-group" id="tabTileStudio">
                     <h4>Tile Studio</h4>
-                    <div class="tool-row">
+                    <div class="tool-row" id="tileUploadRowPc">
                         <input type="file" id="tileImageUpload" accept="image/*" style="font-size: 0.8rem; width:100%;">
                     </div>
                     
-                    <div class="mobile-studio-wrap">
+                    <div class="mobile-studio-layout">
                         
-                        <div class="mobile-side-controls">
+                        <div class="mobile-studio-left">
                             <div class="tools-row-grid" id="toolsGrid">
                                 <button class="tool-btn active" data-tool="brush" title="Free Brush">
                                     <svg viewBox="0 0 24 24"><path d="M20.71,5.63L18.37,3.29C18,2.9 17.35,2.9 16.96,3.29L15.12,5.12L18.88,8.88L20.71,7.04C21.1,6.65 21.1,6 20.71,5.63M3,17.25V21H6.75L17.81,9.93L14.07,6.19L3,17.25Z"/></svg>
@@ -622,61 +615,53 @@
                                 <button class="tool-btn" data-tool="triangle" title="Triangle">
                                     <svg viewBox="0 0 24 24"><path d="M1,21H23L12,2L1,21M12,6L19.8,19H4.2L12,6Z"/></svg>
                                 </button>
-                                <button class="tool-btn" id="btnBucketTool" data-tool="fill" title="Paint Bucket">
-                                    <svg viewBox="0 0 24 24"><path d="M19,4h-4L7.41,11.59c-0.78,0.78-0.78,2.05,0,2.83L11.59,18.6c0.78,0.78,2.05,0.78,2.83,0L22,11V7C22,5.34,20.66,4,19,4z M12,22c1.1,0,2-0.9,2-2h-4C10,21.1,10.9,22,12,22z"/></svg>
+                                <button class="tool-btn" id="btnBucketTool" title="Paint Bucket">
+                                    <svg viewBox="0 0 24 24"><path d="M19,3H5C3.89,3 3,3.89 3,5V19C3,20.1 3.89,21 5,21H19C20.1,21 21,20.1 21,19V5C21,3.89 20.1,3 19,3M11,17H7V13H11V17M13,17V13H17V17H13M13,11V7H17V11H13M11,11H7V7H11V11Z"/></svg>
+                                </button>
+                            </div>
+
+                            <div class="dot-size-container" id="dotSizeContainer">
+                                <div class="dot-option" data-value="2" title="2px"><div class="dot-shape" style="width:4px; height:4px;"></div></div>
+                                <div class="dot-option active" data-value="5" title="5px"><div class="dot-shape" style="width:7px; height:7px;"></div></div>
+                                <div class="dot-option" data-value="10" title="10px"><div class="dot-shape" style="width:11px; height:11px;"></div></div>
+                                <div class="dot-option" data-value="18" title="18px"><div class="dot-shape" style="width:14px; height:14px;"></div></div>
+                            </div>
+                        </div>
+
+                        <div class="mobile-studio-center">
+                            <div class="canvas-container">
+                                <canvas id="tileCanvas" width="200" height="200"></canvas>
+                            </div>
+                            
+                            <div class="mobile-studio-actions">
+                                <button class="btn" id="btnUndo" title="Undo">
+                                    <svg viewBox="0 0 24 24"><path d="M12.5,8C9.85,8 7.45,9 5.6,10.6L2,7V16H11L7.38,12.38C8.77,11.22 10.54,10.5 12.5,10.5C16.04,10.5 19.05,12.81 20.1,16L22.1,15.3C20.76,11.08 16.93,8 12.5,8Z"/></svg>
+                                </button>
+                                <button class="btn" id="btnRedo" title="Redo">
+                                    <svg viewBox="0 0 24 24"><path d="M18.4,10.6C16.55,9 14.15,8 11.5,8C7.07,8 3.24,11.08 1.9,15.3L3.9,16C4.95,12.81 7.96,10.5 11.5,10.5C13.46,10.5 15.23,11.22 16.62,12.38L13,16H22V7L18.4,10.6Z"/></svg>
+                                </button>
+                                <button class="btn" id="btnClearCanvas" title="Clear">
+                                    <svg viewBox="0 0 24 24"><path d="M19,4H15.5L14.5,3H9.5L8.5,4H5V6H19M6,19A2,2 0 0,0 8,21H16A2,2 0 0,0 18,19V7H6V19Z"/></svg>
+                                </button>
+                                <button class="btn" id="btnResetToP" title="Reset to P">
+                                    <svg viewBox="0 0 24 24"><path d="M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2M11,16H9V8H13A2,2 0 0,1 15,10A2,2 0 0,1 13,12H11V16M11,10H13V11H11V10Z"/></svg>
                                 </button>
                             </div>
                         </div>
 
-                        <div class="canvas-container">
-                            <canvas id="tileCanvas" width="200" height="200"></canvas>
+                        <div class="mobile-studio-right">
+                            <input type="color" id="strokeColor" class="circle-picker" value="#1e293b" title="Stroke Color">
+                            <input type="color" id="fillColor" class="circle-picker" value="#7AA1E0" title="Fill Color">
+                            <input type="color" id="bucketColor" class="circle-picker" value="#6D79AB" title="Bucket Color">
+                            <input type="color" id="bgColor" class="circle-picker" value="#ffffff" title="Background Color">
                         </div>
 
-                        <div class="mobile-side-controls">
-                            <div class="dot-size-container" id="dotSizeContainer">
-                                <div class="dot-option" data-value="2" title="Thin (2px)"><div class="dot-shape" style="width:4px; height:4px;"></div></div>
-                                <div class="dot-option active" data-value="5" title="Medium (5px)"><div class="dot-shape" style="width:8px; height:8px;"></div></div>
-                                <div class="dot-option" data-value="10" title="Thick (10px)"><div class="dot-shape" style="width:12px; height:12px;"></div></div>
-                                <div class="dot-option" data-value="18" title="Extra Thick (18px)"><div class="dot-shape" style="width:16px; height:16px;"></div></div>
-                            </div>
-                            
-                            <div class="mobile-color-stack">
-                                <div class="color-circle-wrapper" title="Stroke Color" id="strokeCircleBg">
-                                    <input type="checkbox" id="chkUseStroke" checked style="display: none;">
-                                    <input type="color" id="strokeColor" value="#1e293b">
-                                </div>
-                                <div class="color-circle-wrapper" title="Inner Shape Fill Color" id="fillCircleBg">
-                                    <input type="checkbox" id="chkUseFill" checked style="display: none;">
-                                    <input type="color" id="fillColor" value="#7AA1E0">
-                                </div>
-                                <div class="color-circle-wrapper" title="Bucket Fill Color" id="bucketCircleBg">
-                                    <input type="color" id="bucketColor" value="#6D79AB">
-                                </div>
-                                <div class="color-circle-wrapper" title="Canvas Background Color" id="bgCircleBg">
-                                    <input type="color" id="bgColor" value="#ffffff">
-                                </div>
-                            </div>
-                        </div>
-
-                    </div>
-
-                    <div class="mobile-action-strip">
-                        <button class="mobile-icon-btn" id="btnUndo" title="Undo Step">
-                            <svg viewBox="0 0 24 24"><path d="M12.5,8c-2.65,0-5.05,0.99-6.9,2.6L2,7v9h9l-3.62-3.62c1.39-1.16,3.16-1.88,5.12-1.88c3.54,0,6.55,2.31,7.6,5.5l2.37-0.78C21.08,11.03,17.15,8,12.5,8z"/></svg>
-                        </button>
-                        <button class="mobile-icon-btn" id="btnRedo" title="Redo Step">
-                            <svg viewBox="0 0 24 24"><path d="M18.4,10.6C16.55,8.99,14.15,8,11.5,8c-4.65,0-8.58,3.03-9.96,7.22L3.92,16c1.05-3.19,4.06-5.5,7.58-5.5c1.95,0,3.73,0.72,5.12,1.88L13,16h9V7L18.4,10.6z"/></svg>
-                        </button>
-                        <button class="mobile-icon-btn" id="btnClearCanvas" title="Clear All Graphics">
-                            <svg viewBox="0 0 24 24"><path d="M19,4h-3.5l-1-1h-5l-1,1H5V6h14V4z M6,19c0,1.1,0.9,2,2,2h8c1.1,0,2-0.9,2-2V7H6V19z M8,9h8v10H8V9z"/></svg>
-                        </button>
-                        <button class="mobile-icon-btn" id="btnResetToP" title="Reset Blueprint View">
-                            <svg viewBox="0 0 24 24"><path d="M12,2C6.48,2,2,6.48,2,12s4.48,10,10,10s10-4.48,10-10S17.52,2,12,2z M13,17h-2v-6h2V17z M13,9h-2V7h2V9z"/></svg>
-                        </button>
+                    </div> <div id="pcOnlySwitches" style="margin-top: 10px; display: none;">
+                        <input type="checkbox" id="chkUseStroke" checked>
+                        <input type="checkbox" id="chkUseFill" checked>
                     </div>
 
                 </div>
-
             </div>
         </div>
 
@@ -784,11 +769,8 @@
     let panX = 0, panY = 0;
     let isPanning = false;
     let startPanX = 0, startPanY = 0;
-    let sourceImageForCrop = null;
 
     function init() {
-        // Run mobile responsive layouts adaptation detection script
-        adjustResponsiveUIIcons();
         generateExplorerGrid();
         setupDropdownOptions();
         setupToolsGrid();
@@ -796,15 +778,7 @@
         setupLineWidthSelector();
         setupMobileTabSystems();
         bindEvents();
-        setupPopStateHistory();
-    }
-
-    // Adapt UI features on runtime detection
-    function adjustResponsiveUIIcons() {
-        if(window.innerWidth <= 991) {
-            document.querySelectorAll('.desktop-text').forEach(el => el.style.display = 'none');
-            document.querySelectorAll('.mobile-icon').forEach(el => el.style.display = 'inline-block');
-        }
+        setupMobileNavigationPopups();
     }
 
     // Generate main page overview cards
@@ -906,6 +880,16 @@
                 item.classList.add('active');
                 const targetId = item.getAttribute('data-target');
                 document.getElementById(targetId).classList.add('active-mobile-tab');
+
+                // Auto Open Panel on tab switch if it was hidden
+                const panel = document.getElementById('toolsPanel');
+                const toggleBtn = document.getElementById('btnTogglePanelMobile');
+                const workspace = document.getElementById('workspaceArea');
+                if(panel.classList.contains('collapsed-mobile')) {
+                    panel.classList.remove('collapsed-mobile');
+                    toggleBtn.classList.remove('panel-collapsed-active');
+                    workspace.style.height = "calc(100vh - 310px)";
+                }
             };
         });
     }
@@ -999,7 +983,6 @@
         };
     }
 
-    // Helper to calculate the intrinsic period of a rule's row and extend it dynamically
     function getTransformWithPeriod(matrix, r, c) {
         const blueprintCols = 6;
         const blueprintRows = 4;
@@ -1027,33 +1010,24 @@
         return rowElements[c % pX] || "n";
     }
 
-    // Synchronize round circle picker wrapper interfaces background colors
-    function syncColorPickersIndicator() {
-        const colors = ['strokeColor', 'fillColor', 'bucketColor', 'bgColor'];
-        colors.forEach(id => {
-            const val = document.getElementById(id).value;
-            const parent = document.getElementById(id).parentNode;
-            if(parent && parent.classList.contains('color-circle-wrapper')) {
-                parent.style.backgroundColor = val;
-            }
-        });
-    }
-
-    // History safe routes back button interception implementation
-    function setupPopStateHistory() {
-        window.addEventListener('popstate', function(e) {
-            if (document.getElementById('editorView').style.display === 'block') {
-                // Prevent browser escape entirely and force native fallback trigger routing
-                closeEditorRoutine();
-            }
-        });
-    }
-
-    function closeEditorRoutine() {
+    function closeEditorAndReturn() {
         currentImageUrl = canvas.toDataURL();
         document.getElementById('editorView').style.display = 'none';
         document.getElementById('mainView').style.display = 'block';
         generateExplorerGrid();
+        history.pushState(null, null, location.href); 
+    }
+
+    function setupMobileNavigationPopups() {
+        // Intercept modern hardware back buttons seamlessly
+        history.pushState(null, null, location.href);
+        window.addEventListener('popstate', function () {
+            if (document.getElementById('editorView').style.display === 'block') {
+                closeEditorAndReturn();
+            } else {
+                history.back();
+            }
+        });
     }
 
     function bindEvents() {
@@ -1149,23 +1123,19 @@
             updateTilesFromCanvas();
         };
 
-        document.getElementById('btnBack').onclick = () => {
-            if(window.history.state === 'editor-active') {
-                window.history.back();
-            } else {
-                closeEditorRoutine();
-            }
-        };
+        document.getElementById('btnBack').onclick = closeEditorAndReturn;
+        document.getElementById('btnBackMobile').onclick = closeEditorAndReturn;
 
-        document.getElementById('layoutSelect').onchange = (e) => {
+        const layoutTriggerChange = (e) => {
             const found = patternsData.find(p => p.id == e.target.value);
             if(found) {
                 activePattern = found;
                 document.getElementById('editPatternTitle').textContent = found.title;
                 document.getElementById('editPatternDesc').textContent = found.desc;
                 
-                // Sync mobile clone selector if change happens on desktop side trigger
+                const masterSel = document.getElementById('layoutSelect');
                 const mobSel = document.getElementById('layoutSelectMobile');
+                if(masterSel && masterSel.value !== e.target.value) masterSel.value = e.target.value;
                 if(mobSel && mobSel.value !== e.target.value) mobSel.value = e.target.value;
 
                 renderMiniPPreview(found);
@@ -1173,21 +1143,21 @@
             }
         };
 
+        document.getElementById('layoutSelect').onchange = layoutTriggerChange;
+
         syncInputs('gridCols', 'gridColsNum', renderTessellation);
         syncInputs('gridRows', 'gridRowsNum', renderTessellation);
         syncInputs('gridSizeInput', 'gridSizeNum', renderTessellation);
         
-        // Setup direct native event listeners to capture round color adjustments loops
-        const colorPickers = ['strokeColor', 'fillColor', 'bucketColor', 'bgColor'];
-        colorPickers.forEach(id => {
-            document.getElementById(id).addEventListener('input', () => {
-                syncColorPickersIndicator();
-                if(id === 'bgColor') {
-                    canvas.style.backgroundColor = document.getElementById('bgColor').value;
-                }
-                renderTessellation();
+        const backgroundColTrigger = (e) => {
+            const currentBg = e.target.value;
+            canvas.style.backgroundColor = currentBg;
+            document.querySelectorAll('.circle-picker').forEach(el => {
+                if(el.id === 'bgColor' && el.value !== currentBg) el.value = currentBg;
             });
-        });
+            renderTessellation();
+        };
+        document.getElementById('bgColor').oninput = backgroundColTrigger;
 
         document.getElementById('btnBucketTool').onclick = () => {
             const buttons = document.querySelectorAll('.tool-btn');
@@ -1196,17 +1166,24 @@
             selectedTool = 'fill';
         };
 
-        // Desktop Toggle Panel Controls Handler
+        // Panel Desktop Slide logic
         const panel = document.getElementById('toolsPanel');
         document.getElementById('panelToggle').onclick = function() {
             panel.classList.toggle('collapsed');
             this.textContent = panel.classList.contains('collapsed') ? "⮪" : "➔";
         };
 
-        // Mobile Toggle Slide Up/Down Control Handler
-        document.getElementById('mobileToggleTools').onclick = function() {
-            panel.classList.toggle('collapsed');
-            this.textContent = panel.classList.contains('collapsed') ? "▲ SHOW TOOLS" : "▼ HIDE TOOLS";
+        // Panel Mobile Flex Slide Down/Up Control
+        const toggleBtnMobile = document.getElementById('btnTogglePanelMobile');
+        const workspaceArea = document.getElementById('workspaceArea');
+        toggleBtnMobile.onclick = function() {
+            panel.classList.toggle('collapsed-mobile');
+            this.classList.toggle('panel-collapsed-active');
+            if(panel.classList.contains('collapsed-mobile')) {
+                workspaceArea.style.height = "calc(100vh - 114px)";
+            } else {
+                workspaceArea.style.height = "calc(100vh - 310px)";
+            }
         };
 
         window.addEventListener('keydown', (e) => { if(e.key === 'Control') isCtrlPressed = true; });
@@ -1250,7 +1227,6 @@
             updateTilesFromCanvas();
         };
 
-        // Preview Arena Pan Mapping Interceptor
         const previewArea = document.getElementById('previewArea');
         previewArea.addEventListener('wheel', (e) => {
             e.preventDefault();
@@ -1276,16 +1252,9 @@
         });
         window.addEventListener('mouseup', () => { isPanning = false; });
 
-        // Mobile Touch Pointer Panning Track Coordinates setup
-        let initialTouchDist = 0;
+        // Mobile Pan Navigation Coordinates setup
         previewArea.addEventListener('touchstart', function(e) {
-            if (e.touches.length === 2) {
-                // Pinched Zoom configuration data layer tracks
-                initialTouchDist = Math.hypot(
-                    e.touches[0].clientX - e.touches[1].clientX,
-                    e.touches[0].clientY - e.touches[1].clientY
-                );
-            } else if (e.touches.length === 1 && (e.target.classList.contains('preview-area') || e.target.id === 'tessellationOutput' || e.target.classList.contains('tile'))) {
+            if (e.target.classList.contains('preview-area') || e.target.id === 'tessellationOutput' || e.target.classList.contains('tile')) {
                 isPanning = true;
                 const touch = e.touches[0];
                 startPanX = touch.clientX - panX;
@@ -1294,54 +1263,30 @@
         }, { passive: true });
 
         previewArea.addEventListener('touchmove', function(e) {
-            if (e.touches.length === 2) {
-                // Zoom Track computing bounds directly bounded inside preview zones wrapper
-                const currentDist = Math.hypot(
-                    e.touches[0].clientX - e.touches[1].clientX,
-                    e.touches[0].clientY - e.touches[1].clientY
-                );
-                const factor = currentDist / initialTouchDist;
-                if(factor > 1) scale *= 1.03;
-                else scale /= 1.03;
-                scale = Math.min(Math.max(0.3, scale), 4);
-                initialTouchDist = currentDist;
-                applyTransform();
-            } else if (isPanning && e.touches.length === 1) {
-                const touch = e.touches[0];
-                panX = touch.clientX - startPanX;
-                panY = touch.clientY - startPanY;
-                applyTransform();
-            }
+            if (!isPanning) return;
+            const touch = e.touches[0];
+            let targetX = touch.clientX - startPanX;
+            let targetY = touch.clientY - startPanY;
+            
+            // Lock limits boundary conditions to prevent dragging out of screen view
+            const boundLimit = window.innerWidth * 1.5;
+            panX = Math.min(Math.max(-boundLimit, targetX), boundLimit);
+            panY = Math.min(Math.max(-boundLimit, targetY), boundLimit);
+            applyTransform();
         }, { passive: true });
 
         previewArea.addEventListener('touchend', function() { isPanning = false; });
 
-        document.getElementById('btnResetZoom').onclick = resetZoomRoutine;
-        document.getElementById('mobileResetZoomBtn').onclick = resetZoomRoutine;
+        const resetZoomFunction = () => { scale = 1; panX = 0; panY = 0; applyTransform(); };
+        document.getElementById('btnResetZoom').onclick = resetZoomFunction;
+        document.getElementById('btnResetZoomMobile').onclick = resetZoomFunction;
 
         document.getElementById('btnSaveImage').onclick = saveOutputAsImage;
-    }
-
-    function resetZoomRoutine() {
-        scale = 1; panX = 0; panY = 0; applyTransform();
+        document.getElementById('btnSaveMobile').onclick = saveOutputAsImage;
     }
 
     function applyTransform() {
         const output = document.getElementById('tessellationOutput');
-        
-        // Lock Boundaries limits to prevent layout disappearing from preview pane context view box
-        const cols = parseInt(document.getElementById('gridCols').value) || 8;
-        const rows = parseInt(document.getElementById('gridRows').value) || 6;
-        const tileSize = parseInt(document.getElementById('gridSizeInput').value) || 80;
-        const boundaryWidth = cols * tileSize * scale;
-        const boundaryHeight = rows * tileSize * scale;
-        
-        const limitX = window.innerWidth / 2;
-        const limitY = window.innerHeight / 2;
-        
-        panX = Math.min(Math.max(panX, -boundaryWidth + 40), limitX);
-        panY = Math.min(Math.max(panY, -boundaryHeight + 40), limitY);
-
         output.style.transform = `translate(${panX}px, ${panY}px) scale(${scale})`;
     }
 
@@ -1355,9 +1300,6 @@
     }
 
     function openEditor(pattern) {
-        // Safe navigation routing tracking context parameters
-        window.history.pushState('editor-active', null, '');
-
         activePattern = pattern;
         document.getElementById('mainView').style.display = 'none';
         document.getElementById('editorView').style.display = 'block';
@@ -1375,7 +1317,7 @@
         const currentBg = document.getElementById('bgColor').value;
         canvas.style.backgroundColor = currentBg;
 
-        // Mobile block allocation sizing tuning optimizations rules parameters
+        // Auto scaling optimizing grid size down to look perfect on small screens
         if (window.innerWidth <= 991) {
             document.getElementById('gridSizeInput').value = 40;
             document.getElementById('gridSizeNum').value = 40;
@@ -1389,7 +1331,6 @@
                 drawingHistory = [];
                 historyStep = -1;
                 saveCanvasState();
-                syncColorPickersIndicator();
                 renderTessellation();
             };
             img.src = currentImageUrl;
@@ -1397,7 +1338,6 @@
             drawingHistory = [];
             historyStep = -1;
             setupCanvasDefault();
-            syncColorPickersIndicator();
             renderTessellation();
         }
     }
@@ -1460,7 +1400,7 @@
         ctx.lineCap = "round";
         ctx.lineJoin = "round";
 
-        if (selectedTool === 'brush' && document.getElementById('chkUseStroke').checked) {
+        if (selectedTool === 'brush') {
             ctx.beginPath();
             ctx.moveTo(startX, startY);
         }
@@ -1471,15 +1411,10 @@
         const rect = canvas.getBoundingClientRect();
         const currentX = (e.clientX - rect.left) * (canvas.width / rect.width);
         const currentY = (e.clientY - rect.top) * (canvas.height / rect.height);
-        
-        const useFill = document.getElementById('chkUseFill').checked;
-        const useStroke = document.getElementById('chkUseStroke').checked;
 
         if (selectedTool === 'brush') {
-            if (useStroke) {
-                ctx.lineTo(currentX, currentY);
-                ctx.stroke();
-            }
+            ctx.lineTo(currentX, currentY);
+            ctx.stroke();
         } else if (selectedTool !== 'fill') {
             ctx.putImageData(canvasSnapshot, 0, 0);
             ctx.beginPath();
@@ -1494,27 +1429,25 @@
             }
 
             if (selectedTool === 'line') {
-                if (useStroke) {
-                    ctx.moveTo(startX, startY);
-                    ctx.lineTo(currentX, currentY);
-                    ctx.stroke();
-                }
+                ctx.moveTo(startX, startY);
+                ctx.lineTo(currentX, currentY);
+                ctx.stroke();
             } else if (selectedTool === 'rect') {
                 ctx.rect(startX, startY, width, height);
-                if (useFill) ctx.fill();
-                if (useStroke) ctx.stroke();
+                ctx.fill();
+                ctx.stroke();
             } else if (selectedTool === 'circle') {
                 const radius = Math.sqrt(width * width + height * height);
                 ctx.arc(startX, startY, radius, 0, 2 * Math.PI);
-                if (useFill) ctx.fill();
-                if (useStroke) ctx.stroke();
+                ctx.fill();
+                ctx.stroke();
             } else if (selectedTool === 'triangle') {
                 ctx.moveTo(startX + width / 2, startY);
                 ctx.lineTo(startX + width, startY + height);
                 ctx.lineTo(startX, startY + height);
                 ctx.closePath();
-                if (useFill) ctx.fill();
-                if (useStroke) ctx.stroke();
+                ctx.fill();
+                ctx.stroke();
             }
         }
         updateTilesFromCanvas();
