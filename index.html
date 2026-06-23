@@ -164,7 +164,6 @@
             cursor: grab;
             user-select: none;
             padding: 50px;
-            position: relative;
         }
         .preview-area:active { cursor: grabbing; }
         .tessellation-output {
@@ -354,133 +353,283 @@
         .crop-preview-container { max-height: 400px; margin: 15px 0; background: #eee; position: relative; border-radius: 6px; overflow: hidden; }
         #cropImageTag { max-width: 100%; display: block; }
 
-        /* Mobile Layout Elements (Hidden on Desktop) */
-        .mobile-nav-bar, .mobile-top-bar, #mobileResetZoom, #mobileTogglePanel { display: none; }
+        /* Mobile Tab Menu Elements (Hidden on Desktop) */
+        .mobile-nav-bar { display: none; }
+        .mobile-top-bar { display: none; }
+        .mobile-floating-zoom { display: none; }
+        .mobile-toggle-panel-btn { display: none; }
 
         /* ==========================================================================
            --- MOBILE & TABLET RESPONSIVE APPLICATION INTERFACE (max-width: 991px) ---
            ========================================================================== */
         @media (max-width: 991px) {
-            body { overflow-y: auto; -webkit-overflow-scrolling: touch; }
-            #mainView { padding: 12px; }
+            body { overflow-y: auto !important; position: relative !important; width: 100%; height: auto; }
+            #mainView { padding: 12px; -webkit-overflow-scrolling: touch; }
             .patterns-container { grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 16px; }
 
-            /* Fullscreen App Management */
-            #editorView { overflow: hidden; position: fixed; height: 100vh; height: -webkit-fill-available; }
-            .editor-container { flex-direction: column; height: 100%; }
+            /* Editor View Control */
+            #editorView { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; overflow: hidden; background: #ffffff; }
+            .editor-container { flex-direction: column; height: 100%; width: 100%; position: relative; }
+            
+            /* Workspace Panel Layout */
+            .workspace { height: calc(100vh - 70px); flex: 1; width: 100%; position: relative; }
+            
+            /* Mobile Top Navigation Custom Style */
+            .workspace-header {
+                display: flex !important;
+                padding: 10px;
+                background: #ffffff;
+                border-bottom: 1px solid #e2e8f0;
+                align-items: center;
+                justify-content: space-between;
+                height: 56px;
+                z-index: 1010;
+            }
+            .workspace-header span { display: none !important; }
+            #btnResetZoom { display: none !important; }
 
-            /* Top Bar Mobile UI */
-            .workspace-header { display: none !important; }
+            /* Mobile Outline Header Buttons Style */
+            .workspace-header .btn {
+                background: transparent !important;
+                border: 1px solid #64748b !important;
+                color: #475569 !important;
+                padding: 0 !important;
+                width: 36px;
+                height: 36px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                border-radius: 8px;
+                font-size: 0; 
+            }
+            #btnBack::before {
+                content: "";
+                width: 18px;
+                height: 18px;
+                background-color: #475569;
+                -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M20,11V13H8L13.5,18.5L12.08,19.92L4.16,12L12.08,4.08L13.5,5.5L8,11H20Z'/%3E%3C/svg%3E") no-repeat center;
+                mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M20,11V13H8L13.5,18.5L12.08,19.92L4.16,12L12.08,4.08L13.5,5.5L8,11H20Z'/%3E%3C/svg%3E") no-repeat center;
+            }
+            #btnSaveImage::before {
+                content: "";
+                width: 18px;
+                height: 18px;
+                background-color: #475569;
+                -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M15,9H5V5H15M12,19A3,3 0 0,1 9,16A3,3 0 0,1 12,13A3,3 0 0,1 15,16A3,3 0 0,1 12,19M17,3H5C3.89,3 3,3.9 3,5V19A2,2 0 0,0 5,21H19A2,2 0 0,0 21,19V7L17,3Z'/%3E%3C/svg%3E") no-repeat center;
+                mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M15,9H5V5H15M12,19A3,3 0 0,1 9,16A3,3 0 0,1 12,13A3,3 0 0,1 15,16A3,3 0 0,1 12,19M17,3H5C3.89,3 3,3.9 3,5V19A2,2 0 0,0 5,21H19A2,2 0 0,0 21,19V7L17,3Z'/%3E%3C/svg%3E") no-repeat center;
+            }
+
+            /* Custom Minimal Mobile Rules Dropdown */
             .mobile-top-bar {
-                display: flex !important; align-items: center; justify-content: space-between;
-                background: #ffffff; padding: 10px 14px; border-bottom: 1px solid #e2e8f0; height: 56px; z-index: 1010;
+                display: block !important;
+                flex: 1;
+                margin: 0 12px;
             }
-            .mobile-top-bar .icon-btn {
-                background: transparent; border: 1px solid #cbd5e1; border-radius: 8px;
-                width: 38px; height: 38px; display: flex; align-items: center; justify-content: center; cursor: pointer;
-            }
-            .mobile-top-bar .icon-btn svg { width: 20px; height: 20px; fill: #323c4b; }
-            .mobile-top-select-container { flex: 1; margin: 0 10px; max-width: 60%; }
-            .mobile-top-select-container select {
-                width: 100%; height: 38px; border: 1px solid #cbd5e1; border-radius: 8px; padding: 0 8px; font-size: 0.85rem; color: #1e293b;
-            }
-
-            /* Preview Workspace for Mobile */
-            .workspace { height: calc(100vh - 56px - 70px); position: relative; width: 100%; flex: 1; }
-            .preview-area { padding: 15px; overflow: hidden; touch-action: none; display: flex; align-items: center; justify-content: center; }
-            
-            /* Floating controls on Preview Panel */
-            #mobileResetZoom {
-                display: flex !important; position: absolute; top: 12px; right: 12px; z-index: 1005;
-                background: #ffffff; border: 1px solid #cbd5e1; border-radius: 50%; width: 36px; height: 36px;
-                align-items: center; justify-content: center; box-shadow: 0 2px 5px rgba(0,0,0,0.1); cursor: pointer;
-            }
-            #mobileResetZoom svg { width: 18px; height: 18px; fill: #475569; }
-
-            #mobileTogglePanel {
-                display: flex !important; position: absolute; bottom: 12px; right: 12px; z-index: 1005;
-                background: var(--primary-color); border: none; border-radius: 20px; padding: 0 14px; height: 36px;
-                align-items: center; justify-content: center; color: white; font-size: 0.8rem; font-weight: 500;
-                box-shadow: 0 2px 8px rgba(0,0,0,0.2); cursor: pointer; gap: 4px; transition: transform 0.2s;
+            .mobile-top-bar select {
+                width: 100%;
+                height: 36px;
+                padding: 0 8px;
+                font-size: 0.85rem !important;
+                border-radius: 6px;
+                border: 1px solid #cbd5e1;
+                background: #f8fafc;
+                color: #1e293b;
             }
 
-            /* Bottom Tools Drawer */
+            /* Isolated Touch Preview Panel */
+            .preview-area {
+                position: absolute;
+                top: 56px;
+                left: 0;
+                width: 100%;
+                height: calc(100% - 56px);
+                padding: 0;
+                margin: 0;
+                overflow: hidden;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                z-index: 5;
+                background: #f1f5f9;
+            }
+            .tessellation-output {
+                margin: auto;
+            }
+
+            /* Floating Outline Reset Zoom Icon */
+            .mobile-floating-zoom {
+                display: flex !important;
+                position: absolute;
+                top: 68px;
+                right: 12px;
+                width: 36px;
+                height: 36px;
+                background: rgba(255, 255, 255, 0.9);
+                border: 1px solid #64748b;
+                border-radius: 8px;
+                align-items: center;
+                justify-content: center;
+                z-index: 40;
+                cursor: pointer;
+                box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+            }
+            .mobile-floating-zoom svg { width: 18px; height: 18px; fill: #475569; }
+
+            /* Floating Slide Up/Down Control Handle */
+            .mobile-toggle-panel-btn {
+                display: flex !important;
+                position: absolute;
+                bottom: 78px;
+                right: 12px;
+                width: 40px;
+                height: 40px;
+                background: #ffffff;
+                border: 1px solid #cbd5e1;
+                border-radius: 50%;
+                align-items: center;
+                justify-content: center;
+                z-index: 1050;
+                box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+                transition: transform 0.3s ease;
+            }
+            .mobile-toggle-panel-btn svg { width: 20px; height: 20px; fill: #323c4b; transition: transform 0.3s; }
+            .mobile-toggle-panel-btn.collapsed-state svg { transform: rotate(180deg); }
+
+            /* App Docked Bottom Tools Panel Layout */
             .tools-panel {
-                position: fixed; bottom: 70px; left: 0; width: 100% !important; min-width: 100% !important;
-                background: #ffffff; border-left: none; border-top: 1px solid #e2e8f0; z-index: 1008;
-                box-shadow: 0 -4px 12px rgba(0,0,0,0.06); height: auto !important; max-height: calc(100vh - 150px);
-                transform: translateY(0); transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+                position: absolute !important;
+                bottom: 70px;
+                left: 0;
+                width: 100% !important;
+                min-width: 100% !important;
+                height: auto !important;
+                max-height: calc(100vh - 140px);
+                background: #ffffff;
+                border-left: none;
+                border-top: 1px solid #e2e8f0;
+                z-index: 1000;
+                transform: translateY(0);
+                transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+                box-shadow: 0 -4px 12px rgba(0,0,0,0.05);
             }
-            .tools-panel.mobile-collapsed { transform: translateY(calc(100% + 70px)); }
+            .tools-panel.collapsed {
+                transform: translateY(calc(100% + 70px)) !important;
+                display: flex !important;
+            }
             .panel-toggle { display: none !important; }
-            .panel-content { width: 100%; padding: 16px; overflow-y: auto; max-height: 320px; }
+            .panel-content { width: 100%; padding: 12px; overflow-y: auto; height: auto; max-height: 280px; }
 
-            /* Hide Desktop Elements on Mobile Content */
+            /* Module Screens Toggling System */
             #editPatternTitle, #editPatternDesc, .mini-preview-box, .tools-panel hr, .tool-group-select { display: none !important; }
-
-            /* Tab Control switching rules */
-            .tool-group { border-bottom: none; padding-bottom: 0; margin-bottom: 0; display: none; }
+            .tool-group { display: none; margin: 0; padding: 0; border: 0; }
             .tool-group.active-mobile-tab { display: block !important; }
-            .tool-group h4 { display: none; }
-            .tool-row { gap: 10px; margin-bottom: 12px; }
-            .tool-row label { width: 85px; font-size: 0.8rem; }
+            .tool-group h4 { display: none !important; }
 
-            /* Compact Studio Studio UI Layout */
-            .mobile-studio-layout {
-                display: grid; grid-template-columns: auto 1fr; gap: 12px; align-items: start; margin-bottom: 10px;
+            /* Grid Expansion Setting Module Styles */
+            #tabGridExpansion .tool-row { gap: 8px; margin-bottom: 8px; }
+            #tabGridExpansion .tool-row label { width: 85px; font-size: 0.8rem; }
+            #tabGridExpansion input[type="range"] { height: 28px; }
+            #tabGridExpansion .num-input { width: 55px; height: 30px; font-size: 0.85rem !important; }
+
+            /* Tile Studio Advanced Compact Grid Layout */
+            #tabTileStudio {
+                display: none;
+                grid-template-columns: 60px 1fr 75px;
+                grid-template-rows: auto auto;
+                gap: 4px;
+                align-items: center;
             }
-            .mobile-studio-left { display: flex; flex-direction: column; gap: 8px; justify-content: center; width: 100px; }
-            .mobile-studio-right { display: flex; flex-direction: column; gap: 10px; }
+            #tabTileStudio.active-mobile-tab { display: grid !important; }
 
-            /* Reposition components safely */
-            .canvas-container { width: 140px; height: 140px; margin: 0 auto; grid-column: 1 / span 2; justify-self: center; }
-            .mobile-studio-layout .canvas-container { grid-column: initial; justify-self: initial; margin: 0; }
+            /* Column 1: Grid Outline Icons 3*2 */
+            .mobile-tools-wrapper {
+                grid-column: 1;
+                grid-row: 1;
+                display: grid !important;
+                grid-template-columns: repeat(2, 28px);
+                grid-template-rows: repeat(3, 28px);
+                gap: 4px;
+                justify-content: center;
+            }
+            .tool-btn { height: 28px !important; width: 28px !important; padding: 0; border: 1px solid #e2e8f0; border-radius: 4px; }
+            .tool-btn svg { width: 14px; height: 14px; }
+            .tool-btn.active { border-color: var(--primary-color); background: #f1f5f9; }
+
+            /* Column 2: Large Center Canvas */
+            .canvas-container {
+                grid-column: 2;
+                grid-row: 1;
+                width: 140px !important;
+                height: 140px !important;
+                margin: 0 auto !important;
+                border: 1px dashed var(--primary-color);
+            }
+
+            /* Column 3: Circle Color Pickers Row Stacked */
+            .mobile-colors-wrapper {
+                grid-column: 3;
+                grid-row: 1;
+                display: flex !important;
+                flex-direction: column;
+                gap: 6px;
+                font-size: 0.7rem;
+                color: #64748b;
+                justify-content: center;
+            }
+            .mobile-color-item { display: flex; align-items: center; gap: 4px; }
+            .compact-color-picker {
+                width: 20px !important; height: 20px !important; border-radius: 50% !important;
+                border: 1px solid #cbd5e1; overflow: hidden; padding: 0; -webkit-appearance: none; background: none;
+                flex: none !important;
+            }
+            .compact-color-picker::-webkit-slider-runnable-track { background: none; }
+            .compact-color-picker::-webkit-color-swatch-wrapper { padding: 0; }
+            .compact-color-picker::-webkit-color-swatch { border: none; border-radius: 50%; }
+
+            /* Row 2 (Under Icons): Horizontal Line Sizes */
+            .mobile-sizes-wrapper {
+                grid-column: 1;
+                grid-row: 2;
+                display: flex !important;
+                gap: 4px;
+                justify-content: center;
+                margin-top: 4px;
+            }
+            .dot-size-container {
+                display: flex !important; background: transparent; padding: 0; border: none; height: auto; gap: 2px;
+            }
+            .dot-option { width: 15px; height: 20px; border: 1px solid #e2e8f0; border-radius: 3px; }
+            .dot-option.active { background: #f1f5f9; border-color: var(--primary-color); }
+
+            /* Row 2 (Under Canvas): Action Buttons Line */
+            .mobile-actions-wrapper {
+                grid-column: 2 / span 2;
+                grid-row: 2;
+                display: flex !important;
+                gap: 4px;
+                justify-content: center;
+                margin-top: 4px;
+            }
+            .mobile-actions-wrapper .btn {
+                height: 24px; padding: 0 4px; font-size: 0.75rem !important; border-radius: 4px;
+                background: transparent; border: 1px solid #cbd5e1; display: flex; align-items: center; justify-content: center;
+            }
             
-            .mobile-canvas-actions {
-                display: flex; gap: 6px; justify-content: center; width: 100%; margin-top: 4px; margin-bottom: 12px;
-            }
-            .mobile-canvas-actions .icon-btn {
-                background: #ffffff; border: 1px solid #cbd5e1; border-radius: 6px; flex: 1; height: 32px;
-                display: flex; align-items: center; justify-content: center; cursor: pointer;
-            }
-            .mobile-canvas-actions .icon-btn svg { width: 16px; height: 16px; fill: #475569; }
+            /* Hidden unneeded asset lines on mobile view */
+            #tabTileStudio > .tool-row, #tabTileStudio > style, #tabTileStudio > div:not([class]) { display: none !important; }
 
-            /* Matrix Outline Icons (3x2 side layout) */
-            .tools-row-grid {
-                display: grid; grid-template-columns: repeat(2, 1fr); grid-template-rows: repeat(3, 1fr);
-                gap: 6px; padding: 0; background: transparent; border: none; margin-bottom: 0; width: 100%;
-            }
-            .tool-btn { height: 34px; border: 1px solid #e2e8f0; background: #f8fafc; }
-
-            /* Line Size Icons Horizontal underneath left tools */
-            .mobile-line-sizes { display: flex; gap: 4px; width: 100%; }
-            .mobile-line-sizes .dot-option {
-                flex: 1; height: 26px; border: 1px solid #e2e8f0; background: #f8fafc; display: flex; align-items: center; justify-content: center; border-radius: 4px;
-            }
-            .mobile-line-sizes .dot-option.active { background: #ffffff; border-color: #cbd5e1; box-shadow: 0 1px 2px rgba(0,0,0,0.05); }
-
-            /* Color Picker Rows (Circle pickers style + right side align) */
-            .mobile-color-row { display: flex; align-items: center; justify-content: space-between; font-size: 0.8rem; color: #475569; }
-            .mobile-color-picker-wrapper { display: flex; align-items: center; gap: 6px; }
-            .circle-color-picker {
-                -webkit-appearance: none; border: 2px solid #ffffff; width: 28px; height: 28px; border-radius: 50%;
-                cursor: pointer; box-shadow: 0 0 0 1px #cbd5e1; padding: 0; background: none; overflow: hidden;
-            }
-            .circle-color-picker::-webkit-color-swatch-wrapper { padding: 0; }
-            .circle-color-picker::-webkit-color-swatch { border: none; border-radius: 50%; }
-
-            /* App Safe Area Bottom Bar Fixed Navigation */
+            /* Bottom Fixed Navigation Bar */
             .mobile-nav-bar {
                 display: flex; position: fixed; bottom: 0; left: 0; width: 100vw; height: 70px;
-                background: #ffffff; border-top: 1px solid #e2e8f0; z-index: 1009;
-                box-shadow: 0 -2px 10px rgba(0,0,0,0.03); padding-bottom: env(safe-area-inset-bottom);
+                background: #f8fafc; border-top: 1px solid #e2e8f0; z-index: 1020;
+                box-shadow: 0 -2px 8px rgba(0,0,0,0.03); padding-bottom: env(safe-area-inset-bottom);
             }
             .nav-tab-item {
                 flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center;
-                background: transparent; border: none; cursor: pointer; color: #64748b; font-size: 0.75rem; font-weight: 500; gap: 4px;
+                background: transparent; border: none; cursor: pointer; color: #64748b; font-size: 0.8rem; font-weight: 500; gap: 4px;
             }
-            .nav-tab-item svg { width: 20px; height: 20px; fill: #64748b; }
-            .nav-tab-item.active { color: var(--primary-color); font-weight: 600; background: #f8fafc; }
+            .nav-tab-item svg { width: 20px; height: 20px; fill: #64748b; transition: fill 0.15s; }
+            .nav-tab-item.active { color: var(--primary-color); font-weight: 600; background: #ffffff; }
             .nav-tab-item.active svg { fill: var(--primary-color); }
         }
     </style>
@@ -508,36 +657,27 @@
 <div id="editorView">
     <div class="editor-container">
         
-        <div class="mobile-top-bar">
-            <button class="icon-btn" id="btnMobileBack" title="Back to Main">
-                <svg viewBox="0 0 24 24"><path d="M20,11H7.83l5.59-5.59L12,4l-8,8l8,8l1.41-1.41L7.83,13H20V11Z"/></svg>
-            </button>
-            <div class="mobile-top-select-container">
-                <select id="layoutSelectMobile"></select>
+        <div class="mobile-top-bar" id="mobileTopBar">
             </div>
-            <button class="icon-btn" id="btnMobileSave" title="Save Pattern Image">
-                <svg viewBox="0 0 24 24"><path d="M5,20H19V18H5M19,9H15V3H9V9H5L12,16L19,9Z"/></svg>
-            </button>
-        </div>
 
         <div class="workspace">
             <div class="workspace-header">
                 <button class="btn" id="btnBack">← Back to Main</button>
-                <div style="display:flex; gap:10px; align-items: center;">
+                <div style="display:flex; gap:10px; align-items: center; flex: 1; justify-content: center;">
                     <span style="font-size: 0.85rem; color:#acb5c3;">Zoom: Scroll Wheel | Pan: Click & Drag the empty space</span>
-                    <button class="btn" id="btnResetZoom">Reset Zoom</button>
                 </div>
+                <button class="btn" id="btnResetZoom">Reset Zoom</button>
                 <button class="btn btn-primary" id="btnSaveImage">Save Pattern Image</button>
             </div>
             
-            <button id="mobileResetZoom" title="Reset Zoom">
-                <svg viewBox="0 0 24 24"><path d="M10.59,12L4.54,5.96L5.96,4.54L12,10.59L18.04,4.54L19.46,5.96L13.41,12L19.46,18.04L18.04,19.46L12,13.41L5.96,19.46L4.54,18.04L10.59,12Z"/></svg>
-            </button>
+            <div class="mobile-floating-zoom" id="mobileFloatingZoom" title="Reset Zoom">
+                <svg viewBox="0 0 24 24"><path d="M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2M12,4A8,8 0 0,1 20,12A8,8 0 0,1 12,20A8,8 0 0,1 4,12A8,8 0 0,1 12,4M11,7V11H7V13H11V17H13V13H17V11H13V7H11Z"/></svg>
+            </div>
 
-            <button id="mobileTogglePanel">
-                <span>Hide Tools</span>
-            </button>
-
+            <div class="mobile-toggle-panel-btn" id="mobileTogglePanelBtn">
+                <svg viewBox="0 0 24 24"><path d="M7.41,8.58L12,13.17L16.59,8.58L18,10L12,16L6,10L7.41,8.58Z"/></svg>
+            </div>
+            
             <div class="preview-area" id="previewArea">
                 <div class="tessellation-output" id="tessellationOutput"></div>
             </div>
@@ -566,17 +706,17 @@
 
                 <div class="tool-group active-mobile-tab" id="tabGridExpansion">
                     <h4>Grid Expansion Setting</h4>
-                    <div class="tool-row" style="margin-bottom: 4px;">
+                    <div class="tool-row">
                         <label>Grid Columns</label>
                         <input type="range" id="gridCols" value="8" min="1" max="30">
                         <input type="number" id="gridColsNum" class="num-input" value="8" min="1" max="30">
                     </div>
-                    <div class="tool-row" style="margin-bottom: 4px;">
+                    <div class="tool-row">
                         <label>Grid Rows</label>
                         <input type="range" id="gridRows" value="6" min="1" max="30">
                         <input type="number" id="gridRowsNum" class="num-input" value="6" min="1" max="30">
                     </div>
-                    <div class="tool-row" style="margin-bottom: 4px;">
+                    <div class="tool-row">
                         <label>Block Size (px)</label>
                         <input type="range" id="gridSizeInput" value="80" min="30" max="200">
                         <input type="number" id="gridSizeNum" class="num-input" value="80" min="30" max="200">
@@ -585,92 +725,96 @@
 
                 <div class="tool-group" id="tabTileStudio">
                     <h4>Tile Studio</h4>
-                    <div class="tool-row desktop-upload-row">
+                    <div class="tool-row">
                         <input type="file" id="tileImageUpload" accept="image/*" style="font-size: 0.8rem; width:100%;">
                     </div>
                     
-                    <div class="mobile-studio-layout">
-                        
-                        <div class="mobile-studio-left">
-                            <div class="tools-row-grid" id="toolsGrid">
-                                <button class="tool-btn active" data-tool="brush" title="Free Brush">
-                                    <svg viewBox="0 0 24 24"><path d="M20.71,5.63L18.37,3.29C18,2.9 17.35,2.9 16.96,3.29L15.12,5.12L18.88,8.88L20.71,7.04C21.1,6.65 21.1,6 20.71,5.63M3,17.25V21H6.75L17.81,9.93L14.07,6.19L3,17.25Z"/></svg>
-                                </button>
-                                <button class="tool-btn" data-tool="line" title="Straight Line">
-                                    <svg viewBox="0 0 24 24"><path d="M15,3V7.59L7.59,15H3V21H9V16.41L16.41,9H21V3M17,5H19V7H17M5,17H7V19H5"/></svg>
-                                </button>
-                                <button class="tool-btn" data-tool="rect" title="Rectangle">
-                                    <svg viewBox="0 0 24 24"><path d="M4,6H20V18H4V6M2,4V20H22V4H2Z"/></svg>
-                                </button>
-                                <button class="tool-btn" data-tool="circle" title="Circle">
-                                    <svg viewBox="0 0 24 24"><path d="M12,20A8,8 0 0,1 4,12A8,8 0 0,1 12,4A8,8 0 0,1 20,12A8,8 0 0,1 12,20M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2Z"/></svg>
-                                </button>
-                                <button class="tool-btn" data-tool="triangle" title="Triangle">
-                                    <svg viewBox="0 0 24 24"><path d="M1,21H23L12,2L1,21M12,6L19.8,19H4.2L12,6Z"/></svg>
-                                </button>
-                                <button class="tool-btn" id="btnBucketTool" title="Paint Bucket">
-                                    <svg viewBox="0 0 24 24"><path d="M19,11.5C19,12.33 18.33,13 17.5,13C16.67,13 16,12.33 16,11.5C16,10.67 17.5,8.5 17.5,8.5C17.5,8.5 19,10.67 19,11.5M10.74,13.84L11.8,14.9L4.9,21.8L3.84,20.74L10.74,13.84M19.07,3.5C18.68,3.11 18.05,3.11 17.66,3.5L16.24,4.92L19.07,7.76L20.5,6.34C20.89,5.95 20.89,5.32 20.5,4.93L19.07,3.5M14.83,6.34L12,9.17L14.83,12L17.66,9.17L14.83,6.34M10.59,10.59L6.34,14.83L9.17,17.66L13.41,13.41L10.59,10.59Z"/></svg>
-                                </button>
-                            </div>
-                            
-                            <div class="mobile-line-sizes" id="dotSizeContainer">
-                                <div class="dot-option" data-value="2" title="Thin (2px)"><div class="dot-shape" style="width:3px; height:3px;"></div></div>
-                                <div class="dot-option active" data-value="5" title="Medium (5px)"><div class="dot-shape" style="width:6px; height:6px;"></div></div>
-                                <div class="dot-option" data-value="10" title="Thick (10px)"><div class="dot-shape" style="width:10px; height:10px;"></div></div>
-                                <div class="dot-option" data-value="18" title="Extra Thick (18px)"><div class="dot-shape" style="width:14px; height:14px;"></div></div>
-                            </div>
+                    <div class="mobile-tools-wrapper" id="mobileToolsWrapper">
                         </div>
 
-                        <div class="canvas-container">
-                            <canvas id="tileCanvas" width="200" height="200"></canvas>
-                        </div>
-
-                        <div class="mobile-studio-right">
-                            <div class="mobile-color-row">
-                                <span>Stroke Line</span>
-                                <div class="mobile-color-picker-wrapper">
-                                    <input type="checkbox" id="chkUseStroke" checked>
-                                    <input type="color" id="strokeColor" class="circle-color-picker" value="#1e293b">
-                                </div>
-                            </div>
-                            <div class="mobile-color-row">
-                                <span>Inner Fill</span>
-                                <div class="mobile-color-picker-wrapper">
-                                    <input type="checkbox" id="chkUseFill" checked>
-                                    <input type="color" id="fillColor" class="circle-color-picker" value="#7AA1E0">
-                                </div>
-                            </div>
-                            <div class="mobile-color-row">
-                                <span>Bucket Color</span>
-                                <div class="mobile-color-picker-wrapper">
-                                    <input type="color" id="bucketColor" class="circle-color-picker" value="#6D79AB">
-                                </div>
-                            </div>
-                            <div class="mobile-color-row">
-                                <span>Background</span>
-                                <div class="mobile-color-picker-wrapper">
-                                    <input type="color" id="bgColor" class="circle-color-picker" value="#ffffff">
-                                </div>
-                            </div>
-                        </div>
-
+                    <div class="canvas-container">
+                        <canvas id="tileCanvas" width="200" height="200"></canvas>
                     </div>
 
-                    <div class="mobile-canvas-actions">
-                        <button class="icon-btn" id="btnUndo" title="Undo">
-                            <svg viewBox="0 0 24 24"><path d="M12.5,8C9.85,8 7.45,9 5.6,10.6L2,7V16H11L7.38,12.38C8.77,11.22 10.54,10.5 12.5,10.5C16.04,10.5 19.05,12.81 20.1,16L22.47,15.22C21.08,11.03 17.13,8 12.5,8Z"/></svg>
+                    <div class="mobile-colors-wrapper">
+                        <div class="mobile-color-item"><input type="color" id="strokeColor" class="compact-color-picker" value="#1e293b"><span>Stroke</span></div>
+                        <div class="mobile-color-item"><input type="color" id="fillColor" class="compact-color-picker" value="#7AA1E0"><span>Fill</span></div>
+                        <div class="mobile-color-item"><input type="color" id="bucketColor" class="compact-color-picker" value="#6D79AB"><span>Bucket</span></div>
+                        <div class="mobile-color-item"><input type="color" id="bgColor" class="compact-color-picker" value="#ffffff"><span>BG</span></div>
+                    </div>
+
+                    <div class="mobile-sizes-wrapper" id="mobileSizesWrapper">
+                        </div>
+
+                    <div class="mobile-actions-wrapper" id="mobileActionsWrapper">
+                        </div>
+
+                    <div class="tool-row" style="justify-content: center; gap:5px; margin-bottom: 6px;" id="originalActionsRow">
+                        <button class="btn" id="btnUndo" style="font-size:0.8rem; padding:4px 8px;">Undo</button>
+                        <button class="btn" id="btnRedo" style="font-size:0.8rem; padding:4px 8px;">Redo</button>
+                        <button class="btn" id="btnClearCanvas" style="font-size:0.8rem; padding:4px 8px;">Clear</button>
+                        <button class="btn" id="btnResetToP" style="font-size:0.8rem; padding:4px 8px;">Reset to P</button>
+                    </div>
+
+                    <div style="margin-bottom: 6px;" id="lblDrawingVectors"><label style="font-size: 0.85rem; color: #64748b;">Drawing Vectors</label></div>
+                    <div class="tools-row-grid" id="toolsGrid">
+                        <button class="tool-btn active" data-tool="brush" title="Free Brush">
+                            <svg viewBox="0 0 24 24"><path d="M20.71,5.63L18.37,3.29C18,2.9 17.35,2.9 16.96,3.29L15.12,5.12L18.88,8.88L20.71,7.04C21.1,6.65 21.1,6 20.71,5.63M3,17.25V21H6.75L17.81,9.93L14.07,6.19L3,17.25Z"/></svg>
                         </button>
-                        <button class="icon-btn" id="btnRedo" title="Redo">
-                            <svg viewBox="0 0 24 24"><path d="M18.4,10.6C16.55,9 14.15,8 11.5,8C6.87,8 2.92,11.03 1.53,15.22L3.9,16C4.95,12.81 7.96,10.5 11.5,10.5C13.46,10.5 15.23,11.22 16.62,12.38L13,16H22V7L18.4,10.6Z"/></svg>
+                        <button class="tool-btn" data-tool="line" title="Straight Line">
+                            <svg viewBox="0 0 24 24"><path d="M15,3V7.59L7.59,15H3V21H9V16.41L16.41,9H21V3M17,5H19V7H17M5,17H7V19H5"/></svg>
                         </button>
-                        <button class="icon-btn" id="btnClearCanvas" title="Clear Canvas">
-                            <svg viewBox="0 0 24 24"><path d="M19,4H15.5L14.5,3H9.5L8.5,4H5V6H19M6,19A2,2 0 0,0 8,21H16A2,2 0 0,0 18,19V7H6V19Z"/></svg>
+                        <button class="tool-btn" data-tool="rect" title="Rectangle">
+                            <svg viewBox="0 0 24 24"><path d="M4,6H20V18H4V6M2,4V20H22V4H2Z"/></svg>
                         </button>
-                        <button class="icon-btn" id="btnResetToP" title="Reset Blueprint P">
-                            <svg viewBox="0 0 24 24"><path d="M12,2A10,10 0 1,0 22,12A10,10 0 0,0 12,2ZM12,18A6,6 0 1,1 18,12A6,6 0 0,1 12,18Z"/></svg>
+                        <button class="tool-btn" data-tool="circle" title="Circle">
+                            <svg viewBox="0 0 24 24"><path d="M12,20A8,8 0 0,1 4,12A8,8 0 0,1 12,4A8,8 0 0,1 20,12A8,8 0 0,1 12,20M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2Z"/></svg>
+                        </button>
+                        <button class="tool-btn" data-tool="triangle" title="Triangle">
+                            <svg viewBox="0 0 24 24"><path d="M1,21H23L12,2L1,21M12,6L19.8,19H4.2L12,6Z"/></svg>
+                        </button>
+                        <button class="tool-btn" data-tool="fill" title="Paint Bucket" id="btnBucketIconOnly">
+                            <svg viewBox="0 0 24 24"><path d="M19,11.5C19,13.43 17.43,15 15.5,15C13.57,15 12,13.43 12,11.5C12,9.57 13.57,8 15.5,8C17.43,8 19,9.57 19,11.5M16.56,2.29L21.71,7.44C22.1,7.83 22.1,8.47 21.71,8.86L18.44,12.13C18.47,11.92 18.5,11.71 18.5,11.5C18.5,9.84 17.16,8.5 15.5,8.5C14.67,8.5 13.92,8.84 13.38,9.38L10.21,6.21L15.15,1.27C15.54,0.88 16.17,0.88 16.56,1.27L16.56,2.29M2,18.5A2.5,2.5 0 0,1 4.5,16A2.5,2.5 0 0,1 7,18.5A2.5,2.5 0 0,1 4.5,21A2.5,2.5 0 0,1 2,18.5M10.9,11.39L12.31,12.8L4.66,20.45C4.61,20.45 4.56,20.45 4.5,20.45A1.5,1.5 0 0,1 3,18.95C3,18.81 3,18.68 3.07,18.55L10.9,11.39Z"/></svg>
                         </button>
                     </div>
 
+                    <div class="tool-row" id="rowLineWidthOriginal">
+                        <label>Line Size</label>
+                        <div class="dot-size-container" id="dotSizeContainer">
+                            <div class="dot-option" data-value="2" title="Thin (2px)"><div class="dot-shape" style="width:4px; height:4px;"></div></div>
+                            <div class="dot-option active" data-value="5" title="Medium (5px)"><div class="dot-shape" style="width:8px; height:8px;"></div></div>
+                            <div class="dot-option" data-value="10" title="Thick (10px)"><div class="dot-shape" style="width:12px; height:12px;"></div></div>
+                            <div class="dot-option" data-value="18" title="Extra Thick (18px)"><div class="dot-shape" style="width:16px; height:16px;"></div></div>
+                        </div>
+                    </div>  
+
+                    <div class="tool-row" id="rowStrokeOriginal">
+                        <label>Stroke Line</label>
+                        <div class="color-control-row">
+                            <input type="checkbox" id="chkUseStroke" checked title="Enable/Disable Stroke Line">
+                            </div>
+                    </div>
+                    <div class="tool-row" id="rowFillOriginal">
+                        <label>Inner Fill Shape</label>
+                        <div class="color-control-row">
+                            <input type="checkbox" id="chkUseFill" checked title="Enable/Disable Inner Shape Fill">
+                        </div>
+                    </div>
+                    
+                    <div class="tool-row" id="rowBucketOriginal">
+                        <label>Paint Bucket</label>
+                        <div style="display:flex; gap:8px; flex:1; align-items:center;">
+                            <button class="btn" id="btnBucketTool" style="flex:2; display:flex; align-items:center; justify-content:center; gap:4px; height:28px; font-size:0.8rem; padding:0 4px;">
+                                Use Bucket
+                            </button>
+                        </div>
+                    </div>
+                    <div class="tool-row" id="rowBgOriginal">
+                        <label>Background</label>
+                        <div class="color-control-row">
+                            <span style="width:16px;"></span>
+                        </div>
+                    </div>
                 </div>
 
             </div>
@@ -782,10 +926,6 @@
     let startPanX = 0, startPanY = 0;
     let sourceImageForCrop = null;
 
-    // Mobile specific Zoom/Pan layout boundaries tracking
-    let touchStartDist = 0;
-    let touchStartScale = 1;
-
     function init() {
         generateExplorerGrid();
         setupDropdownOptions();
@@ -793,9 +933,11 @@
         setupCanvasDefault();
         setupLineWidthSelector();
         setupMobileTabSystems();
+        setupMobileResponsiveLayout();
         bindEvents();
     }
 
+    // Generate main page overview cards
     function generateExplorerGrid() {
         const wrapper = document.getElementById('patternsWrapper');
         wrapper.innerHTML = "";
@@ -846,16 +988,18 @@
             select.appendChild(opt);
         });
 
-        // Mirror native selector options on mobile top header dropdown
-        const mobileSelect = document.getElementById('layoutSelectMobile');
-        patternsData.forEach(p => {
-            const opt = document.createElement('option');
-            opt.value = p.id;
-            opt.textContent = p.title;
-            mobileSelect.appendChild(opt);
-        });
+        // Mirror native select inside the mobile-top-bar container
+        const mobileTopBar = document.getElementById('mobileTopBar');
+        const clonedSelect = select.cloneNode(true);
+        clonedSelect.id = "layoutSelectMobile";
+        clonedSelect.onchange = (e) => {
+            select.value = e.target.value;
+            select.dispatchEvent(new Event('change'));
+        };
+        mobileTopBar.appendChild(clonedSelect);
     }
 
+    // Bind drawing tools grid selector
     function setupToolsGrid() {
         const buttons = document.querySelectorAll('.tool-btn');
         buttons.forEach(btn => {
@@ -863,10 +1007,18 @@
                 buttons.forEach(b => b.classList.remove('active'));
                 btn.classList.add('active');
                 selectedTool = btn.getAttribute('data-tool');
+                
+                // Keep synchronization on dual-bind element triggers
+                const toolAttr = btn.getAttribute('data-tool');
+                const matchingMobileBtn = document.querySelector(`.mobile-tools-wrapper [data-tool="${toolAttr}"]`);
+                const matchingDesktopBtn = document.querySelector(`#toolsGrid [data-tool="${toolAttr}"]`);
+                if(matchingMobileBtn) matchingMobileBtn.classList.add('active');
+                if(matchingDesktopBtn) matchingDesktopBtn.classList.add('active');
             };
         });
     }
 
+    // Setup Custom Dot Width Selector
     function setupLineWidthSelector() {
         const dots = document.querySelectorAll('#dotSizeContainer .dot-option');
         dots.forEach(dot => {
@@ -874,13 +1026,24 @@
                 dots.forEach(d => d.classList.remove('active'));
                 dot.classList.add('active');
                 selectedLineWidth = parseInt(dot.getAttribute('data-value'));
+                
+                // Sync mobile injected matching parameters
+                const dataVal = dot.getAttribute('data-value');
+                document.querySelectorAll(`[data-value="${dataVal}"]`).forEach(d => {
+                    const siblingDots = d.parentNode.querySelectorAll('.dot-option');
+                    siblingDots.forEach(sd => sd.classList.remove('active'));
+                    d.classList.add('active');
+                });
             };
         });
     }
 
+    // Wire-up Mobile specific tabs click switching systems
     function setupMobileTabSystems() {
         const navItems = document.querySelectorAll('.nav-tab-item');
         const groups = document.querySelectorAll('.tools-panel .tool-group');
+        const panel = document.getElementById('toolsPanel');
+        const toggleBtn = document.getElementById('mobileTogglePanelBtn');
         
         navItems.forEach(item => {
             item.onclick = () => {
@@ -890,10 +1053,111 @@
                 item.classList.add('active');
                 const targetId = item.getAttribute('data-target');
                 document.getElementById(targetId).classList.add('active-mobile-tab');
+                
+                // Dynamic panel content heights layout balancing logic 
+                const contentNode = panel.querySelector('.panel-content');
+                if (targetId === 'tabGridExpansion') {
+                    contentNode.style.maxHeight = "150px";
+                } else {
+                    contentNode.style.maxHeight = "280px";
+                }
+
+                // Auto slide-up if panel was collapsed
+                if (panel.classList.contains('collapsed')) {
+                    panel.classList.remove('collapsed');
+                    toggleBtn.classList.remove('collapsed-state');
+                }
             };
         });
     }
 
+    // Setup structured mobile DOM wrappers placement layout
+    function setupMobileResponsiveLayout() {
+        // Move tools into 3x2 grid container wrapper
+        const mobileToolsWrapper = document.getElementById('mobileToolsWrapper');
+        const desktopTools = document.querySelectorAll('#toolsGrid .tool-btn');
+        desktopTools.forEach(btn => {
+            const clone = btn.cloneNode(true);
+            clone.onclick = () => btn.click();
+            mobileToolsWrapper.appendChild(clone);
+        });
+
+        // Mirror brush bucket into 3x2 control structure
+        const bucketIconOnlyBtn = document.getElementById('btnBucketIconOnly');
+        bucketIconOnlyBtn.onclick = () => {
+            const buttons = document.querySelectorAll('.tool-btn');
+            buttons.forEach(b => b.classList.remove('active'));
+            bucketIconOnlyBtn.classList.add('active');
+            selectedTool = 'fill';
+            
+            // Sync desktop side status trigger highlight
+            const nativeBtn = document.getElementById('btnBucketTool');
+            if(nativeBtn) nativeBtn.classList.add('active');
+        };
+
+        // Move Line sizes into horizontal sub-bar wrapper
+        const mobileSizesWrapper = document.getElementById('mobileSizesWrapper');
+        const originalSizesContainer = document.getElementById('dotSizeContainer');
+        const clonedSizes = originalSizesContainer.cloneNode(true);
+        clonedSizes.id = "dotSizeContainerMobile";
+        clonedSizes.querySelectorAll('.dot-option').forEach(dot => {
+            const val = dot.getAttribute('data-value');
+            dot.onclick = () => {
+                const targetNativeDot = originalSizesContainer.querySelector(`[data-value="${val}"]`);
+                if(targetNativeDot) targetNativeDot.click();
+            };
+        });
+        mobileSizesWrapper.appendChild(clonedSizes);
+
+        // Move Actions into horizontal underlying row container wrapper
+        const mobileActionsWrapper = document.getElementById('mobileActionsWrapper');
+        const actions = ['Undo', 'Redo', 'Clear', 'ResetToP'];
+        actions.forEach(actionId => {
+            const nativeBtn = document.getElementById('btn' + actionId);
+            if (nativeBtn) {
+                const clone = nativeBtn.cloneNode(true);
+                clone.id = nativeBtn.id + 'Mobile';
+                clone.onclick = () => nativeBtn.click();
+                if(actionId === 'ResetToP') clone.textContent = 'Reset';
+                mobileActionsWrapper.appendChild(clone);
+            }
+        });
+
+        // Set minimal content padding spacing gap configuration settings layout
+        const gapStyle = document.createElement('style');
+        gapStyle.textContent = "@media(max-width:991px){ .tessellation-output { gap: 0px !important; } }";
+        document.head.appendChild(gapStyle);
+
+        // Slide up/down floating handler controller
+        const panel = document.getElementById('toolsPanel');
+        const toggleBtn = document.getElementById('mobileTogglePanelBtn');
+        toggleBtn.onclick = function() {
+            panel.classList.toggle('collapsed');
+            this.classList.toggle('collapsed-state');
+        };
+
+        // Custom single-point zoom-pan limits lock parameters setup bounds 
+        const previewArea = document.getElementById('previewArea');
+        previewArea.addEventListener('touchmove', function(e) {
+            // Force block document cascading window rubber band effect scrolls
+            if (e.target.closest('#previewArea')) {
+                if(e.cancelable) e.preventDefault();
+            }
+        }, { passive: false });
+
+        // Add standard HTML History State API hooks monitoring to intercept native mobile device back actions
+        window.addEventListener('popstate', function(e) {
+            const editorVisible = document.getElementById('editorView').style.display === 'block';
+            if (editorVisible) {
+                // Intercept and redirect execution path flow to main view dashboard screen context
+                document.getElementById('btnBack').click();
+                // Push standard visual correction state anchor to bypass forward progression jumps
+                history.pushState(null, null, window.location.pathname);
+            }
+        });
+    }
+
+    // Initialize transparent default canvas
     function setupCanvasDefault() {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
         canvas.style.backgroundColor = document.getElementById('bgColor').value;
@@ -905,6 +1169,7 @@
         saveCanvasState();
     }
 
+    // Render mini P blueprint indicator layout inside panel
     function renderMiniPPreview(pattern) {
         const grid = document.getElementById('miniPreviewGrid');
         grid.innerHTML = "";
@@ -981,6 +1246,7 @@
         };
     }
 
+    // Helper to calculate the intrinsic period of a rule's row and extend it dynamically
     function getTransformWithPeriod(matrix, r, c) {
         const blueprintCols = 6;
         const blueprintRows = 4;
@@ -1008,23 +1274,7 @@
         return rowElements[c % pX] || "n";
     }
 
-    function handleBackToMain() {
-        currentImageUrl = canvas.toDataURL();
-        document.getElementById('editorView').style.display = 'none';
-        document.getElementById('mainView').style.display = 'block';
-        generateExplorerGrid();
-    }
-
     function bindEvents() {
-        // Safe Browser Popstate implementation for Device native hardware Back button
-        window.history.pushState({page: "main"}, "");
-        window.onpopstate = function(event) {
-            if (document.getElementById('editorView').style.display === 'block') {
-                handleBackToMain();
-                window.history.pushState({page: "main"}, "");
-            }
-        };
-
         document.getElementById('btnClearToP').onclick = () => {
             currentImageUrl = "";
             document.getElementById('globalImageUpload').value = "";
@@ -1068,11 +1318,18 @@
 
         document.getElementById('btnCropSquare').onclick = () => {
             if (!cropper) return;
-            const croppedCanvas = cropper.getCroppedCanvas({ width: canvas.width, height: canvas.height });
+            
+            const croppedCanvas = cropper.getCroppedCanvas({
+                width: canvas.width,
+                height: canvas.height
+            });
+            
             ctx.clearRect(0, 0, canvas.width, canvas.height);
             ctx.drawImage(croppedCanvas, 0, 0, canvas.width, canvas.height);
+            
             saveCanvasState();
             updateTilesFromCanvas();
+            
             document.getElementById('cropModal').style.display = 'none';
             cropper.destroy();
             cropper = null;
@@ -1081,7 +1338,11 @@
         document.getElementById('btnCropNone').onclick = () => {
             document.getElementById('cropModal').style.display = 'none';
             const originalSrc = document.getElementById('cropImageTag').src;
-            if (cropper) { cropper.destroy(); cropper = null; }
+            
+            if (cropper) {
+                cropper.destroy();
+                cropper = null;
+            }
 
             const img = new Image();
             img.onload = function() {
@@ -1099,102 +1360,98 @@
         };
 
         document.getElementById('btnResetToP').onclick = () => {
-            drawingHistory = []; historyStep = -1;
+            drawingHistory = [];
+            historyStep = -1;
             document.getElementById('tileImageUpload').value = "";
-            setupCanvasDefault(); updateTilesFromCanvas();
+            setupCanvasDefault();
+            updateTilesFromCanvas();
         };
 
-        // Linked Actions Desktop/Mobile triggers back and save states
-        document.getElementById('btnBack').onclick = handleBackToMain;
-        document.getElementById('btnMobileBack').onclick = handleBackToMain;
-        document.getElementById('btnSaveImage').onclick = saveOutputAsImage;
-        document.getElementById('btnMobileSave').onclick = saveOutputAsImage;
+        document.getElementById('btnBack').onclick = () => {
+            currentImageUrl = canvas.toDataURL();
+            document.getElementById('editorView').style.display = 'none';
+            document.getElementById('mainView').style.display = 'block';
+            generateExplorerGrid();
+        };
 
-        // Sync Desktop Selection Pattern Rules Dropdown
         document.getElementById('layoutSelect').onchange = (e) => {
-            handlePatternSelectionChange(e.target.value);
-        };
-
-        // Sync Mobile Selection Pattern Rules Dropdown
-        document.getElementById('layoutSelectMobile').onchange = (e) => {
-            handlePatternSelectionChange(e.target.value);
-        };
-
-        function handlePatternSelectionChange(patternId) {
-            const found = patternsData.find(p => p.id == patternId);
+            const found = patternsData.find(p => p.id == e.target.value);
             if(found) {
                 activePattern = found;
                 document.getElementById('editPatternTitle').textContent = found.title;
                 document.getElementById('editPatternDesc').textContent = found.desc;
                 
-                document.getElementById('layoutSelect').value = patternId;
-                document.getElementById('layoutSelectMobile').value = patternId;
+                // Sync mobile clone selector if change happens on desktop side trigger
+                const mobSel = document.getElementById('layoutSelectMobile');
+                if(mobSel && mobSel.value !== e.target.value) mobSel.value = e.target.value;
 
                 renderMiniPPreview(found);
                 renderTessellation();
             }
-        }
+        };
 
         syncInputs('gridCols', 'gridColsNum', renderTessellation);
         syncInputs('gridRows', 'gridRowsNum', renderTessellation);
         syncInputs('gridSizeInput', 'gridSizeNum', renderTessellation);
         
-        const bgPickers = [document.getElementById('bgColor')];
-        bgPickers.forEach(picker => {
-            if(picker) {
-                picker.oninput = () => {
-                    const currentBg = picker.value;
-                    canvas.style.backgroundColor = currentBg;
-                    renderTessellation();
+        document.getElementById('bgColor').oninput = (e) => {
+            const currentBg = e.target.value;
+            // Sync up twin mirrored elements references
+            document.querySelectorAll('#bgColor').forEach(inputNode => { inputNode.value = currentBg; });
+            canvas.style.backgroundColor = currentBg;
+            renderTessellation();
+        };
+
+        // Dual mirror cross links input handlers color hooks sync bindings
+        ['strokeColor', 'fillColor', 'bucketColor'].forEach(idString => {
+            const element = document.getElementById(idString);
+            if (element) {
+                element.oninput = (e) => {
+                    document.querySelectorAll('#' + idString).forEach(node => { node.value = e.target.value; });
                 };
             }
         });
 
         document.getElementById('btnBucketTool').onclick = () => {
+            const buttons = document.querySelectorAll('.tool-btn');
+            buttons.forEach(b => b.classList.remove('active'));
             selectedTool = 'fill';
+            
+            const mobBucket = document.getElementById('btnBucketIconOnly');
+            if(mobBucket) mobBucket.classList.add('active');
         };
 
-        // Collapsible Desktop Toolbar Handle System
         const panel = document.getElementById('toolsPanel');
         document.getElementById('panelToggle').onclick = function() {
             panel.classList.toggle('collapsed');
             this.textContent = panel.classList.contains('collapsed') ? "⮪" : "➔";
         };
 
-        // Mobile Fold/Unfold Panel Engine
-        const mobileToggleBtn = document.getElementById('mobileTogglePanel');
-        mobileToggleBtn.onclick = function() {
-            panel.classList.toggle('mobile-collapsed');
-            const span = this.querySelector('span');
-            if (panel.classList.contains('mobile-collapsed')) {
-                span.textContent = "Show Tools";
-                this.style.transform = "translateY(0)";
-            } else {
-                span.textContent = "Hide Tools";
-            }
-        };
-
         window.addEventListener('keydown', (e) => { if(e.key === 'Control') isCtrlPressed = true; });
         window.addEventListener('keyup', (e) => { if(e.key === 'Control') isCtrlPressed = false; });
 
-        // Desktop Drawing Pointer Pipeline
+        // Desktop Pointer Mapping
         canvas.addEventListener('mousedown', startDrawing);
         canvas.addEventListener('mousemove', draw);
         canvas.addEventListener('mouseup', stopDrawing);
         canvas.addEventListener('mouseleave', stopDrawing);
 
-        // Tablet & Touch Screen Mobile Studio Matrix Mapping
+        // Mobile Native Touch Surface Mapping
         canvas.addEventListener('touchstart', function(e) {
             e.preventDefault();
             const touch = e.touches[0];
-            const mouseEvent = new MouseEvent('mousedown', { clientX: touch.clientX, clientY: touch.clientY });
+            const mouseEvent = new MouseEvent('mousedown', {
+                clientX: touch.clientX, clientY: touch.clientY
+            });
             canvas.dispatchEvent(mouseEvent);
         }, { passive: false });
 
         canvas.addEventListener('touchmove', function(e) {
             e.preventDefault();
             const touch = e.touches[0];
-            const mouseEvent = new MouseEvent('mousemove', { clientX: touch.clientX, clientY: touch.clientY });
+            const mouseEvent = new MouseEvent('mousemove', {
+                clientX: touch.clientX, clientY: touch.clientY
+            });
             canvas.dispatchEvent(mouseEvent);
         }, { passive: false });
 
@@ -1206,10 +1463,11 @@
         document.getElementById('btnUndo').onclick = () => { if(historyStep > 0) { historyStep--; restoreCanvasStep(); } };
         document.getElementById('btnRedo').onclick = () => { if(historyStep < drawingHistory.length - 1) { historyStep++; restoreCanvasStep(); } };
         document.getElementById('btnClearCanvas').onclick = () => {
-            ctx.clearRect(0, 0, canvas.width, canvas.height); saveCanvasState(); updateTilesFromCanvas();
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            saveCanvasState();
+            updateTilesFromCanvas();
         };
 
-        // Preview Zoom & Pan Processing Engine
         const previewArea = document.getElementById('previewArea');
         previewArea.addEventListener('wheel', (e) => {
             e.preventDefault();
@@ -1231,60 +1489,51 @@
             if (!isPanning) return;
             panX = e.clientX - startPanX;
             panY = e.clientY - startPanY;
-            applyTransformBoundaries();
+            applyTransform();
         });
         window.addEventListener('mouseup', () => { isPanning = false; });
 
-        // Mobile Isolation MultiTouch Zooming / Panning Systems
+        // Mobile Pan Navigation Coordinates setup
         previewArea.addEventListener('touchstart', function(e) {
-            if (e.touches.length === 1) {
+            if (e.target.classList.contains('preview-area') || e.target.id === 'tessellationOutput' || e.target.classList.contains('tile')) {
                 isPanning = true;
                 const touch = e.touches[0];
                 startPanX = touch.clientX - panX;
                 startPanY = touch.clientY - panY;
-            } else if (e.touches.length === 2) {
-                isPanning = false;
-                touchStartDist = Math.hypot(e.touches[0].clientX - e.touches[1].clientX, e.touches[0].clientY - e.touches[1].clientY);
-                touchStartScale = scale;
             }
         }, { passive: true });
 
         previewArea.addEventListener('touchmove', function(e) {
-            if (isPanning && e.touches.length === 1) {
-                const touch = e.touches[0];
-                panX = touch.clientX - startPanX;
-                panY = touch.clientY - startPanY;
-                applyTransformBoundaries();
-            } else if (e.touches.length === 2) {
-                const dist = Math.hypot(e.touches[0].clientX - e.touches[1].clientX, e.touches[0].clientY - e.touches[1].clientY);
-                scale = Math.min(Math.max(0.3, touchStartScale * (dist / touchStartDist)), 4);
-                applyTransformBoundaries();
-            }
+            if (!isPanning) return;
+            const touch = e.touches[0];
+            panX = touch.clientX - startPanX;
+            panY = touch.clientY - startPanY;
+            applyTransform();
         }, { passive: true });
 
         previewArea.addEventListener('touchend', function() { isPanning = false; });
 
-        // Reset Panels Action
-        const resetZoomTriggers = [document.getElementById('btnResetZoom'), document.getElementById('mobileResetZoom')];
-        resetZoomTriggers.forEach(btn => {
-            if(btn) {
-                btn.onclick = () => { scale = 1; panX = 0; panY = 0; applyTransform(); };
-            }
-        });
-    }
+        document.getElementById('btnResetZoom').onclick = () => {
+            scale = 1; panX = 0; panY = 0; applyTransform();
+        };
+        
+        document.getElementById('mobileFloatingZoom').onclick = () => {
+            document.getElementById('btnResetZoom').click();
+        };
 
-    // Locks preview panel layout boundaries safely from flying off mobile screens
-    function applyTransformBoundaries() {
-        if (window.innerWidth <= 991) {
-            const maxPan = window.innerWidth * 0.8;
-            panX = Math.min(Math.max(panX, -maxPan), maxPan);
-            panY = Math.min(Math.max(panY, -maxPan), maxPan);
-        }
-        applyTransform();
+        document.getElementById('btnSaveImage').onclick = saveOutputAsImage;
     }
 
     function applyTransform() {
         const output = document.getElementById('tessellationOutput');
+        
+        // Strict boundary lock handling parameters formulation
+        const boundsLimit = window.innerWidth * 0.8;
+        if (panX < -boundsLimit) panX = -boundsLimit;
+        if (panX > boundsLimit) panX = boundsLimit;
+        if (panY < -boundsLimit) panY = -boundsLimit;
+        if (panY > boundsLimit) panY = boundsLimit;
+
         output.style.transform = `translate(${panX}px, ${panY}px) scale(${scale})`;
     }
 
@@ -1303,7 +1552,9 @@
         document.getElementById('editorView').style.display = 'block';
 
         document.getElementById('layoutSelect').value = pattern.id;
-        document.getElementById('layoutSelectMobile').value = pattern.id;
+        if(document.getElementById('layoutSelectMobile')) {
+            document.getElementById('layoutSelectMobile').value = pattern.id;
+        }
 
         document.getElementById('editPatternTitle').textContent = pattern.title;
         document.getElementById('editPatternDesc').textContent = pattern.desc;
@@ -1313,18 +1564,17 @@
         const currentBg = document.getElementById('bgColor').value;
         canvas.style.backgroundColor = currentBg;
 
-        // Auto Optimise Mobile Grid Sizing Layout Viewports
+        // Smart Block Size optimization on initialization trigger for mobile screens
         if (window.innerWidth <= 991) {
-            document.getElementById('gridSizeInput').value = 40;
-            document.getElementById('gridSizeNum').value = 40;
+            document.getElementById('gridSizeInput').value = 45;
+            document.getElementById('gridSizeNum').value = 45;
             document.getElementById('gridCols').value = 6;
             document.getElementById('gridColsNum').value = 6;
-            document.getElementById('gridRows').value = 6;
-            document.getElementById('gridRowsNum').value = 6;
+            document.getElementById('gridRows').value = 8;
+            document.getElementById('gridRowsNum').value = 8;
             
-            // Standard state closed configuration layout
-            document.getElementById('toolsPanel').classList.add('mobile-collapsed');
-            document.getElementById('mobileTogglePanel').querySelector('span').textContent = "Show Tools";
+            // Push anchor fallback state into history frames array to handle system intercept actions
+            history.pushState(null, null, window.location.pathname);
         }
 
         if(currentImageUrl) {
@@ -1332,13 +1582,17 @@
             img.onload = () => {
                 ctx.clearRect(0, 0, canvas.width, canvas.height);
                 ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-                drawingHistory = []; historyStep = -1;
-                saveCanvasState(); renderTessellation();
+                drawingHistory = [];
+                historyStep = -1;
+                saveCanvasState();
+                renderTessellation();
             };
             img.src = currentImageUrl;
         } else {
-            drawingHistory = []; historyStep = -1;
-            setupCanvasDefault(); renderTessellation();
+            drawingHistory = [];
+            historyStep = -1;
+            setupCanvasDefault();
+            renderTessellation();
         }
     }
 
@@ -1386,7 +1640,9 @@
         if (selectedTool === 'fill') {
             const paintColor = hexToRgb(document.getElementById('bucketColor').value);
             floodFill(Math.floor(startX), Math.floor(startY), paintColor);
-            saveCanvasState(); updateTilesFromCanvas(); return;
+            saveCanvasState();
+            updateTilesFromCanvas();
+            return;
         }
 
         isDrawing = true;
@@ -1395,10 +1651,12 @@
         ctx.lineWidth = selectedLineWidth;
         ctx.strokeStyle = document.getElementById('strokeColor').value;
         ctx.fillStyle = document.getElementById('fillColor').value;
-        ctx.lineCap = "round"; ctx.lineJoin = "round";
+        ctx.lineCap = "round";
+        ctx.lineJoin = "round";
 
         if (selectedTool === 'brush' && document.getElementById('chkUseStroke').checked) {
-            ctx.beginPath(); ctx.moveTo(startX, startY);
+            ctx.beginPath();
+            ctx.moveTo(startX, startY);
         }
     }
 
@@ -1412,7 +1670,10 @@
         const useStroke = document.getElementById('chkUseStroke').checked;
 
         if (selectedTool === 'brush') {
-            if (useStroke) { ctx.lineTo(currentX, currentY); ctx.stroke(); }
+            if (useStroke) {
+                ctx.lineTo(currentX, currentY);
+                ctx.stroke();
+            }
         } else if (selectedTool !== 'fill') {
             ctx.putImageData(canvasSnapshot, 0, 0);
             ctx.beginPath();
@@ -1427,7 +1688,11 @@
             }
 
             if (selectedTool === 'line') {
-                if (useStroke) { ctx.moveTo(startX, startY); ctx.lineTo(currentX, currentY); ctx.stroke(); }
+                if (useStroke) {
+                    ctx.moveTo(startX, startY);
+                    ctx.lineTo(currentX, currentY);
+                    ctx.stroke();
+                }
             } else if (selectedTool === 'rect') {
                 ctx.rect(startX, startY, width, height);
                 if (useFill) ctx.fill();
@@ -1451,7 +1716,8 @@
 
     function stopDrawing() {
         if (!isDrawing) return;
-        isDrawing = false; saveCanvasState();
+        isDrawing = false;
+        saveCanvasState();
     }
 
     function saveCanvasState() {
