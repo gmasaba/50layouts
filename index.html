@@ -5,8 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>50 Layout Patterns Generator & Explorer</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.6.2/cropper.min.css">
-    <!-- นำเข้า Google Material Icons เพื่อทำปุ่ม Outline Icons บนโมบายล์ -->
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
     <style>
         :root {
             --bg-color: #f5f7fb;
@@ -358,263 +356,285 @@
         /* Mobile Tab Menu Elements (Hidden on Desktop) */
         .mobile-nav-bar { display: none; }
         .mobile-top-bar { display: none; }
+        .mobile-side-tools { display: none; }
         .mobile-toggle-panel-btn { display: none; }
 
         /* ==========================================================================
            --- MOBILE & TABLET RESPONSIVE APPLICATION INTERFACE (max-width: 991px) ---
            ========================================================================== */
         @media (max-width: 991px) {
-            body { overflow: auto !important; position: static !important; width: auto !important; height: auto !important; }
+            body { overflow-y: auto !important; position: static !important; }
+            #mainView { padding: 15px; }
 
-            /* หน้าแรก: ให้สามารถเลื่อนดูทั้ง 50 layout แบบแนวตั้งปกติได้ ไม่โดนล็อคจอ */
-            #mainView { display: block; overflow: visible; padding-bottom: 40px; }
-            .patterns-container { grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 16px; }
+            /* 1. หน้าแรกเลื่อนดูทั้ง 50 layout ได้อิสระ */
+            .patterns-container { 
+                display: grid !important; 
+                grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)) !important; 
+                gap: 16px !important; 
+                overflow: visible !important;
+            }
 
-            /* จัดการความสูงของบราวเซอร์ ป้องกันการโดนบัง */
+            /* 2. หน้า edit บน Mobile / Tablet */
+            #editorView {
+                position: fixed;
+                padding-bottom: env(safe-area-inset-bottom);
+                box-sizing: border-box;
+            }
             .editor-container { 
-                flex-direction: column; 
-                height: 100vh; 
-                height: calc(var(--vh, 1vh) * 100);
-                width: 100vw; 
+                flex-direction: column !important; 
+                height: 100% !important; 
+                width: 100vw !important; 
                 position: relative;
-                overflow: hidden;
             }
             
-            /* Workspace Panel ของ Canvas */
+            /* Workspace ส่วนแสดงผลตรงกลาง */
             .workspace { 
-                height: 55% !important; 
-                flex: none; 
-                width: 100%; 
-                display: flex;
-                flex-direction: column;
+                height: calc(100% - 240px) !important; 
+                flex: 1 !important; 
+                width: 100% !important; 
+                position: relative;
             }
             
-            /* Workspace Header ปรับเป็นสไตล์สกรีนแอป */
+            /* ส่วนหัว Header ของหน้า Edit */
             .workspace-header { 
-                padding: 6px 12px; 
+                padding: 10px; 
                 z-index: 1010; 
-                box-shadow: 0 2px 4px rgba(0,0,0,0.02); 
+                display: flex !important; 
+                justify-content: space-between !important; 
+                align-items: center !important;
                 background: #ffffff;
-                display: flex;
-                justify-content: space-between;
-                align-items: center;
-                height: 50px;
             }
-            .workspace-header span { display: none !important; } /* ซ่อนตัวอักษร PC shortcut */
-            
-            /* ปรับปุ่ม Back และ Save ใน Workspace Header ให้ใช้ Outline Icon และเป็นโครงเหลี่ยมมนปกติ */
-            .workspace-header .btn {
-                background: transparent;
-                border: 1px solid var(--border-color);
-                color: var(--text-color);
-                padding: 4px 8px;
-                display: inline-flex;
-                align-items: center;
-                justify-content: center;
+            .workspace-header span { display: none !important; } /* ซ่อนข้อความคีย์ลัดเดสก์ท็อป */
+
+            /* ปรับปุ่มกลับหน้าแรก / เซฟ ให้เป็น Outline Icon */
+            #btnBack {
+                background: transparent !important;
+                border: 1px solid var(--primary-color) !important;
+                color: var(--primary-color) !important;
+                padding: 8px !important;
                 border-radius: 6px;
-                min-height: auto;
+                display: flex; align-items: center; justify-content: center;
+                width: 40px; height: 40px; font-size: 0 !important;
             }
-            .workspace-header .btn .material-symbols-outlined { font-size: 20px; }
-            
-            /* ซ่อนปุ่ม Reset Zoom ตัวเดิมออกจาก Header */
-            .workspace-header #btnResetZoom { display: none !important; }
+            #btnBack::before {
+                content: "";
+                display: inline-block;
+                width: 20px; height: 20px;
+                background-color: var(--primary-color);
+                -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M20,11H7.83l5.59-5.59L12,4l-8,8l8,8l1.41-1.41L7.83,13H20V11Z'/%3E%3C/svg%3E") no-repeat center;
+                mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M20,11H7.83l5.59-5.59L12,4l-8,8l8,8l1.41-1.41L7.83,13H20V11Z'/%3E%3C/svg%3E") no-repeat center;
+            }
 
-            /* ย้ายปุ่ม Reset zoom มาเป็น outline icon ตรงบริเวณมุมขวาบนของ panel preview */
-            .preview-area { 
-                padding: 0; 
-                position: relative; 
-                flex: 1; 
-                width: 100%; 
-                height: calc(100% - 50px);
-                overflow: hidden !important; 
-            }
-            .mobile-reset-zoom-floating {
-                display: flex !important;
-                position: absolute;
-                top: 10px;
-                right: 10px;
-                z-index: 1020;
-                background: rgba(255, 255, 255, 0.9);
-                border: 1px solid var(--border-color);
+            #btnSaveImage {
+                background: transparent !important;
+                border: 1px solid var(--primary-color) !important;
+                color: var(--primary-color) !important;
+                padding: 8px !important;
                 border-radius: 6px;
-                width: 36px;
-                height: 36px;
-                align-items: center;
-                justify-content: center;
-                cursor: pointer;
-                color: var(--text-color);
+                display: flex; align-items: center; justify-content: center;
+                width: 40px; height: 40px; font-size: 0 !important;
+            }
+            #btnSaveImage::before {
+                content: "";
+                display: inline-block;
+                width: 20px; height: 20px;
+                background-color: var(--primary-color);
+                -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M15,9H5V5H15M12,19A3,3 0 0,1 9,16A3,3 0 0,1 12,13A3,3 0 0,1 15,16A3,3 0 0,1 12,19M17,3H5C3.89,3 3,3.9 3,5V19A2,2 0 0,0 5,21H19A2,2 0 0,0 21,19V7L17,3Z'/%3E%3C/svg%3E") no-repeat center;
+                mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M15,9H5V5H15M12,19A3,3 0 0,1 9,16A3,3 0 0,1 12,13A3,3 0 0,1 15,16A3,3 0 0,1 12,19M17,3H5C3.89,3 3,3.9 3,5V19A2,2 0 0,0 5,21H19A2,2 0 0,0 21,19V7L17,3Z'/%3E%3C/svg%3E") no-repeat center;
             }
 
-            /* ควบคุมให้ซูมเอ้าซูมอินเฉพาะ panel preview (tessellation-output) เท่านั้น */
-            .tessellation-output {
-                transform-origin: center center;
+            /* ปุ่ม Reset zoom ย้ายไปอยู่ที่มุมขวาบนของ panel preview (เป็น Outline Icon) */
+            #btnResetZoom {
+                position: absolute !important;
+                right: 15px !important;
+                top: 15px !important;
+                z-index: 1020 !important;
+                background: rgba(255,255,255,0.9) !important;
+                border: 1px solid var(--border-color) !important;
+                width: 36px; height: 36px;
+                padding: 0 !important;
+                border-radius: 50% !important;
+                font-size: 0 !important;
+                display: flex !important; align-items: center; justify-content: center;
+                box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            }
+            #btnResetZoom::before {
+                content: "";
+                display: inline-block;
+                width: 18px; height: 18px;
+                background-color: #475569;
+                -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M12,2A10,10 0 1,0 22,12A10,10 0 0,0 12,2M12,18A6,6 0 1,1 18,12A6,6 0 0,1 12,18M12,8A4,4 0 1,0 16,12A4,4 0 0,0 12,8Z'/%3E%3C/svg%3E") no-repeat center;
+                mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M12,2A10,10 0 1,0 22,12A10,10 0 0,0 12,2M12,18A6,6 0 1,1 18,12A6,6 0 0,1 12,18M12,8A4,4 0 1,0 16,12A4,4 0 0,0 12,8Z'/%3E%3C/svg%3E") no-repeat center;
             }
 
-            /* มินิมอลสไตล์สำหรับเลือก Rules (อยู่ถัดลงมาจากแถบด้านบน) */
+            /* ตัวเลือก rules สไตล์มินิมอล อยู่ถัดลงมาจากแถบกลับหน้าแรกและเซฟ */
             .mobile-top-bar {
                 display: flex !important;
                 align-items: center;
                 background: #ffffff;
-                padding: 6px 12px;
+                padding: 8px 12px;
                 border-bottom: 1px solid #e2e8f0;
                 gap: 8px;
-                height: 45px;
-                z-index: 1005;
+                z-index: 1009;
             }
-            .mobile-top-bar label { font-size: 0.8rem; font-weight: 500; color: #64748b; white-space: nowrap; }
-            .mobile-top-bar select { 
-                flex: 1; 
-                height: 32px !important; 
-                padding: 2px 8px; 
-                font-size: 0.85rem !important; 
-                border-radius: 6px; 
-                border: 1px solid #cbd5e1;
-                background: #f8fafc;
-                min-height: auto !important;
+            .mobile-top-bar label { display: none; }
+            .mobile-top-bar select {
+                flex: 1; height: 36px; padding: 4px 10px; font-size: 0.85rem !important;
+                border-radius: 6px; border: 1px solid #e2e8f0; background: #f8fafc; outline: none;
             }
 
-            /* Re-structure tools-panel วางไว้ครึ่งล่าง ไม่โดนบราวเซอร์บัง */
-            .tools-panel {
-                width: 100% !important; 
-                min-width: 100% !important;
-                height: calc(45% - 115px) !important; /* หักลบพื้นที่ topbar และ navbar */
-                max-height: none !important;
-                border-left: none; 
-                border-top: 1px solid #e2e8f0;
-                position: absolute; 
-                bottom: 70px; 
-                left: 0; 
-                z-index: 999;
-                background: #ffffff; 
-                box-shadow: 0 -4px 10px rgba(0,0,0,0.03);
-                transition: transform 0.3s ease;
+            /* ปรับแต่งพื้นที่แสดงผล Preview / Canvas */
+            .preview-area { 
+                padding: 10px; 
+                position: relative; 
+                overflow: hidden !important; 
+                align-items: center; justify-content: center;
             }
-            /* ปุ่มสำหรับกดซ่อน panel tools ลงข้างล่าง และกดกลับขึ้นมาได้ */
+
+            /* ตรึงพิกัดให้เลื่อนหน้าจอหลบสิ่งกีดขวางของเบราว์เซอร์มือถือ */
+            .tools-panel {
+                width: 100% !important; min-width: 100% !important;
+                height: 190px !important; max-height: 190px !important;
+                border-left: none !important; border-top: 1px solid #e2e8f0 !important;
+                position: absolute !important; bottom: 60px !important; left: 0 !important; z-index: 1005 !important;
+                background: #ffffff !important; box-shadow: 0 -4px 12px rgba(0,0,0,0.05);
+                transform: translateY(0);
+                transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+            }
+            /* กรณีซ่อน panel tools ลงข้างล่าง */
+            .tools-panel.collapsed-mobile {
+                transform: translateY(190px);
+            }
+            .panel-toggle { display: none !important; }
+
+            /* ปุ่มซ่อน / แสดง แผงควบคุมเครื่องมือเครื่องมือ (Outline Icon) */
             .mobile-toggle-panel-btn {
                 display: flex !important;
                 position: absolute;
-                top: -32px;
-                right: 12px;
-                background: var(--primary-color);
-                color: #ffffff;
-                border: none;
-                border-radius: 6px 6px 0 0;
-                padding: 4px 12px;
-                font-size: 0.8rem;
-                align-items: center;
-                gap: 4px;
-                cursor: pointer;
-                z-index: 1001;
-                box-shadow: 0 -2px 5px rgba(0,0,0,0.1);
+                top: -36px; right: 15px;
+                width: 36px; height: 36px;
+                background: #ffffff; border: 1px solid var(--border-color);
+                border-radius: 50%; z-index: 1007;
+                align-items: center; justify-content: center;
+                cursor: pointer; box-shadow: 0 2px 5px rgba(0,0,0,0.1);
             }
-            .tools-panel.mobile-hidden {
-                transform: translateY(calc(100% + 70px));
+            .mobile-toggle-panel-btn svg {
+                width: 20px; height: 20px; fill: #475569;
+                transition: transform 0.3s;
+            }
+            .tools-panel.collapsed-mobile .mobile-toggle-panel-btn svg {
+                transform: rotate(180deg);
             }
 
-            .panel-toggle { display: none !important; } /* ซ่อน Toggle ของ PC */
-            .panel-content { width: 100%; padding: 10px 14px; overflow-y: auto; height: 100%; }
-            
-            /* ซ่อนข้อมูลส่วนเกินบนโมบายล์ */
+            .panel-content { width: 100% !important; padding: 10px 15px !important; overflow-y: auto !important; height: 100% !important; }
             #editPatternTitle, #editPatternDesc, .mini-preview-box, .tools-panel hr { display: none !important; }
             .tool-group-select { display: none !important; }
 
-            /* ควบคุมการเปิดปิด Tab ตามเมนูด้านล่าง */
-            .tool-group { border-bottom: none; padding-bottom: 0; margin-bottom: 0; display: none; }
+            .tool-group { border-bottom: none !important; padding-bottom: 0 !important; margin-bottom: 0 !important; display: none !important; }
             .tool-group.active-mobile-tab { display: block !important; }
-            .tool-group h4 { display: none; }
+            .tool-group h4 { display: none !important; }
 
             /* ขนาด panel grid setting กับ panel studio ไม่เท่ากันได้ */
-            #tabGridExpansion.active-mobile-tab { display: flex !important; flex-direction: column; gap: 8px; }
-            #tabTileStudio.active-mobile-tab { display: block !important; }
+            #tabGridExpansion.active-mobile-tab { height: auto; }
+            #tabTileStudio.active-mobile-tab { height: auto; position: relative; }
 
-            /* ปรับแต่ง Grid Setting มินิมอล: ปรับลดขนาดช่องว่าง ไม่ให้มีช่องว่าง */
-            #tabGridExpansion .tool-row { gap: 6px; margin-bottom: 0px; padding: 2px 0; }
-            #tabGridExpansion .tool-row label { width: 90px; font-size: 0.8rem; }
-            #tabGridExpansion input[type="range"] { height: 24px; }
-            #tabGridExpansion .num-input { height: 28px !important; min-height: auto !important; padding: 2px; }
+            /* Grid Setting ปรับลดขนาดช่องว่าง ไม่ให้มีช่องว่าง (gap 0) */
+            #tabGridExpansion .tool-row { gap: 4px !important; margin-bottom: 8px; }
+            #tabGridExpansion label { width: 90px; font-size: 0.8rem; }
+            #tabGridExpansion input[type="range"] { flex: 1; }
+            #tabGridExpansion .num-input { width: 50px; height: 32px; padding: 2px; }
 
-            /* ปรับแต่ง Studio (Tile Studio) */
-            /* จัดการ Canvas สำหรับวาดให้ใหญ่ขึ้น อยู่ตรงกลาง panel */
-            .canvas-mobile-wrapper {
-                display: flex !important;
-                align-items: center;
-                justify-content: center;
-                gap: 12px;
-                margin: 8px 0;
-                width: 100%;
+            /* Studio Area จัดวางวัตถุข้าง Canvas */
+            #tabTileStudio {
+                display: none !important;
             }
-            .canvas-container { 
-                width: 140px !important; 
-                height: 140px !important; 
-                margin: 0 !important;
-                flex-shrink: 0;
-            }
-            /* ปุ่มกด undo redo clear reset ให้เป็น outline icon เอาไปไว้ข้างๆ canvas เรียงลงมา */
-            .canvas-side-actions {
+            #tabTileStudio.active-mobile-tab {
                 display: flex !important;
                 flex-direction: column;
-                gap: 6px;
-                justify-content: center;
+                height: 100%;
             }
-            .canvas-side-actions .btn {
-                min-height: auto !important;
-                height: 30px;
-                width: 34px;
-                padding: 0;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                background: transparent;
-                border: 1px solid var(--border-color);
-                border-radius: 4px;
-                color: var(--text-color);
+            #tabTileStudio .tool-row:first-child { display: none; } /* ซ่อนปุ่มอัปโหลดไฟล์ในมือถือเพื่อประหยัดพื้นที่ */
+
+            /* Canvas สำหรับวาดใหญ่ขึ้น อยู่ตรงกลาง panel */
+            .canvas-container {
+                width: 120px !important; height: 120px !important;
+                margin: 0 auto !important;
+                position: absolute; left: 50%; top: 45px; transform: translateX(-50%);
+                border: 1px solid var(--primary-color);
+                border-radius: 6px;
+                z-index: 2;
             }
-            .canvas-side-actions .btn span { font-size: 18px; }
-            /* ซ่อนแถบปุ่มเดิมบน PC */
-            #tabTileStudio > .tool-row[style*="justify-content: center"] { display: none !important; }
 
-            /* จัดตำแหน่ง Vector Brush แบบลดการใช้พื้นที่ */
-            #tabTileStudio > div[style*="margin-bottom: 6px"] { display: none !important; } /* ซ่อน Label หัวข้อใหญ่ */
-            .tools-row-grid { margin-bottom: 8px; padding: 2px; border-radius: 6px; height: 32px; gap: 2px; }
-            .tool-btn { height: 26px; border-radius: 4px; }
-            .tool-btn svg { width: 15px; height: 15px; }
-
-            /* ปุ่มเลือกสีเป็นทรงกลม */
-            .compact-color-picker { 
-                border-radius: 50% !important; 
-                width: 32px !important; 
-                height: 32px !important; 
-                flex: none !important; 
-                border: 1px solid var(--border-color);
-                overflow: hidden;
-                padding: 0;
+            /* ปุ่มย้อนกลับ แก้ไข ล้างค่า รีเซ็ต ย้ายไปอยู่ด้านล่าง Canvas (Outline Icon) */
+            #tabTileStudio .tool-row[style*="justify-content: center"] {
+                position: absolute;
+                bottom: 5px; left: 0; width: 100%;
+                display: flex !important; justify-content: center !important; gap: 8px !important;
+                z-index: 5; margin: 0 !important;
             }
-            .compact-color-picker::-webkit-color-swatch-wrapper { padding: 0; }
-            .compact-color-picker::-webkit-color-swatch { border: none; border-radius: 50%; }
+            #btnUndo, #btnRedo, #btnClearCanvas, #btnResetToP {
+                background: transparent !important; border: 1px solid #cbd5e1 !important;
+                color: #475569 !important; font-size: 0 !important; width: 32px; height: 32px;
+                padding: 0 !important; display: flex !important; align-items: center; justify-content: center;
+                border-radius: 6px;
+            }
+            #btnUndo::before { content: "↶"; font-size: 1.1rem; }
+            #btnRedo::before { content: "↷"; font-size: 1.1rem; }
+            #btnClearCanvas::before { content: "✕"; font-size: 1rem; }
+            #btnResetToP::before { content: "⟲"; font-size: 1.1rem; }
 
-            /* ตัวเลือก line size ไม่ต้องมีตัวหนังสือ ลดการใช้พื้นที่ */
-            .tool-row-line-size label { display: none !important; } /* ซ่อนคำว่า Line Size */
-            .dot-size-container { height: 32px; gap: 6px; padding: 2px 6px; width: 100%; justify-content: space-around; }
+            /* โครงสร้างปุ่มเครื่องมือที่วางไว้ข้าง Canvas */
+            .mobile-side-tools {
+                display: flex !important;
+                position: absolute; top: 5px; width: 34px;
+                flex-direction: column; gap: 6px; z-index: 10;
+            }
+            .mobile-side-tools.left-side { left: 15px; }
+            .mobile-side-tools.right-side { right: 15px; width: 40px; }
 
-            /* ปรับแต่งแถบอื่นๆ ใน Studio ให้กระชับ */
-            .tool-row { margin-bottom: 6px; gap: 8px; }
-            .tool-row label { width: 85px; font-size: 0.78rem; }
-            #btnBucketTool { height: 28px !important; min-height: auto !important; font-size: 0.75rem !important; }
-            #tabTileStudio input[type="file"] { font-size: 0.75rem; }
+            /* ปุ่มเลือกสีทรงกลม วางไว้ข้าง canvas */
+            .mobile-color-picker-wrapper {
+                width: 32px; height: 32px; border-radius: 50%;
+                overflow: hidden; border: 2px solid #cbd5e1; position: relative;
+            }
+            .mobile-color-picker-wrapper input[type="color"] {
+                position: absolute; top: -5px; left: -5px; width: 42px; height: 42px;
+                padding: 0; border: none; border-radius: 50%; cursor: pointer;
+            }
 
-            /* Tab Bottom Navigation Bar */
+            /* ปุ่มเวกเตอร์/พู่กัน/bucket เรียงลงมาข้าง canvas (Outline) */
+            .tools-row-grid {
+                display: none !important; /* ซ่อนอันเดิม */
+            }
+            .mobile-tool-btn {
+                width: 32px; height: 32px; background: transparent;
+                border: 1px solid #cbd5e1; border-radius: 6px;
+                display: flex; align-items: center; justify-content: center; padding: 0;
+            }
+            .mobile-tool-btn svg { width: 16px; height: 16px; fill: #475569; }
+            .mobile-tool-btn.active { border-color: var(--primary-color); background: #f1f5f9; }
+            .mobile-tool-btn.active svg { fill: var(--primary-color); }
+
+            /* ตัวเลือก line size ไม่ต้องมีตัวหนังสือ วางเรียงลงมาข้าง canvas */
+            .dot-size-container {
+                display: flex !important; flex-direction: column !important;
+                background: transparent !important; border: none !important;
+                padding: 0 !important; gap: 6px !important; height: auto !important; width: 32px;
+            }
+            .dot-option {
+                width: 32px !important; height: 32px !important;
+                border: 1px solid #cbd5e1 !important; border-radius: 6px !important;
+                background: #ffffff;
+            }
+            .dot-option.active { border-color: var(--primary-color) !important; background: #f1f5f9 !important; box-shadow: none !important; }
+
+            /* แถบเมนูด้านล่างสุด (Tab Navigation Bar) */
             .mobile-nav-bar {
-                display: flex; position: absolute; bottom: 0; left: 0; width: 100vw; height: 70px;
-                background: #f8fafc; border-top: 1px solid #e2e8f0; z-index: 1002;
-                box-shadow: 0 -2px 8px rgba(0,0,0,0.03); padding-bottom: env(safe-area-inset-bottom);
+                display: flex !important; position: absolute !important; bottom: 0 !important; left: 0 !important; width: 100vw !important; height: 60px !important;
+                background: #ffffff !important; border-top: 1px solid #e2e8f0 !important; z-index: 1006 !important;
             }
-            .nav-tab-item {
-                flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center;
-                background: transparent; border: none; cursor: pointer; color: #64748b; font-size: 0.8rem; font-weight: 500; gap: 4px;
-            }
-            .nav-tab-item svg { width: 20px; height: 20px; fill: #64748b; transition: fill 0.15s; }
-            .nav-tab-item.active { color: var(--primary-color); font-weight: 600; background: #ffffff; }
-            .nav-tab-item.active svg { fill: var(--primary-color); }
+            .nav-tab-item { font-size: 0.75rem !important; gap: 2px !important; height: 100% !important; }
+            .nav-tab-item svg { width: 18px !important; height: 18px !important; }
         }
     </style>
 </head>
@@ -641,43 +661,29 @@
 <div id="editorView">
     <div class="editor-container">
         
-        <!-- แถบเลือกกติกา (Rules) สำหรับโมบายล์ อยู่ใต้ส่วนหัวด้านบน -->
-        <div class="mobile-top-bar" id="mobileTopBar">
-            <label>Layout Rules:</label>
-        </div>
+        <!-- แถบเลือก Rules สไตล์มินิมอลใต้ส่วนหัว -->
+        <div class="mobile-top-bar" id="mobileTopBar"></div>
 
         <div class="workspace">
             <div class="workspace-header">
-                <!-- ปรับปุ่มกลับหน้าแรก และเซฟ ให้ใช้โครงสร้างแบบรองรับ Material Icons ครอบคลุม Outline style -->
-                <button class="btn" id="btnBack">
-                    <span class="material-symbols-outlined" style="display:none;" id="mobBackIcon">arrow_back</span>
-                    <span id="txtBack">← Back to Main</span>
-                </button>
+                <button class="btn" id="btnBack">← Back to Main</button>
                 <div style="display:flex; gap:10px; align-items: center;">
                     <span style="font-size: 0.85rem; color:#acb5c3;">Zoom: Scroll Wheel | Pan: Click & Drag the empty space</span>
                     <button class="btn" id="btnResetZoom">Reset Zoom</button>
                 </div>
-                <button class="btn btn-primary" id="btnSaveImage">
-                    <span class="material-symbols-outlined" style="display:none;" id="mobSaveIcon">save</span>
-                    <span id="txtSave">Save Pattern Image</span>
-                </button>
+                <button class="btn btn-primary" id="btnSaveImage">Save Pattern Image</button>
             </div>
             
             <div class="preview-area" id="previewArea">
-                <!-- ปุ่ม Reset Zoom ลอยตรงมุมพื้นที่พรีวิวเฉพาะบนมือถือ -->
-                <button class="mobile-reset-zoom-floating" id="btnResetZoomMobile" style="display:none;" title="Reset Zoom">
-                    <span class="material-symbols-outlined">zoom_out_map</span>
-                </button>
                 <div class="tessellation-output" id="tessellationOutput"></div>
             </div>
         </div>
 
         <div class="tools-panel" id="toolsPanel">
-            <!-- ปุ่มกดซ่อน / แสดง Panel Tools บน Mobile -->
-            <button class="mobile-toggle-panel-btn" id="btnMobileTogglePanel" style="display:none;">
-                <span class="material-symbols-outlined" style="font-size:16px;" id="mobTogglePanelIcon">expand_more</span>
-                <span id="mobTogglePanelText">Hide Tools</span>
-            </button>
+            <!-- ปุ่มกด ซ่อน/แสดง แผงควบคุมเครื่องมือบนมือถือ -->
+            <div class="mobile-toggle-panel-btn" id="mobileTogglePanel">
+                <svg viewBox="0 0 24 24"><path d="M7.41,8.58L12,13.17L16.59,8.58L18,10L12,16L6,10L7.41,8.58Z"/></svg>
+            </div>
 
             <div class="panel-toggle" id="panelToggle">➔</div>
             <div class="panel-content">
@@ -699,6 +705,7 @@
                     </div>
                 </div>
 
+                <!-- PANEL 1: GRID SETTING -->
                 <div class="tool-group active-mobile-tab" id="tabGridExpansion">
                     <h4>Grid Expansion Setting</h4>
                     <div class="tool-row">
@@ -718,27 +725,49 @@
                     </div>
                 </div>
 
+                <!-- PANEL 2: TILE STUDIO -->
                 <div class="tool-group" id="tabTileStudio">
                     <h4>Tile Studio</h4>
                     <div class="tool-row">
                         <input type="file" id="tileImageUpload" accept="image/*" style="font-size: 0.8rem; width:100%;">
                     </div>
                     
-                    <!-- โครงสร้าง Wrapper ใหม่สำหรับจัดวางองค์ประกอบ Canvas และปุ่มแอคชันบน Mobile -->
-                    <div class="canvas-mobile-wrapper">
-                        <div class="canvas-container">
-                            <canvas id="tileCanvas" width="200" height="200"></canvas>
+                    <!-- เครื่องมือกลุ่มซ้ายของ Canvas บนมือถือ (เวกเตอร์ต่างๆ + พู่กัน) -->
+                    <div class="mobile-side-tools left-side">
+                        <button class="mobile-tool-btn active" data-tool="brush" id="mToolBrush" title="Free Brush">
+                            <svg viewBox="0 0 24 24"><path d="M20.71,5.63L18.37,3.29C18,2.9 17.35,2.9 16.96,3.29L15.12,5.12L18.88,8.88L20.71,7.04C21.1,6.65 21.1,6 20.71,5.63M3,17.25V21H6.75L17.81,9.93L14.07,6.19L3,17.25Z"/></svg>
+                        </button>
+                        <button class="mobile-tool-btn" data-tool="line" id="mToolLine" title="Straight Line">
+                            <svg viewBox="0 0 24 24"><path d="M15,3V7.59L7.59,15H3V21H9V16.41L16.41,9H21V3M17,5H19V7H17M5,17H7V19H5"/></svg>
+                        </button>
+                        <button class="mobile-tool-btn" data-tool="rect" id="mToolRect" title="Rectangle">
+                            <svg viewBox="0 0 24 24"><path d="M4,6H20V18H4V6M2,4V20H22V4H2Z"/></svg>
+                        </button>
+                        <button class="mobile-tool-btn" data-tool="circle" id="mToolCircle" title="Circle">
+                            <svg viewBox="0 0 24 24"><path d="M12,20A8,8 0 0,1 4,12A8,8 0 0,1 12,4A8,8 0 0,1 20,12A8,8 0 0,1 12,20M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2Z"/></svg>
+                        </button>
+                        <button class="mobile-tool-btn" data-tool="fill" id="mToolBucket" title="Paint Bucket">
+                            <svg viewBox="0 0 24 24"><path d="M19,3H5C3.89,3 3,3.89 3,5V19A2,2 0 0,0 5,21H19A2,2 0 0,0 21,19V5C21,3.89 20.1,3 19,3M19,19H5V5H19V19Z"/></svg>
+                        </button>
+                    </div>
+
+                    <div class="canvas-container">
+                        <canvas id="tileCanvas" width="200" height="200"></canvas>
+                    </div>
+
+                    <!-- เครื่องมือกลุ่มขวาของ Canvas บนมือถือ (ปุ่มสีทรงกลม + ตัวเลือกขนาดเส้น) -->
+                    <div class="mobile-side-tools right-side">
+                        <div class="mobile-color-picker-wrapper">
+                            <input type="color" id="mobileStrokeColor" value="#1e293b">
                         </div>
-                        
-                        <!-- ชุดปุ่มย้ายมาเรียงต่อกันด้านข้างในรูปแบบ Outline Icon เฉพาะ Mobile -->
-                        <div class="canvas-side-actions" id="canvasSideActionsMobile">
-                            <button class="btn" id="btnUndoMobile" title="Undo"><span class="material-symbols-outlined">undo</span></button>
-                            <button class="btn" id="btnRedoMobile" title="Redo"><span class="material-symbols-outlined">redo</span></button>
-                            <button class="btn" id="btnClearMobile" title="Clear Canvas"><span class="material-symbols-outlined">delete</span></button>
-                            <button class="btn" id="btnResetPMobile" title="Reset to P"><span class="material-symbols-outlined">restart_alt</span></button>
+                        <div class="dot-size-container" id="dotSizeContainer">
+                            <div class="dot-option" data-value="2" title="Thin"><div class="dot-shape" style="width:4px; height:4px;"></div></div>
+                            <div class="dot-option active" data-value="5" title="Medium"><div class="dot-shape" style="width:8px; height:8px;"></div></div>
+                            <div class="dot-option" data-value="10" title="Thick"><div class="dot-shape" style="width:12px; height:12px;"></div></div>
                         </div>
                     </div>
 
+                    <!-- แถบควบคุมล่าง Canvas (Undo, Redo, Clear, Reset) -->
                     <div class="tool-row" style="justify-content: center; gap:5px; margin-bottom: 6px;">
                         <button class="btn" id="btnUndo" style="font-size:0.8rem; padding:4px 8px;">Undo</button>
                         <button class="btn" id="btnRedo" style="font-size:0.8rem; padding:4px 8px;">Redo</button>
@@ -746,65 +775,22 @@
                         <button class="btn" id="btnResetToP" style="font-size:0.8rem; padding:4px 8px;">Reset to P</button>
                     </div>
 
-                    <div style="margin-bottom: 6px;"><label style="font-size: 0.85rem; color: #64748b;">Drawing Vectors</label></div>
-                    <div class="tools-row-grid" id="toolsGrid">
-                        <button class="tool-btn active" data-tool="brush" title="Free Brush">
-                            <svg viewBox="0 0 24 24"><path d="M20.71,5.63L18.37,3.29C18,2.9 17.35,2.9 16.96,3.29L15.12,5.12L18.88,8.88L20.71,7.04C21.1,6.65 21.1,6 20.71,5.63M3,17.25V21H6.75L17.81,9.93L14.07,6.19L3,17.25Z"/></svg>
-                        </button>
-                        <button class="tool-btn" data-tool="line" title="Straight Line">
-                            <svg viewBox="0 0 24 24"><path d="M15,3V7.59L7.59,15H3V21H9V16.41L16.41,9H21V3M17,5H19V7H17M5,17H7V19H5"/></svg>
-                        </button>
-                        <button class="tool-btn" data-tool="rect" title="Rectangle">
-                            <svg viewBox="0 0 24 24"><path d="M4,6H20V18H4V6M2,4V20H22V4H2Z"/></svg>
-                        </button>
-                        <button class="tool-btn" data-tool="circle" title="Circle">
-                            <svg viewBox="0 0 24 24"><path d="M12,20A8,8 0 0,1 4,12A8,8 0 0,1 12,4A8,8 0 0,1 20,12A8,8 0 0,1 12,20M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2Z"/></svg>
-                        </button>
-                        <button class="tool-btn" data-tool="triangle" title="Triangle">
-                            <svg viewBox="0 0 24 24"><path d="M1,21H23L12,2L1,21M12,6L19.8,19H4.2L12,6Z"/></svg>
-                        </button>
-                    </div>
-
-                    <div class="tool-row tool-row-line-size">
-                        <label>Line Size</label>
-                        <div class="dot-size-container" id="dotSizeContainer">
-                            <div class="dot-option" data-value="2" title="Thin (2px)"><div class="dot-shape" style="width:4px; height:4px;"></div></div>
-                            <div class="dot-option active" data-value="5" title="Medium (5px)"><div class="dot-shape" style="width:8px; height:8px;"></div></div>
-                            <div class="dot-option" data-value="10" title="Thick (10px)"><div class="dot-shape" style="width:12px; height:12px;"></div></div>
-                            <div class="dot-option" data-value="18" title="Extra Thick (18px)"><div class="dot-shape" style="width:16px; height:16px;"></div></div>
+                    <!-- รายการคอนโทรลของ Desktop (ซ่อนบน Mobile ด้วย CSS ตัวอื่นอัตโนมัติ) -->
+                    <div class="desktop-only-controls" style="display:none;">
+                        <div class="tools-row-grid" id="toolsGrid">
+                            <button class="tool-btn active" data-tool="brush"><svg viewBox="0 0 24 24"><path d="M20.71,5.63L18.37,3.29C18,2.9 17.35,2.9 16.96,3.29L15.12,5.12L18.88,8.88L20.71,7.04C21.1,6.65 21.1,6 20.71,5.63M3,17.25V21H6.75L17.81,9.93L14.07,6.19L3,17.25Z"/></svg></button>
+                            <button class="tool-btn" data-tool="line"><svg viewBox="0 0 24 24"><path d="M15,3V7.59L7.59,15H3V21H9V16.41L16.41,9H21V3M17,5H19V7H17M5,17H7V19H5"/></svg></button>
+                            <button class="tool-btn" data-tool="rect"><svg viewBox="0 0 24 24"><path d="M4,6H20V18H4V6M2,4V20H22V4H2Z"/></svg></button>
+                            <button class="tool-btn" data-tool="circle"><svg viewBox="0 0 24 24"><path d="M12,20A8,8 0 0,1 4,12A8,8 0 0,1 12,4A8,8 0 0,1 20,12A8,8 0 0,1 12,20M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2Z"/></svg></button>
+                            <button class="tool-btn" data-tool="triangle"><svg viewBox="0 0 24 24"><path d="M1,21H23L12,2L1,21M12,6L19.8,19H4.2L12,6Z"/></svg></button>
                         </div>
-                    </div>  
-
-                    <div class="tool-row">
-                        <label>Stroke Line</label>
-                        <div class="color-control-row">
-                            <input type="checkbox" id="chkUseStroke" checked title="Enable/Disable Stroke Line">
-                            <input type="color" id="strokeColor" class="compact-color-picker" value="#1e293b">
-                        </div>
-                    </div>
-                    <div class="tool-row">
-                        <label>Inner Fill Shape</label>
-                        <div class="color-control-row">
-                            <input type="checkbox" id="chkUseFill" checked title="Enable/Disable Inner Shape Fill">
-                            <input type="color" id="fillColor" class="compact-color-picker" value="#7AA1E0">
-                        </div>
-                    </div>
-                    
-                    <div class="tool-row">
-                        <label>Paint Bucket</label>
-                        <div style="display:flex; gap:8px; flex:1; align-items:center;">
-                            <button class="btn" id="btnBucketTool" style="flex:2; display:flex; align-items:center; justify-content:center; gap:4px; height:28px; font-size:0.8rem; padding:0 4px;">
-                                Use Bucket
-                            </button>
-                            <input type="color" id="bucketColor" class="compact-color-picker" value="#6D79AB" style="flex:1;">
-                        </div>
-                    </div>
-                    <div class="tool-row">
-                        <label>Background</label>
-                        <div class="color-control-row">
-                            <span style="width:16px;" id="mobBgSpacer"></span>
-                            <input type="color" id="bgColor" class="compact-color-picker" value="#ffffff">
-                        </div>
+                        <input type="checkbox" id="chkUseStroke" checked>
+                        <input type="color" id="strokeColor" value="#1e293b">
+                        <input type="checkbox" id="chkUseFill" checked>
+                        <input type="color" id="fillColor" value="#7AA1E0">
+                        <button class="btn" id="btnBucketTool">Use Bucket</button>
+                        <input type="color" id="bucketColor" value="#6D79AB">
+                        <input type="color" id="bgColor" value="#ffffff">
                     </div>
                 </div>
 
@@ -918,14 +904,6 @@
     let sourceImageForCrop = null;
 
     function init() {
-        // จัดการเรื่องความสูงบราวเซอร์บนมือถือกันแถบบัง (Mobile layout view height fix)
-        let vh = window.innerHeight * 0.01;
-        document.documentElement.style.setProperty('--vh', `${vh}px`);
-        window.addEventListener('resize', () => {
-            let vh = window.innerHeight * 0.01;
-            document.documentElement.style.setProperty('--vh', `${vh}px`);
-        });
-
         generateExplorerGrid();
         setupDropdownOptions();
         setupToolsGrid();
@@ -933,41 +911,9 @@
         setupLineWidthSelector();
         setupMobileTabSystems();
         bindEvents();
-        setupMobileResponsiveUI();
-        setupBrowserBackButton();
+        setupMobileNavigationHandling();
     }
 
-    // ฟังก์ชันช่วยสลับสถานะ Outline Icon กับ Text บน Mobile
-    function setupMobileResponsiveUI() {
-        const isMobile = window.innerWidth <= 991;
-        if(isMobile) {
-            document.getElementById('mobBackIcon').style.display = 'inline-block';
-            document.getElementById('txtBack').style.display = 'none';
-            document.getElementById('mobSaveIcon').style.display = 'inline-block';
-            document.getElementById('txtSave').style.display = 'none';
-        } else {
-            document.getElementById('mobBackIcon').style.display = 'none';
-            document.getElementById('txtBack').style.display = 'inline-block';
-            document.getElementById('mobSaveIcon').style.display = 'none';
-            document.getElementById('txtSave').style.display = 'inline-block';
-        }
-    }
-    window.addEventListener('resize', setupMobileResponsiveUI);
-
-    // รองรับการใช้ปุ่มย้อนกลับของ Browser เพื่อออกจากหน้า Edit กลับหน้าแรก
-    function setupBrowserBackButton() {
-        window.addEventListener('popstate', function(event) {
-            if (document.getElementById('editorView').style.display === 'block') {
-                // ถ้าอยู่ในหน้า Edit ให้ปิดลงแล้วกลับหน้าแรก
-                currentImageUrl = canvas.toDataURL();
-                document.getElementById('editorView').style.display = 'none';
-                document.getElementById('mainView').style.display = 'block';
-                generateExplorerGrid();
-            }
-        });
-    }
-
-    // Generate main page overview cards
     function generateExplorerGrid() {
         const wrapper = document.getElementById('patternsWrapper');
         wrapper.innerHTML = "";
@@ -1018,7 +964,7 @@
             select.appendChild(opt);
         });
 
-        // คลอนชุด Select Layout ไปไว้ในตัวเลือก Rules ด้านบนของ Mobile แบบมินิมอล
+        // คลอนตัวเลือก Rules มาใส่ไว้ใน Minimal Mobile Top bar
         const mobileTopBar = document.getElementById('mobileTopBar');
         const clonedSelect = select.cloneNode(true);
         clonedSelect.id = "layoutSelectMobile";
@@ -1029,19 +975,21 @@
         mobileTopBar.appendChild(clonedSelect);
     }
 
-    // Bind drawing tools grid selector
     function setupToolsGrid() {
-        const buttons = document.querySelectorAll('.tool-btn');
+        const buttons = document.querySelectorAll('.tool-btn, .mobile-tool-btn');
         buttons.forEach(btn => {
             btn.onclick = () => {
-                buttons.forEach(b => b.classList.remove('active'));
-                btn.classList.add('active');
-                selectedTool = btn.getAttribute('data-tool');
+                document.querySelectorAll('.tool-btn, .mobile-tool-btn').forEach(b => b.classList.remove('active'));
+                
+                // ค้นหาและไฮไลต์ปุ่มคู่ขนาน (ทั้ง Desktop และ Mobile)
+                const targetTool = btn.getAttribute('data-tool');
+                document.querySelectorAll(`[data-tool="${targetTool}"]`).forEach(b => b.classList.add('active'));
+                
+                selectedTool = targetTool;
             };
         });
     }
 
-    // Setup Custom Dot Width Selector
     function setupLineWidthSelector() {
         const dots = document.querySelectorAll('#dotSizeContainer .dot-option');
         dots.forEach(dot => {
@@ -1053,7 +1001,6 @@
         });
     }
 
-    // Wire-up Mobile specific tabs click switching systems
     function setupMobileTabSystems() {
         const navItems = document.querySelectorAll('.nav-tab-item');
         const groups = document.querySelectorAll('.tools-panel .tool-group');
@@ -1070,10 +1017,22 @@
         });
     }
 
-    // Initialize transparent default canvas
+    // ฟังก์ชันซัพพอร์ตปุ่มย้อนกลับของ Browser (Popstate Navigation)
+    function setupMobileNavigationHandling() {
+        window.addEventListener('popstate', (e) => {
+            if (document.getElementById('editorView').style.display === 'block') {
+                // ถ้าอยู่ในหน้า Edit ให้ปิดและกลับไปหน้าแรกแทนการปิดเว็บ
+                currentImageUrl = canvas.toDataURL();
+                document.getElementById('editorView').style.display = 'none';
+                document.getElementById('mainView').style.display = 'block';
+                generateExplorerGrid();
+            }
+        });
+    }
+
     function setupCanvasDefault() {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
-        canvas.style.backgroundColor = document.getElementById('bgColor').value;
+        canvas.style.backgroundColor = document.getElementById('bgColor')?.value || "#ffffff";
         ctx.font = "bold 110px sans-serif";
         ctx.fillStyle = "#1e293b";
         ctx.textAlign = "center";
@@ -1082,7 +1041,6 @@
         saveCanvasState();
     }
 
-    // Render mini P blueprint indicator layout inside panel
     function renderMiniPPreview(pattern) {
         const grid = document.getElementById('miniPreviewGrid');
         grid.innerHTML = "";
@@ -1159,7 +1117,6 @@
         };
     }
 
-    // Helper to calculate the intrinsic period of a rule's row and extend it dynamically
     function getTransformWithPeriod(matrix, r, c) {
         const blueprintCols = 6;
         const blueprintRows = 4;
@@ -1201,61 +1158,45 @@
             });
         });
 
+        // ซิงค์ปุ่มเลือกสีของ Mobile กลับไปยังแกนหลัก
+        document.getElementById('mobileStrokeColor').oninput = (e) => {
+            document.getElementById('strokeColor').value = e.target.value;
+        };
+
         document.getElementById('tileImageUpload').addEventListener('change', (e) => {
             handleImageUpload(e, (dataUrl) => {
                 const cropImg = document.getElementById('cropImageTag');
                 cropImg.src = dataUrl;
                 document.getElementById('cropModal').style.display = 'flex';
                 
-                if (cropper) {
-                    cropper.destroy();
-                }
+                if (cropper) { cropper.destroy(); }
 
                 setTimeout(() => {
                     cropper = new Cropper(cropImg, {
-                        aspectRatio: 1,
-                        viewMode: 1,
-                        movable: true,
-                        zoomable: true,
-                        scalable: false,
-                        rotatable: false,
-                        cropBoxMovable: true,
-                        cropBoxResizable: true,
-                        background: true
+                        aspectRatio: 1, viewMode: 1, movable: true, zoomable: true,
+                        scalable: false, rotatable: false, cropBoxMovable: true,
+                        cropBoxResizable: true, background: true
                     });
                 }, 50);
-
                 e.target.value = "";
             });
         });
 
         document.getElementById('btnCropSquare').onclick = () => {
             if (!cropper) return;
-            
-            const croppedCanvas = cropper.getCroppedCanvas({
-                width: canvas.width,
-                height: canvas.height
-            });
-            
+            const croppedCanvas = cropper.getCroppedCanvas({ width: canvas.width, height: canvas.height });
             ctx.clearRect(0, 0, canvas.width, canvas.height);
             ctx.drawImage(croppedCanvas, 0, 0, canvas.width, canvas.height);
-            
             saveCanvasState();
             updateTilesFromCanvas();
-            
             document.getElementById('cropModal').style.display = 'none';
-            cropper.destroy();
-            cropper = null;
+            cropper.destroy(); cropper = null;
         };
 
         document.getElementById('btnCropNone').onclick = () => {
             document.getElementById('cropModal').style.display = 'none';
             const originalSrc = document.getElementById('cropImageTag').src;
-            
-            if (cropper) {
-                cropper.destroy();
-                cropper = null;
-            }
+            if (cropper) { cropper.destroy(); cropper = null; }
 
             const img = new Image();
             img.onload = function() {
@@ -1272,15 +1213,8 @@
             img.src = originalSrc;
         };
 
-        // ผูกอีเวนต์ชุดปุ่มข้างแคนวาสของโมบายล์ ให้ทำงานสัมพันธ์กับปุ่มหลักเดิม
-        document.getElementById('btnUndoMobile').onclick = () => document.getElementById('btnUndo').click();
-        document.getElementById('btnRedoMobile').onclick = () => document.getElementById('btnRedo').click();
-        document.getElementById('btnClearMobile').onclick = () => document.getElementById('btnClearCanvas').click();
-        document.getElementById('btnResetPMobile').onclick = () => document.getElementById('btnResetToP').click();
-
         document.getElementById('btnResetToP').onclick = () => {
-            drawingHistory = [];
-            historyStep = -1;
+            drawingHistory = []; historyStep = -1;
             document.getElementById('tileImageUpload').value = "";
             setupCanvasDefault();
             updateTilesFromCanvas();
@@ -1319,9 +1253,14 @@
         };
 
         document.getElementById('btnBucketTool').onclick = () => {
-            const buttons = document.querySelectorAll('.tool-btn');
-            buttons.forEach(b => b.classList.remove('active'));
+            document.querySelectorAll('.tool-btn, .mobile-tool-btn').forEach(b => b.classList.remove('active'));
+            document.getElementById('mToolBucket').classList.add('active');
             selectedTool = 'fill';
+        };
+
+        // ปุ่มซ่อน / แสดง แผงควบคุม (Mobile Outline Icon)
+        document.getElementById('mobileTogglePanel').onclick = function() {
+            panel.classList.toggle('collapsed-mobile');
         };
 
         const panel = document.getElementById('toolsPanel');
@@ -1330,40 +1269,25 @@
             this.textContent = panel.classList.contains('collapsed') ? "⮪" : "➔";
         };
 
-        // สคริปต์ควบคุมการซ่อน/แสดง Panel Tools บน Mobile ลอยอยู่เหนือ Navbar
-        const btnMobileTogglePanel = document.getElementById('btnMobileTogglePanel');
-        btnMobileTogglePanel.onclick = function() {
-            panel.classList.toggle('mobile-hidden');
-            const isHidden = panel.classList.contains('mobile-hidden');
-            document.getElementById('mobTogglePanelIcon').textContent = isHidden ? "expand_less" : "expand_more";
-            document.getElementById('mobTogglePanelText').textContent = isHidden ? "Show Tools" : "Hide Tools";
-        };
-
         window.addEventListener('keydown', (e) => { if(e.key === 'Control') isCtrlPressed = true; });
         window.addEventListener('keyup', (e) => { if(e.key === 'Control') isCtrlPressed = false; });
 
-        // Desktop Pointer Mapping
         canvas.addEventListener('mousedown', startDrawing);
         canvas.addEventListener('mousemove', draw);
         canvas.addEventListener('mouseup', stopDrawing);
         canvas.addEventListener('mouseleave', stopDrawing);
 
-        // Mobile Native Touch Surface Mapping
         canvas.addEventListener('touchstart', function(e) {
             e.preventDefault();
             const touch = e.touches[0];
-            const mouseEvent = new MouseEvent('mousedown', {
-                clientX: touch.clientX, clientY: touch.clientY
-            });
+            const mouseEvent = new MouseEvent('mousedown', { clientX: touch.clientX, clientY: touch.clientY });
             canvas.dispatchEvent(mouseEvent);
         }, { passive: false });
 
         canvas.addEventListener('touchmove', function(e) {
             e.preventDefault();
             const touch = e.touches[0];
-            const mouseEvent = new MouseEvent('mousemove', {
-                clientX: touch.clientX, clientY: touch.clientY
-            });
+            const mouseEvent = new MouseEvent('mousemove', { clientX: touch.clientX, clientY: touch.clientY });
             canvas.dispatchEvent(mouseEvent);
         }, { passive: false });
 
@@ -1390,80 +1314,70 @@
             applyTransform();
         }, { passive: false });
 
-        // ฟังก์ชันช่วยจำกัดขอบเขตการลากจอกลางหน้าพรีวิวให้สัมพันธ์กับ Grid (จำกัดพื้นที่เท่าที่ grid มี)
-        function clampPan(x, y) {
-            const output = document.getElementById('tessellationOutput');
-            const pRect = previewArea.getBoundingClientRect();
-            const oRect = output.getBoundingClientRect();
-            
-            // ขอบเขตความกว้างและความสูงสูงสุดที่ยอมให้ลากห่างออกจากจุดกึ่งกลาง
-            const limitX = Math.max(pRect.width, oRect.width);
-            const limitY = Math.max(pRect.height, oRect.height);
-            
-            return {
-                x: Math.min(Math.max(x, -limitX), limitX),
-                y: Math.min(Math.max(y, -limitY), limitY)
-            };
-        }
-
         previewArea.addEventListener('mousedown', (e) => {
             if(e.target.classList.contains('preview-area') || e.target.id === 'tessellationOutput' || e.target.classList.contains('tile')) {
                 isPanning = true;
-                startPanX = e.clientX - panX;
-                startPanY = e.clientY - panY;
+                startPanX = e.clientX - panX; startPanY = e.clientY - panY;
             }
         });
         window.addEventListener('mousemove', (e) => {
             if (!isPanning) return;
-            let rawX = e.clientX - startPanX;
-            let rawY = e.clientY - startPanY;
-            
-            // จำกัดพื้นที่ลากพรีวิวเฉพาะบนโมบายล์
-            if (window.innerWidth <= 991) {
-                const clamped = clampPan(rawX, rawY);
-                panX = clamped.x;
-                panY = clamped.y;
-            } else {
-                panX = rawX;
-                panY = rawY;
-            }
+            calculatePanBoundaries(e.clientX - startPanX, e.clientY - startPanY);
             applyTransform();
         });
         window.addEventListener('mouseup', () => { isPanning = false; });
 
-        // Mobile Pan Navigation Coordinates setup
+        // เปิดใช้งานระบบ Touch zoom แฝง (Pinch to Zoom) เฉพาะตรงบริเวณ preview เท่านั้น
+        let initialTouchDist = 0;
         previewArea.addEventListener('touchstart', function(e) {
-            if (e.target.classList.contains('preview-area') || e.target.id === 'tessellationOutput' || e.target.classList.contains('tile')) {
+            if (e.touches.length === 2) {
+                // เก็บค่าระยะห่างนิ้วมือเริ่มต้นคำนวณการซูมเฉพาะ Panel Preview เท่านั้น
+                initialTouchDist = Math.hypot(e.touches[0].clientX - e.touches[1].clientX, e.touches[0].clientY - e.touches[1].clientY);
+            } else if (e.target.classList.contains('preview-area') || e.target.id === 'tessellationOutput' || e.target.classList.contains('tile')) {
                 isPanning = true;
                 const touch = e.touches[0];
-                startPanX = touch.clientX - panX;
-                startPanY = touch.clientY - panY;
+                startPanX = touch.clientX - panX; startPanY = touch.clientY - panY;
             }
         }, { passive: true });
 
         previewArea.addEventListener('touchmove', function(e) {
-            if (!isPanning) return;
-            const touch = e.touches[0];
-            let rawX = touch.clientX - startPanX;
-            let rawY = touch.clientY - startPanY;
-            
-            const clamped = clampPan(rawX, rawY);
-            panX = clamped.x;
-            panY = clamped.y;
-            
-            applyTransform();
+            if (e.touches.length === 2 && initialTouchDist > 0) {
+                const currentDist = Math.hypot(e.touches[0].clientX - e.touches[1].clientX, e.touches[0].clientY - e.touches[1].clientY);
+                const zoomFactor = currentDist / initialTouchDist;
+                scale = Math.min(Math.max(0.2, scale * (zoomFactor > 1 ? 1.03 : 0.97)), 5);
+                applyTransform();
+            } else if (isPanning) {
+                const touch = e.touches[0];
+                calculatePanBoundaries(touch.clientX - startPanX, touch.clientY - startPanY);
+                applyTransform();
+            }
         }, { passive: true });
 
-        previewArea.addEventListener('touchend', function() { isPanning = false; });
+        previewArea.addEventListener('touchend', function() { isPanning = false; initialTouchDist = 0; });
 
-        // ผูกเหตุการณ์ปุ่ม Reset Zoom ของทั้ง Desktop และ Mobile Floating
-        const resetZoomAction = () => {
+        document.getElementById('btnResetZoom').onclick = () => {
             scale = 1; panX = 0; panY = 0; applyTransform();
         };
-        document.getElementById('btnResetZoom').onclick = resetZoomAction;
-        document.getElementById('btnResetZoomMobile').onclick = resetZoomAction;
 
         document.getElementById('btnSaveImage').onclick = saveOutputAsImage;
+    }
+
+    // จำกัดการเลื่อนหน้าจอ (Pan) ให้อยู่เฉพาะพื้นที่เท่าที่ grid มีอยู่
+    function calculatePanBoundaries(targetX, targetY) {
+        if (window.innerWidth <= 991) {
+            const outputElement = document.getElementById('tessellationOutput');
+            if (outputElement) {
+                const rect = outputElement.getBoundingClientRect();
+                // อนุญาตให้ขยับเลื่อนได้ไม่เกินขอบเขตของพิกัดความกว้างยาวรวมของชิ้นงาน Grid
+                const maxW = rect.width / 2;
+                const maxH = rect.height / 2;
+                panX = Math.min(Math.max(targetX, -maxW), maxW);
+                panY = Math.min(Math.max(targetY, -maxH), maxH);
+                return;
+            }
+        }
+        panX = targetX;
+        panY = targetY;
     }
 
     function applyTransform() {
@@ -1485,8 +1399,8 @@
         document.getElementById('mainView').style.display = 'none';
         document.getElementById('editorView').style.display = 'block';
 
-        // เพิ่มประวัติลงใน browser history เพื่อให้สามารถใช้ปุ่ม back ของบราวเซอร์ย้อนกลับได้
-        window.history.pushState({page: "editor"}, "Editor View");
+        // บันทึก History State เข้า Browser เพื่อรองรับการกด Back ปุ่มบนมือถือ
+        window.history.pushState({editing: true}, "");
 
         document.getElementById('layoutSelect').value = pattern.id;
         if(document.getElementById('layoutSelectMobile')) {
@@ -1498,12 +1412,12 @@
         
         renderMiniPPreview(pattern);
 
-        const currentBg = document.getElementById('bgColor').value;
+        const currentBg = document.getElementById('bgColor')?.value || "#ffffff";
         canvas.style.backgroundColor = currentBg;
 
         if (window.innerWidth <= 991) {
-            document.getElementById('gridSizeInput').value = 30;
-            document.getElementById('gridSizeNum').value = 30;
+            document.getElementById('gridSizeInput').value = 45;
+            document.getElementById('gridSizeNum').value = 45;
         }
 
         if(currentImageUrl) {
@@ -1511,17 +1425,13 @@
             img.onload = () => {
                 ctx.clearRect(0, 0, canvas.width, canvas.height);
                 ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-                drawingHistory = [];
-                historyStep = -1;
-                saveCanvasState();
-                renderTessellation();
+                drawingHistory = []; historyStep = -1;
+                saveCanvasState(); renderTessellation();
             };
             img.src = currentImageUrl;
         } else {
-            drawingHistory = [];
-            historyStep = -1;
-            setupCanvasDefault();
-            renderTessellation();
+            drawingHistory = []; historyStep = -1;
+            setupCanvasDefault(); renderTessellation();
         }
     }
 
@@ -1531,7 +1441,7 @@
         const cols = parseInt(document.getElementById('gridCols').value) || 8;
         const rows = parseInt(document.getElementById('gridRows').value) || 6;
         const tileSize = parseInt(document.getElementById('gridSizeInput').value) || 80;
-        const currentBg = document.getElementById('bgColor').value;
+        const currentBg = document.getElementById('bgColor')?.value || "#ffffff";
 
         const outputZone = document.getElementById('tessellationOutput');
         outputZone.innerHTML = "";
@@ -1557,9 +1467,7 @@
         }
     }
 
-    function updateTilesFromCanvas() {
-        renderTessellation();
-    }
+    function updateTilesFromCanvas() { renderTessellation(); }
 
     function startDrawing(e) {
         const rect = canvas.getBoundingClientRect();
@@ -1567,11 +1475,9 @@
         startY = (e.clientY - rect.top) * (canvas.height / rect.height);
         
         if (selectedTool === 'fill') {
-            const paintColor = hexToRgb(document.getElementById('bucketColor').value);
+            const paintColor = hexToRgb(document.getElementById('strokeColor').value);
             floodFill(Math.floor(startX), Math.floor(startY), paintColor);
-            saveCanvasState();
-            updateTilesFromCanvas();
-            return;
+            saveCanvasState(); updateTilesFromCanvas(); return;
         }
 
         isDrawing = true;
@@ -1579,13 +1485,11 @@
         
         ctx.lineWidth = selectedLineWidth;
         ctx.strokeStyle = document.getElementById('strokeColor').value;
-        ctx.fillStyle = document.getElementById('fillColor').value;
-        ctx.lineCap = "round";
-        ctx.lineJoin = "round";
+        ctx.fillStyle = document.getElementById('strokeColor').value;
+        ctx.lineCap = "round"; ctx.lineJoin = "round";
 
-        if (selectedTool === 'brush' && document.getElementById('chkUseStroke').checked) {
-            ctx.beginPath();
-            ctx.moveTo(startX, startY);
+        if (selectedTool === 'brush') {
+            ctx.beginPath(); ctx.moveTo(startX, startY);
         }
     }
 
@@ -1595,102 +1499,53 @@
         const currentX = (e.clientX - rect.left) * (canvas.width / rect.width);
         const currentY = (e.clientY - rect.top) * (canvas.height / rect.height);
         
-        const useFill = document.getElementById('chkUseFill').checked;
-        const useStroke = document.getElementById('chkUseStroke').checked;
-
         if (selectedTool === 'brush') {
-            if (useStroke) {
-                ctx.lineTo(currentX, currentY);
-                ctx.stroke();
-            }
+            ctx.lineTo(currentX, currentY); ctx.stroke();
         } else if (selectedTool !== 'fill') {
             ctx.putImageData(canvasSnapshot, 0, 0);
             ctx.beginPath();
-            
-            let width = currentX - startX;
-            let height = currentY - startY;
-
-            if (isCtrlPressed && (selectedTool === 'rect' || selectedTool === 'circle' || selectedTool === 'triangle')) {
-                const maxLen = Math.max(Math.abs(width), Math.abs(height));
-                width = width >= 0 ? maxLen : -maxLen;
-                height = height >= 0 ? maxLen : -maxLen;
-            }
+            let width = currentX - startX; let height = currentY - startY;
 
             if (selectedTool === 'line') {
-                if (useStroke) {
-                    ctx.moveTo(startX, startY);
-                    ctx.lineTo(currentX, currentY);
-                    ctx.stroke();
-                }
+                ctx.moveTo(startX, startY); ctx.lineTo(currentX, currentY); ctx.stroke();
             } else if (selectedTool === 'rect') {
-                ctx.rect(startX, startY, width, height);
-                if (useFill) ctx.fill();
-                if (useStroke) ctx.stroke();
+                ctx.rect(startX, startY, width, height); ctx.stroke();
             } else if (selectedTool === 'circle') {
                 const radius = Math.sqrt(width * width + height * height);
-                ctx.arc(startX, startY, radius, 0, 2 * Math.PI);
-                if (useFill) ctx.fill();
-                if (useStroke) ctx.stroke();
-            } else if (selectedTool === 'triangle') {
-                ctx.moveTo(startX + width / 2, startY);
-                ctx.lineTo(startX + width, startY + height);
-                ctx.lineTo(startX, startY + height);
-                ctx.closePath();
-                if (useFill) ctx.fill();
-                if (useStroke) ctx.stroke();
+                ctx.arc(startX, startY, radius, 0, 2 * Math.PI); ctx.stroke();
             }
         }
         updateTilesFromCanvas();
     }
 
-    function stopDrawing() {
-        if (!isDrawing) return;
-        isDrawing = false;
-        saveCanvasState();
-    }
-
+    function stopDrawing() { if (!isDrawing) return; isDrawing = false; saveCanvasState(); }
     function saveCanvasState() {
-        if (historyStep < drawingHistory.length - 1) {
-            drawingHistory = drawingHistory.slice(0, historyStep + 1);
-        }
-        drawingHistory.push(ctx.getImageData(0, 0, canvas.width, canvas.height));
-        historyStep++;
+        if (historyStep < drawingHistory.length - 1) { drawingHistory = drawingHistory.slice(0, historyStep + 1); }
+        drawingHistory.push(ctx.getImageData(0, 0, canvas.width, canvas.height)); historyStep++;
     }
-
     function restoreCanvasStep() {
-        if (historyStep >= 0 && historyStep < drawingHistory.length) {
-            ctx.putImageData(drawingHistory[historyStep], 0, 0);
-            updateTilesFromCanvas();
-        }
+        if (historyStep >= 0 && historyStep < drawingHistory.length) { ctx.putImageData(drawingHistory[historyStep], 0, 0); updateTilesFromCanvas(); }
     }
 
     function saveOutputAsImage() {
         if(!activePattern) return;
-        
         const cols = parseInt(document.getElementById('gridCols').value) || 8;
         const rows = parseInt(document.getElementById('gridRows').value) || 6;
         const tileSize = parseInt(document.getElementById('gridSizeInput').value) || 80;
-        const currentBg = document.getElementById('bgColor').value;
+        const currentBg = document.getElementById('bgColor')?.value || "#ffffff";
 
         const exportCanvas = document.createElement('canvas');
-        exportCanvas.width = cols * tileSize;
-        exportCanvas.height = rows * tileSize;
+        exportCanvas.width = cols * tileSize; exportCanvas.height = rows * tileSize;
         const eCtx = exportCanvas.getContext('2d');
+        eCtx.fillStyle = currentBg; eCtx.fillRect(0, 0, exportCanvas.width, exportCanvas.height);
 
-        eCtx.fillStyle = currentBg;
-        eCtx.fillRect(0, 0, exportCanvas.width, exportCanvas.height);
-
-        const sourceTileImg = new Image();
-        sourceTileImg.src = canvas.toDataURL();
-
+        const sourceTileImg = new Image(); sourceTileImg.src = canvas.toDataURL();
         sourceTileImg.onload = function() {
             for (let r = 0; r < rows; r++) {
                 for (let c = 0; c < cols; c++) {
                     const transform = getTransformWithPeriod(activePattern.matrix, r, c);
-
                     eCtx.save();
-                    const posX = c * tileSize + tileSize / 2;
-                    const posY = r * tileSize + tileSize / 2;
+                    const posX = c * tileSize + tileSize / 2; const posY = r * tileSize + tileSize / 2;
                     eCtx.translate(posX, posY);
 
                     if (transform === 'r90')  eCtx.rotate(90 * Math.PI / 180);
@@ -1706,17 +1561,12 @@
                     eCtx.restore();
                 }
             }
-
-            const link = document.createElement('a');
-            link.download = `Tessellation-${activePattern.title}.png`;
-            link.href = exportCanvas.toDataURL('image/png');
-            link.click();
+            const link = document.createElement('a'); link.download = `Tessellation-${activePattern.title}.png`;
+            link.href = exportCanvas.toDataURL('image/png'); link.click();
         };
     }
-
     window.onload = init;
 </script>
-
 </body>
 </html>
 
