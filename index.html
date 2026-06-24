@@ -157,7 +157,7 @@
             justify-content: center;
             position: relative;
             background: #f1f5f9;
-            touch-action: none; /* ล็อคไม่ให้เลื่อนหน้าจอหลักขณะซูม/แพนภาพ preview */
+            touch-action: none;
         }
         .tessellation-output {
             display: grid;
@@ -261,7 +261,6 @@
         .mobile-toggle-panel-btn { display: none; }
         .mobile-nav-bar { display: none; }
         
-        /* ซ่อนแผงเลือกกติกากลางด้านบนของ Desktop ตอนเริ่มแรก */
         #headerLayoutSelectWrapper { display: flex; flex: 1; justify-content: center; padding: 0 10px; }
 
         #cropModal {
@@ -280,49 +279,63 @@
             #mainView { height: 100vh; }
             .patterns-container { grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 16px; }
 
+            /* หน้าแรก: ซ่อนอินพุตอัพโหลดรูปภาพของหน้าแรก */
+            #globalImageUpload { display: none !important; }
+
             .editor-container { flex-direction: column; height: 100vh; width: 100vw; }
             
-            /* ล็อคขนาดส่วนอื่นๆ ไว้ ซูม/แพนได้เฉพาะพื้นที่นี้ */
-            .workspace { height: calc(100vh - 325px); flex: none; width: 100%; }
+            /* ปรับพื้นที่พรีวิวเริ่มต้นให้เว้นพื้นที่ด้านล่างไม่ให้โดนพาเนลบังพิกัดสำคัญ */
+            .workspace { height: calc(100% - 60px); flex: 1; width: 100%; padding-bottom: 250px; }
             .workspace-header { padding: 8px 12px; gap: 8px; }
             .workspace-header span { display: none; }
             
-            /* ปรับให้เลือกลำดับ Rule อยู่แถวบนสุดระหว่าง back และ save บนมือถือ */
             #headerLayoutSelectWrapper { display: flex !important; visibility: visible !important; width: auto; max-width: 55%; }
             #headerLayoutSelectWrapper select { height: 36px; padding: 4px 8px; font-size: 0.85rem; border-radius: 6px; }
 
-            /* Bottom Panel */
+            /* Bottom Panel System */
             .tools-panel {
                 width: 100% !important; min-width: 100% !important;
-                height: 230px !important; max-height: 230px;
+                height: auto !important; max-height: 290px;
                 border-left: none; border-top: 1px solid #e2e8f0;
                 position: fixed; bottom: 60px; left: 0; z-index: 1001;
                 background: #ffffff; transform: translateY(0); transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             }
-            .tools-panel.collapsed { transform: translateY(100%); }
+            .tools-panel.collapsed { transform: translateY(100%) !important; }
 
-            .panel-content { padding: 10px 12px 12px 12px; overflow-y: auto; height: 100%; }
+            /* ลบ space ว่างหน้า grid edit / studio */
+            .panel-content { padding: 8px 14px; overflow-y: auto; height: 100%; }
             
-            /* ซ่อนส่วนที่ไม่จำเป็นบน Mobile */
             #editPatternTitle, #editPatternDesc, .mini-preview-box, .desktop-tab-toggle, .tool-group h4, .tools-panel hr, #desktopPanelRulesZone { display: none !important; }
 
-            .tool-group { margin-bottom: 0; }
+            .tool-group { margin-bottom: 0; padding: 4px 0; }
             .tool-group.active-tab { display: block !important; }
 
-            /* ปรับแต่งเลย์เอาต์ Tile Studio ให้สมดุล กึ่งกลางหน้าจอ และขยายขนาด Canvas ใหญ่ขึ้น */
+            #tabGridExpansion { padding: 4px 5px; }
+            #tabGridExpansion .tool-row { margin-bottom: 8px; }
+
+            /* จัดตำแหน่งและสัดส่วนหน้าสตูดิโอให้พอดี */
             .studio-layout-container {
-                grid-template-columns: 65px 160px 85px; gap: 8px; margin-top: 2px; justify-content: center; align-content: center; width: 100%;
+                grid-template-columns: 55px 1fr 65px; gap: 8px; margin-top: 2px; width: 100%; align-items: center; justify-content: center;
             }
-            .canvas-container { width: 160px; height: 160px; } /* ขยายขนาด Canvas ให้ใหญ่เต็มพิกัดบนอุปกรณ์พกพา */
+            
+            /* จัด Canvas อยู่กลาง panel ในแกน x */
+            .studio-center-col { display: flex; justify-content: center; align-items: center; width: 100%; }
+            .canvas-container { width: 115px; height: 115px; border-radius: 6px; margin: 0 auto; }
+            
             .tools-grid-3x2 { gap: 4px; }
-            .tool-btn-outline { height: 32px; }
-            .line-size-horiz { margin-top: 2px; }
-            .line-dot-opt { height: 22px; }
-            .studio-right-col { gap: 6px; font-size: 0.75rem; }
-            .circle-color-picker { width: 22px; height: 22px; }
-            .canvas-actions-row { margin-top: 5px; gap: 4px; }
-            .canvas-actions-row .btn-outline { padding: 4px; }
-            .canvas-actions-row .btn-outline svg { width: 16px; height: 16px; }
+            .tool-btn-outline { height: 28px; padding: 2px; }
+            .tool-btn-outline svg { width: 14px; height: 14px; }
+            .line-size-horiz { margin-top: 3px; gap: 2px; }
+            .line-dot-opt { height: 18px; }
+            
+            .studio-right-col { gap: 4px; font-size: 0.7er; justify-content: center; }
+            .color-picker-wrapper { gap: 1px; }
+            .circle-color-picker { width: 20px; height: 20px; }
+            .color-checkbox { width: 13px; height: 13px; }
+            
+            .canvas-actions-row { margin-top: 6px; gap: 4px; }
+            .canvas-actions-row .btn-outline { padding: 4px; height: 28px; flex: 1; }
+            .canvas-actions-row .btn-outline svg { width: 14px; height: 14px; }
 
             /* แถบนำทางด้านล่าง */
             .mobile-nav-bar {
@@ -337,15 +350,15 @@
             .nav-tab-item svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 2; }
             .nav-tab-item.active { color: var(--text-color); background: #ffffff; font-weight: 600; }
 
-            /* ปรับแต่งปุ่มซ่อน panel: ให้อยู่ตรงกลางด้านบนของ panel พอดี ไม่ซ้อนทับหรือบังเครื่องมือ */
+            /* ปรับปุ่มกดซ่อน panel tools ให้อยู่ตรงตำแหน่งแนบติดกับเส้นขอบบนพอดี */
             .mobile-toggle-panel-btn {
-                display: flex; position: fixed; bottom: 290px; left: 50%; transform: translateX(-50%); z-index: 1005;
-                background: #ffffff; color: var(--text-color); border: 1px solid #e2e8f0; width: 50px; height: 24px;
-                border-radius: 12px 12px 0 0; border-bottom: none; box-shadow: 0 -3px 6px rgba(0,0,0,0.03); align-items: center; justify-content: center; cursor: pointer;
+                display: flex; position: fixed; left: 50%; transform: translateX(-50%); z-index: 1005;
+                background: #ffffff; color: var(--text-color); border: 1px solid #cbd5e1; width: 50px; height: 22px;
+                border-radius: 10px 10px 0 0; border-bottom: none; align-items: center; justify-content: center; cursor: pointer;
                 transition: bottom 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+                margin-bottom: -1px;
             }
-            .tools-panel.collapsed + .mobile-toggle-panel-btn { bottom: 60px; border-bottom: 1px solid #e2e8f0; border-radius: 12px 12px 12px 12px; box-shadow: 0 -2px 8px rgba(0,0,0,0.1); }
-            .mobile-toggle-panel-btn svg { width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-width: 2; transition: transform 0.3s; }
+            .mobile-toggle-panel-btn svg { width: 14px; height: 14px; fill: none; stroke: currentColor; stroke-width: 2; transition: transform 0.3s; }
         }
     </style>
 </head>
@@ -357,8 +370,8 @@
     </header>
 
    <div class="upload-zone">
-        <strong>Upload Image Asset</strong><br>
-        <small>Click Layout Card to Enter Edit Mode</small>
+        <!-- ลบข้อความตัวหนาเดิมออก เหลือเพียงโครงสร้างตัวอ่อนชี้แนะโหมด Edit -->
+        <small style="color: #64748b; font-size: 0.95rem;">Click Layout Card to Enter Edit Mode</small>
         <div class="upload-actions">
             <input type="file" id="globalImageUpload" accept="image/*">
             <button class="btn-outline" id="btnClearToP" style="font-size: 0.85rem; padding: 6px 12px;">Reset Image to Default</button>
@@ -594,7 +607,6 @@
         { id: 36, title: "36. Center Core Focus", desc: "Directs all graphic paths inward toward row centerlines to anchor visual attention.", matrix: ["mx","n","mx","n","mx","n","my","mxy","my","mxy","my","mxy","mx","n","mx","n","mx","n","my","mxy","my","mxy","my","mxy"] },
         { id: 37, title: "37. Alternate Cross Fill", desc: "Fills negative spaces using inverse diagonal rotations scattered over vacant grids.", matrix: ["n","mxy","n","mxy","n","mxy","mxy","n","mxy","n","mxy","n","n","mxy","n","mxy","n","mxy","mxy","n","mxy","n","mxy","n"] },
         { id: 38, title: "38. Chevron Chevron Flow V2", desc: "Creates sharp arrow configurations that dive vertically down screens without interruption.", matrix: ["r90","mx90","r90","mx90","r90","mx90","r90","mx90","r90","mx90","r90","mx90","r90","mx90","r90","mx90","r90","mx90","r90","mx90","r90","mx90","r90","mx90"] },
-        { id: 39, title: "39. Asymmetric Glide Symmetry", desc: "Slightly shifted translation paths frequently featured in modern architectural masonry.", matrix: ["n","my","r180","mx","n","my","r180","mx","n","my","r180","mx","n","my","r180","mx","n","my","r180","mx","n","my","r180","mx"] },
         { id: 40, title: "40. Fish Scale Layout", desc: "Overlaps modules conceptually to simulate scale arrays fanning outward.", matrix: ["my90","n","my90","n","my90","n","n","my90","n","my90","n","my90","my90","n","my90","n","my90","n","n","my90","n","my90","n","my90"] },
         { id: 41, title: "41. Matrix Inversion", desc: "Swaps independent X and Y axis orientations on odd/even coordinates sequentially.", matrix: ["mx","my","mx","my","mx","my","my","mx","my","mx","my","mx","mx","my","mx","my","mx","my","my","mx","my","mx","my","mx"] },
         { id: 42, title: "42. Offset Brick Mirror", desc: "Half-stepped running bond brick offsets coupled with mirrors to slice seam visibility.", matrix: ["n","mx","n","mx","n","mx","mx","n","mx","n","mx","n","n","mx","n","mx","n","mx","mx","n","mx","n","mx","n"] },
@@ -630,6 +642,27 @@
     let isPanning = false;
     let startPanX = 0, startPanY = 0;
 
+    function adjustMobilePanelHeight() {
+        if (window.innerWidth > 991) return;
+        const panel = document.getElementById('toolsPanel');
+        const activeTab = document.querySelector('.tool-group.active-tab');
+        const toggleBtn = document.getElementById('mobileTogglePanel');
+        if (panel && activeTab && toggleBtn) {
+            let targetMaxHeight = '245px';
+            if (activeTab.id === 'tabGridExpansion') {
+                targetMaxHeight = '155px';
+            }
+            panel.style.maxHeight = targetMaxHeight;
+            
+            // ปรับตำแหน่งปุ่มซ่อนให้ตรงเสมอกับเส้นขอบบนพอดี (ขอบแผงเครื่องมือด้านล่าง)
+            if (panel.classList.contains('collapsed')) {
+                toggleBtn.style.bottom = '60px';
+            } else {
+                toggleBtn.style.bottom = (60 + parseInt(targetMaxHeight)) + 'px';
+            }
+        }
+    }
+
     function init() {
         generateExplorerGrid();
         setupDropdownOptions();
@@ -640,9 +673,9 @@
         setupDesktopTabs();
         bindEvents();
         setupResponsiveLayoutEngine();
+        setTimeout(adjustMobilePanelHeight, 150);
     }
 
-    // ระบบตรวจจับและสลับรูปแบบข้อความ/เลย์เอาต์ตามขนาดหน้าจอแบบ Responsive
     function setupResponsiveLayoutEngine() {
         const selectElement = document.getElementById('layoutSelect');
         const headerContainer = document.getElementById('headerLayoutSelectWrapper');
@@ -650,21 +683,18 @@
         const textLabels = document.querySelectorAll('.color-name-text');
 
         if (window.innerWidth <= 991) {
-            // โหมดพกพา: ย้ายเมนูเลือกไปแถบหัวข้อด้านบนสุดของหน้า Preview วิ่งระหว่าง back และ save
             headerContainer.appendChild(selectElement);
-            
-            // แสดงชื่อสีแบบสั้น (ตัวย่อ)
             textLabels.forEach(label => {
                 label.textContent = label.getAttribute('data-mobile');
             });
+            adjustMobilePanelHeight();
         } else {
-            // โหมดเดสก์ท็อป: ย้ายเมนูเลือกไปวางบน Panel ด้านขวาแทนที่หัวข้อ Rules เดิม
             desktopPanelZone.appendChild(selectElement);
-            
-            // แสดงชื่อสีเวอร์ชันเต็มปกติ
             textLabels.forEach(label => {
                 label.textContent = label.getAttribute('data-desktop');
             });
+            const panel = document.getElementById('toolsPanel');
+            if(panel) panel.style.maxHeight = 'none';
         }
     }
 
@@ -756,6 +786,10 @@
                 document.querySelectorAll('.desktop-tab-btn').forEach(d => {
                     d.classList.toggle('active', d.getAttribute('data-target') === targetId);
                 });
+                
+                adjustMobilePanelHeight();
+                // บังคับคำนวณตำแหน่งพรีวิวเริ่มต้นใหม่ให้เหมาะสมกับความสูงแท็บปัจจุบันไม่ให้โดนพาเนลบัง
+                autoFitPreviewToViewport();
             };
         });
     }
@@ -867,6 +901,48 @@
         return rowElements[c % pX] || "n";
     }
 
+    let initialTouchDist = null;
+
+    // คำนวณขอบเขตและย่อ/เลื่อน Preview Layout เริ่มต้นให้อยู่ในระยะสายตาพอดีทั้งอัน ไม่โดนบีบหรือโดนบาร์ทับด้านล่าง
+    function autoFitPreviewToViewport() {
+        const output = document.getElementById('tessellationOutput');
+        if (!output) return;
+        
+        setTimeout(() => {
+            const rect = output.getBoundingClientRect();
+            if (rect.width === 0 || rect.height === 0) return;
+
+            const availWidth = window.innerWidth;
+            // คำนวณความสูงที่มีอยู่จริงโดยหักลบแผงด้านบน แผงพาเนลด้านล่าง และแถบนำทาง
+            let panelHeight = 0;
+            if (window.innerWidth <= 991) {
+                const panel = document.getElementById('toolsPanel');
+                if (panel && !panel.classList.contains('collapsed')) {
+                    panelHeight = parseInt(panel.style.maxHeight) || 245;
+                }
+                panelHeight += 60; // รวมความสูงเนวิเกชันด้านล่างสุด
+            }
+            const availHeight = window.innerHeight - 60 - panelHeight; 
+
+            const rawWidth = rect.width / scale;
+            const rawHeight = rect.height / scale;
+
+            const scaleX = (availWidth * 0.85) / rawWidth;
+            const scaleY = (availHeight * 0.85) / rawHeight;
+            
+            scale = Math.min(scaleX, scaleY, 1); // กำหนดขนาดเริ่มต้นที่เหมาะสมที่สุด
+            
+            // ชดเชยจุดศูนย์กลางพิกัด Y (Offset แกนตั้งขึ้นไปด้านบนเล็กน้อยเพื่อหลบแผงทับ)
+            panX = 0;
+            if (window.innerWidth <= 991) {
+                panY = -(panelHeight / 4);
+            } else {
+                panY = 0;
+            }
+            applyTransform();
+        }, 60);
+    }
+
     function bindEvents() {
         window.addEventListener('popstate', (e) => {
             if(document.getElementById('editorView').style.display === 'block') {
@@ -959,16 +1035,18 @@
             selectedTool = 'fill';
         };
 
-        // แผงกลไกซ่อน/เปิดแท็บเครื่องมือสไลด์
         const panel = document.getElementById('toolsPanel');
         const arrowToggleSvg = document.getElementById('arrowToggleSvg');
         document.getElementById('mobileTogglePanel').onclick = function() {
             panel.classList.toggle('collapsed');
-            if(panel.classList.contains('collapsed')) {
-                arrowToggleSvg.style.transform = "rotate(180deg)";
-            } else {
-                arrowToggleSvg.style.transform = "rotate(0deg)";
+            const activeTab = document.querySelector('.tool-group.active-tab');
+            let baseBottom = '60px';
+            if (!panel.classList.contains('collapsed') && window.innerWidth <= 991) {
+                baseBottom = (activeTab && activeTab.id === 'tabGridExpansion') ? '155px' : '245px';
             }
+            this.style.bottom = baseBottom;
+            arrowToggleSvg.style.transform = panel.classList.contains('collapsed') ? "rotate(180deg)" : "rotate(0deg)";
+            autoFitPreviewToViewport();
         };
 
         window.addEventListener('keydown', (e) => { if(e.key === 'Control') isCtrlPressed = true; });
@@ -999,7 +1077,6 @@
         document.getElementById('btnRedo').onclick = () => { if(historyStep < drawingHistory.length - 1) { historyStep++; restoreCanvasStep(); } };
         document.getElementById('btnClearCanvas').onclick = () => { ctx.clearRect(0, 0, canvas.width, canvas.height); saveCanvasState(); updateTilesFromCanvas(); };
 
-        // จำกัดให้การเคลื่อนไหว Zoom / Pan ทำงานและผูกมัดเฉพาะแค่บนพิ้นที่ Preview เท่านั้น
         const previewArea = document.getElementById('previewArea');
         previewArea.addEventListener('wheel', (e) => {
             e.preventDefault();
@@ -1016,7 +1093,7 @@
             if (!isPanning) return;
             let targetX = e.clientX - startPanX;
             let targetY = e.clientY - startPanY;
-            const maxW = window.innerWidth * 0.8; const maxH = window.innerHeight * 0.8;
+            const maxW = window.innerWidth * 1.5; const maxH = window.innerHeight * 1.5;
             panX = Math.min(Math.max(-maxW, targetX), maxW);
             panY = Math.min(Math.max(-maxH, targetY), maxH);
             applyTransform();
@@ -1024,26 +1101,48 @@
         window.addEventListener('mouseup', () => { isPanning = false; });
 
         previewArea.addEventListener('touchstart', function(e) {
-            isPanning = true;
-            const touch = e.touches[0];
-            startPanX = touch.clientX - panX; startPanY = touch.clientY - panY;
+            if (e.touches.length === 1) {
+                isPanning = true;
+                const touch = e.touches[0];
+                startPanX = touch.clientX - panX; startPanY = touch.clientY - panY;
+            } else if (e.touches.length === 2) {
+                isPanning = false;
+                initialTouchDist = Math.hypot(
+                    e.touches[0].clientX - e.touches[1].clientX,
+                    e.touches[0].clientY - e.touches[1].clientY
+                );
+            }
         }, { passive: true });
 
         previewArea.addEventListener('touchmove', function(e) {
-            if (!isPanning) return;
-            const touch = e.touches[0];
-            let targetX = touch.clientX - startPanX;
-            let targetY = touch.clientY - startPanY;
-            const maxW = window.innerWidth * 0.8; const maxH = window.innerHeight * 0.8;
-            panX = Math.min(Math.max(-maxW, targetX), maxW);
-            panY = Math.min(Math.max(-maxH, targetY), maxH);
-            applyTransform();
+            if (isPanning && e.touches.length === 1) {
+                const touch = e.touches[0];
+                let targetX = touch.clientX - startPanX;
+                let targetY = touch.clientY - startPanY;
+                const maxW = window.innerWidth * 1.5; const maxH = window.innerHeight * 1.5;
+                panX = Math.min(Math.max(-maxW, targetX), maxW);
+                panY = Math.min(Math.max(-maxH, targetY), maxH);
+                applyTransform();
+            } else if (e.touches.length === 2 && initialTouchDist !== null) {
+                const currentDist = Math.hypot(
+                    e.touches[0].clientX - e.touches[1].clientX,
+                    e.touches[0].clientY - e.touches[1].clientY
+                );
+                const factor = currentDist / initialTouchDist;
+                initialTouchDist = currentDist;
+                scale = Math.min(Math.max(0.3, scale * factor), 4);
+                applyTransform();
+            }
         }, { passive: true });
 
-        previewArea.addEventListener('touchend', function() { isPanning = false; });
+        previewArea.addEventListener('touchend', function(e) {
+            isPanning = false;
+            if (e.touches.length < 2) initialTouchDist = null;
+        }, { passive: true });
 
         document.getElementById('btnResetZoom').onclick = (e) => {
             e.stopPropagation(); scale = 1; panX = 0; panY = 0; applyTransform();
+            autoFitPreviewToViewport();
         };
 
         document.getElementById('btnSaveImage').onclick = saveOutputAsImage;
@@ -1051,7 +1150,7 @@
 
     function applyTransform() {
         const output = document.getElementById('tessellationOutput');
-        output.style.transform = `translate(${panX}px, ${panY}px) scale(${scale})`;
+        if(output) output.style.transform = `translate(${panX}px, ${panY}px) scale(${scale})`;
     }
 
     function handleImageUpload(e, callback) {
@@ -1090,12 +1189,13 @@
                 ctx.clearRect(0, 0, canvas.width, canvas.height);
                 ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
                 drawingHistory = []; historyStep = -1; saveCanvasState(); renderTessellation();
+                autoFitPreviewToViewport();
             };
             img.src = currentImageUrl;
         } else {
             drawingHistory = []; historyStep = -1; setupCanvasDefault(); renderTessellation();
+            autoFitPreviewToViewport();
         }
-        scale = 1; panX = 0; panY = 0; applyTransform();
         setupResponsiveLayoutEngine();
     }
 
