@@ -258,7 +258,6 @@
         .mini-preview-grid { display: grid; grid-template-columns: repeat(6, var(--mini-grid-size)); grid-template-rows: repeat(4, var(--mini-grid-size)); background: #e2e8f0; }
         .mini-tile { width: var(--mini-grid-size); height: var(--mini-grid-size); display: flex; align-items: center; justify-content: center; font-size: 0.85rem; font-weight: bold; color: #323c4b; background: #ffffff; outline: 1px solid rgba(0,0,0,0.1); }
 
-        .mobile-toggle-panel-btn { display: none; }
         .mobile-nav-bar { display: none; }
         
         #headerLayoutSelectWrapper { display: flex; flex: 1; justify-content: center; padding: 0 10px; }
@@ -273,18 +272,16 @@
 
         /* ==========================================================================
            --- MOBILE & TABLET RESPONSIVE STYLE (max-width: 991px) ---
-           ========================================================================== */
+           ========================================================================= */
         @media (max-width: 991px) {
             body { overflow: hidden; position: fixed; width: 100%; height: 100%; }
             #mainView { height: 100vh; }
             .patterns-container { grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 16px; }
 
-            /* หน้าแรก: ซ่อนอินพุตอัพโหลดรูปภาพของหน้าแรก */
             #globalImageUpload { display: none !important; }
 
             .editor-container { flex-direction: column; height: 100vh; width: 100vw; }
             
-            /* ปรับพื้นที่พรีวิวเริ่มต้นให้เว้นพื้นที่ด้านล่างไม่ให้โดนพาเนลบังพิกัดสำคัญ */
             .workspace { height: calc(100% - 60px); flex: 1; width: 100%; padding-bottom: 250px; }
             .workspace-header { padding: 8px 12px; gap: 8px; }
             .workspace-header span { display: none; }
@@ -302,7 +299,6 @@
             }
             .tools-panel.collapsed { transform: translateY(100%) !important; }
 
-            /* ลบ space ว่างหน้า grid edit / studio */
             .panel-content { padding: 8px 14px; overflow-y: auto; height: 100%; }
             
             #editPatternTitle, #editPatternDesc, .mini-preview-box, .desktop-tab-toggle, .tool-group h4, .tools-panel hr, #desktopPanelRulesZone { display: none !important; }
@@ -313,14 +309,12 @@
             #tabGridExpansion { padding: 4px 5px; }
             #tabGridExpansion .tool-row { margin-bottom: 8px; }
 
-            /* จัดตำแหน่งและสัดส่วนหน้าสตูดิโอให้พอดี */
             .studio-layout-container {
                 grid-template-columns: 55px 1fr 65px; gap: 8px; margin-top: 2px; width: 100%; align-items: center; justify-content: center;
             }
             
-            /* จัด Canvas อยู่กลาง panel ในแกน x */
             .studio-center-col { display: flex; justify-content: center; align-items: center; width: 100%; }
-            .canvas-container { width: 115px; height: 115px; border-radius: 6px; margin: 0 auto; }
+            .canvas-container { width: 140px; height: 140px; border-radius: 6px; margin: 0 auto; }
             
             .tools-grid-3x2 { gap: 4px; }
             .tool-btn-outline { height: 28px; padding: 2px; }
@@ -328,7 +322,7 @@
             .line-size-horiz { margin-top: 3px; gap: 2px; }
             .line-dot-opt { height: 18px; }
             
-            .studio-right-col { gap: 4px; font-size: 0.7er; justify-content: center; }
+            .studio-right-col { gap: 4px; font-size: 0.7rem; justify-content: center; }
             .color-picker-wrapper { gap: 1px; }
             .circle-color-picker { width: 20px; height: 20px; }
             .color-checkbox { width: 13px; height: 13px; }
@@ -349,16 +343,6 @@
             }
             .nav-tab-item svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 2; }
             .nav-tab-item.active { color: var(--text-color); background: #ffffff; font-weight: 600; }
-
-            /* ปรับปุ่มกดซ่อน panel tools ให้อยู่ตรงตำแหน่งแนบติดกับเส้นขอบบนพอดี */
-            .mobile-toggle-panel-btn {
-                display: flex; position: fixed; left: 50%; transform: translateX(-50%); z-index: 1005;
-                background: #ffffff; color: var(--text-color); border: 1px solid #cbd5e1; width: 50px; height: 22px;
-                border-radius: 10px 10px 0 0; border-bottom: none; align-items: center; justify-content: center; cursor: pointer;
-                transition: bottom 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-                margin-bottom: -1px;
-            }
-            .mobile-toggle-panel-btn svg { width: 14px; height: 14px; fill: none; stroke: currentColor; stroke-width: 2; transition: transform 0.3s; }
         }
     </style>
 </head>
@@ -370,7 +354,6 @@
     </header>
 
    <div class="upload-zone">
-        <!-- ลบข้อความตัวหนาเดิมออก เหลือเพียงโครงสร้างตัวอ่อนชี้แนะโหมด Edit -->
         <small style="color: #64748b; font-size: 0.95rem;">Click Layout Card to Enter Edit Mode</small>
         <div class="upload-actions">
             <input type="file" id="globalImageUpload" accept="image/*">
@@ -534,10 +517,6 @@
             </div>
         </div>
 
-        <button class="mobile-toggle-panel-btn" id="mobileTogglePanel" title="Toggle Tool Shelf">
-            <svg id="arrowToggleSvg" viewBox="0 0 24 24"><path d="M18 15l-6-6-6 6"/></svg>
-        </button>
-
         <div class="mobile-nav-bar">
             <button class="nav-tab-item active" data-target="tabGridExpansion">
                 <svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M9 3v18M15 3v18M3 9h18M3 15h18"/></svg>
@@ -646,20 +625,12 @@
         if (window.innerWidth > 991) return;
         const panel = document.getElementById('toolsPanel');
         const activeTab = document.querySelector('.tool-group.active-tab');
-        const toggleBtn = document.getElementById('mobileTogglePanel');
-        if (panel && activeTab && toggleBtn) {
+        if (panel && activeTab) {
             let targetMaxHeight = '245px';
             if (activeTab.id === 'tabGridExpansion') {
                 targetMaxHeight = '155px';
             }
             panel.style.maxHeight = targetMaxHeight;
-            
-            // ปรับตำแหน่งปุ่มซ่อนให้ตรงเสมอกับเส้นขอบบนพอดี (ขอบแผงเครื่องมือด้านล่าง)
-            if (panel.classList.contains('collapsed')) {
-                toggleBtn.style.bottom = '60px';
-            } else {
-                toggleBtn.style.bottom = (60 + parseInt(targetMaxHeight)) + 'px';
-            }
         }
     }
 
@@ -773,23 +744,38 @@
     function setupMobileTabSystems() {
         const navItems = document.querySelectorAll('.nav-tab-item');
         const groups = document.querySelectorAll('.tools-panel .tool-group');
+        const panel = document.getElementById('toolsPanel');
         
         navItems.forEach(item => {
-            item.onclick = () => {
-                navItems.forEach(n => n.classList.remove('active'));
-                groups.forEach(g => g.classList.remove('active-tab'));
-                
-                item.classList.add('active');
-                const targetId = item.getAttribute('data-target');
-                document.getElementById(targetId).classList.add('active-tab');
+            item.onclick = (e) => {
+                if (window.innerWidth > 991) return;
 
-                document.querySelectorAll('.desktop-tab-btn').forEach(d => {
-                    d.classList.toggle('active', d.getAttribute('data-target') === targetId);
-                });
+                const targetId = item.getAttribute('data-target');
+                const isCurrentlyActive = item.classList.contains('active');
+                const isPanelCollapsed = panel.classList.contains('collapsed');
+
+                if (isCurrentlyActive && !isPanelCollapsed) {
+                    // กดซ้ำที่เมนูเดิมตอนที่แผงเปิดอยู่ -> ทำการปิด (ซ่อน) พาเนล
+                    panel.classList.add('collapsed');
+                    item.classList.remove('active');
+                } else {
+                    // เปิดแผงควบคุม และเปลี่ยนเนื้อหาแท็บ
+                    panel.classList.remove('collapsed');
+                    navItems.forEach(n => n.classList.remove('active'));
+                    groups.forEach(g => g.classList.remove('active-tab'));
+                    
+                    item.classList.add('active');
+                    document.getElementById(targetId).classList.add('active-tab');
+
+                    document.querySelectorAll('.desktop-tab-btn').forEach(d => {
+                        d.classList.toggle('active', d.getAttribute('data-target') === targetId);
+                    });
+                    
+                    adjustMobilePanelHeight();
+                }
                 
-                adjustMobilePanelHeight();
-                // บังคับคำนวณตำแหน่งพรีวิวเริ่มต้นใหม่ให้เหมาะสมกับความสูงแท็บปัจจุบันไม่ให้โดนพาเนลบัง
-                autoFitPreviewToViewport();
+                // ลบฟังก์ชัน autoFitPreviewToViewport() ตรงนี้ออกตามความต้องการ 
+                // เพื่อไม่ให้ตำแหน่งหรือขนาดพรีวิวขยับเปลี่ยนไปมาตามการกดสลับเมนูเปิด-ปิด
             };
         });
     }
@@ -903,7 +889,7 @@
 
     let initialTouchDist = null;
 
-    // คำนวณขอบเขตและย่อ/เลื่อน Preview Layout เริ่มต้นให้อยู่ในระยะสายตาพอดีทั้งอัน ไม่โดนบีบหรือโดนบาร์ทับด้านล่าง
+    // ฟังก์ชันคำนวณขนาดและจัดให้อยู่ในตําแหน่งที่เหมาะสมตอนเริ่มต้นเปิด Editor ครั้งแรก
     function autoFitPreviewToViewport() {
         const output = document.getElementById('tessellationOutput');
         if (!output) return;
@@ -913,14 +899,13 @@
             if (rect.width === 0 || rect.height === 0) return;
 
             const availWidth = window.innerWidth;
-            // คำนวณความสูงที่มีอยู่จริงโดยหักลบแผงด้านบน แผงพาเนลด้านล่าง และแถบนำทาง
             let panelHeight = 0;
             if (window.innerWidth <= 991) {
                 const panel = document.getElementById('toolsPanel');
                 if (panel && !panel.classList.contains('collapsed')) {
                     panelHeight = parseInt(panel.style.maxHeight) || 245;
                 }
-                panelHeight += 60; // รวมความสูงเนวิเกชันด้านล่างสุด
+                panelHeight += 60;
             }
             const availHeight = window.innerHeight - 60 - panelHeight; 
 
@@ -930,9 +915,8 @@
             const scaleX = (availWidth * 0.85) / rawWidth;
             const scaleY = (availHeight * 0.85) / rawHeight;
             
-            scale = Math.min(scaleX, scaleY, 1); // กำหนดขนาดเริ่มต้นที่เหมาะสมที่สุด
+            scale = Math.min(scaleX, scaleY, 1);
             
-            // ชดเชยจุดศูนย์กลางพิกัด Y (Offset แกนตั้งขึ้นไปด้านบนเล็กน้อยเพื่อหลบแผงทับ)
             panX = 0;
             if (window.innerWidth <= 991) {
                 panY = -(panelHeight / 4);
@@ -1035,20 +1019,6 @@
             selectedTool = 'fill';
         };
 
-        const panel = document.getElementById('toolsPanel');
-        const arrowToggleSvg = document.getElementById('arrowToggleSvg');
-        document.getElementById('mobileTogglePanel').onclick = function() {
-            panel.classList.toggle('collapsed');
-            const activeTab = document.querySelector('.tool-group.active-tab');
-            let baseBottom = '60px';
-            if (!panel.classList.contains('collapsed') && window.innerWidth <= 991) {
-                baseBottom = (activeTab && activeTab.id === 'tabGridExpansion') ? '155px' : '245px';
-            }
-            this.style.bottom = baseBottom;
-            arrowToggleSvg.style.transform = panel.classList.contains('collapsed') ? "rotate(180deg)" : "rotate(0deg)";
-            autoFitPreviewToViewport();
-        };
-
         window.addEventListener('keydown', (e) => { if(e.key === 'Control') isCtrlPressed = true; });
         window.addEventListener('keyup', (e) => { if(e.key === 'Control') isCtrlPressed = false; });
 
@@ -1073,10 +1043,6 @@
             canvas.dispatchEvent(new MouseEvent('mouseup', {}));
         }, { passive: true });
 
-        document.getElementById('btnUndo').onclick = () => { if(historyStep > 0) { historyStep--; restoreCanvasStep(); } };
-        document.getElementById('btnRedo').onclick = () => { if(historyStep < drawingHistory.length - 1) { historyStep++; restoreCanvasStep(); } };
-        document.getElementById('btnClearCanvas').onclick = () => { ctx.clearRect(0, 0, canvas.width, canvas.height); saveCanvasState(); updateTilesFromCanvas(); };
-
         const previewArea = document.getElementById('previewArea');
         previewArea.addEventListener('wheel', (e) => {
             e.preventDefault();
@@ -1093,7 +1059,9 @@
             if (!isPanning) return;
             let targetX = e.clientX - startPanX;
             let targetY = e.clientY - startPanY;
-            const maxW = window.innerWidth * 1.5; const maxH = window.innerHeight * 1.5;
+            
+            const maxW = window.innerWidth * 0.4; 
+            const maxH = window.innerHeight * 0.4;
             panX = Math.min(Math.max(-maxW, targetX), maxW);
             panY = Math.min(Math.max(-maxH, targetY), maxH);
             applyTransform();
@@ -1119,7 +1087,9 @@
                 const touch = e.touches[0];
                 let targetX = touch.clientX - startPanX;
                 let targetY = touch.clientY - startPanY;
-                const maxW = window.innerWidth * 1.5; const maxH = window.innerHeight * 1.5;
+                
+                const maxW = window.innerWidth * 0.4; 
+                const maxH = window.innerHeight * 0.4;
                 panX = Math.min(Math.max(-maxW, targetX), maxW);
                 panY = Math.min(Math.max(-maxH, targetY), maxH);
                 applyTransform();
