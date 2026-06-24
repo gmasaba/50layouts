@@ -194,7 +194,6 @@
 
         .tool-group { margin-bottom: 20px; display: none; }
         .tool-group.active-tab { display: block; }
-        .tool-group.active-tab { display: block; }
         .tool-row { display: flex; gap: 10px; margin-bottom: 12px; align-items: center; }
         .tool-row label { font-size: 0.85rem; width: 100px; color: #64748b; flex-shrink: 0; }
         .tool-row input[type="range"] { flex: 1; }
@@ -756,9 +755,11 @@
                 const isPanelCollapsed = panel.classList.contains('collapsed');
 
                 if (isCurrentlyActive && !isPanelCollapsed) {
+                    // กดซ้ำที่เมนูเดิมตอนที่แผงเปิดอยู่ -> ทำการปิด (ซ่อน) พาเนล
                     panel.classList.add('collapsed');
                     item.classList.remove('active');
                 } else {
+                    // เปิดแผงควบคุม และเปลี่ยนเนื้อหาแท็บ
                     panel.classList.remove('collapsed');
                     navItems.forEach(n => n.classList.remove('active'));
                     groups.forEach(g => g.classList.remove('active-tab'));
@@ -885,6 +886,7 @@
 
     let initialTouchDist = null;
 
+    // ฟังก์ชันคำนวณขนาดและจัดให้อยู่ในตําแหน่งที่เหมาะสมตอนเริ่มต้นเปิด Editor ครั้งแรก
     function autoFitPreviewToViewport() {
         const output = document.getElementById('tessellationOutput');
         if (!output) return;
@@ -975,10 +977,23 @@
             img.src = originalSrc;
         };
 
-        // เพิ่มการทำงานของปุ่ม Clear Canvas (แก้ปัญหาปุ่มกดไม่ทำงาน)
+        // --- ระบบปุ่มประมวลผล Canvas (แก้ไขแล้ว) ---
+        document.getElementById('btnUndo').onclick = () => {
+            if (historyStep > 0) {
+                historyStep--;
+                restoreCanvasStep();
+            }
+        };
+
+        document.getElementById('btnRedo').onclick = () => {
+            if (historyStep < drawingHistory.length - 1) {
+                historyStep++;
+                restoreCanvasStep();
+            }
+        };
+
         document.getElementById('btnClearCanvas').onclick = () => {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
-            canvas.style.backgroundColor = document.getElementById('bgColor').value;
             saveCanvasState();
             updateTilesFromCanvas();
         };
