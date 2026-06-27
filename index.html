@@ -194,6 +194,7 @@
 
         .tool-group { margin-bottom: 20px; display: none; }
         .tool-group.active-tab { display: block; }
+        .tool-group h4 { margin-top: 0; margin-bottom: 15px; color: var(--primary-color); }
         .tool-row { display: flex; gap: 10px; margin-bottom: 12px; align-items: center; }
         .tool-row label { font-size: 0.85rem; width: 100px; color: #64748b; flex-shrink: 0; }
         .tool-row input[type="range"] { flex: 1; }
@@ -278,8 +279,6 @@
             #mainView { height: 100vh; }
             .patterns-container { grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 16px; }
 
-            #globalImageUpload { display: none !important; }
-
             .editor-container { flex-direction: column; height: 100vh; width: 100vw; }
             
             .workspace { height: calc(100% - 60px); flex: 1; width: 100%; padding-bottom: 250px; }
@@ -356,7 +355,6 @@
    <div class="upload-zone">
         <small style="color: #64748b; font-size: 0.95rem;">Click Layout Card to Enter Edit Mode</small>
         <div class="upload-actions">
-            <input type="file" id="globalImageUpload" accept="image/*">
             <button class="btn-outline" id="btnClearToP" style="font-size: 0.85rem; padding: 6px 12px;">Reset Image to Default</button>
         </div>
     </div>
@@ -755,11 +753,9 @@
                 const isPanelCollapsed = panel.classList.contains('collapsed');
 
                 if (isCurrentlyActive && !isPanelCollapsed) {
-                    // กดซ้ำที่เมนูเดิมตอนที่แผงเปิดอยู่ -> ทำการปิด (ซ่อน) พาเนล
                     panel.classList.add('collapsed');
                     item.classList.remove('active');
                 } else {
-                    // เปิดแผงควบคุม และเปลี่ยนเนื้อหาแท็บ
                     panel.classList.remove('collapsed');
                     navItems.forEach(n => n.classList.remove('active'));
                     groups.forEach(g => g.classList.remove('active-tab'));
@@ -886,7 +882,6 @@
 
     let initialTouchDist = null;
 
-    // ฟังก์ชันคำนวณขนาดและจัดให้อยู่ในตําแหน่งที่เหมาะสมตอนเริ่มต้นเปิด Editor ครั้งแรก
     function autoFitPreviewToViewport() {
         const output = document.getElementById('tessellationOutput');
         if (!output) return;
@@ -934,13 +929,8 @@
 
         document.getElementById('btnClearToP').onclick = () => {
             currentImageUrl = "";
-            document.getElementById('globalImageUpload').value = "";
             generateExplorerGrid();
         };
-
-        document.getElementById('globalImageUpload').addEventListener('change', (e) => {
-            handleImageUpload(e, (dataUrl) => { currentImageUrl = dataUrl; generateExplorerGrid(); });
-        });
 
         document.getElementById('tileImageUpload').addEventListener('change', (e) => {
             handleImageUpload(e, (dataUrl) => {
@@ -977,31 +967,11 @@
             img.src = originalSrc;
         };
 
-        // --- ระบบปุ่มประมวลผล Canvas (แก้ไขแล้ว) ---
-        document.getElementById('btnUndo').onclick = () => {
-            if (historyStep > 0) {
-                historyStep--;
-                restoreCanvasStep();
-            }
-        };
-
-        document.getElementById('btnRedo').onclick = () => {
-            if (historyStep < drawingHistory.length - 1) {
-                historyStep++;
-                restoreCanvasStep();
-            }
-        };
-
-        document.getElementById('btnClearCanvas').onclick = () => {
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-            saveCanvasState();
-            updateTilesFromCanvas();
-        };
-
-        document.getElementById('btnResetToP').onclick = () => {
-            drawingHistory = []; historyStep = -1;
-            setupCanvasDefault(); updateTilesFromCanvas();
-        };
+        // ผูกปุ่ม Undo, Redo, Clear Canvas, และ Reset Blueprint ในหน้า Edit
+        document.getElementById('btnUndo').onclick = () => { if (historyStep > 0) { historyStep--; restoreCanvasStep(); } };
+        document.getElementById('btnRedo').onclick = () => { if (historyStep < drawingHistory.length - 1) { historyStep++; restoreCanvasStep(); } };
+        document.getElementById('btnClearCanvas').onclick = () => { ctx.clearRect(0, 0, canvas.width, canvas.height); saveCanvasState(); updateTilesFromCanvas(); };
+        document.getElementById('btnResetToP').onclick = () => { drawingHistory = []; historyStep = -1; setupCanvasDefault(); updateTilesFromCanvas(); };
 
         function closeEditorRoutine() {
             currentImageUrl = canvas.toDataURL();
