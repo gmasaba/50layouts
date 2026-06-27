@@ -195,11 +195,22 @@
         .tool-group { margin-bottom: 20px; display: none; }
         .tool-group.active-tab { display: block; }
         .tool-group h4 { margin-top: 0; margin-bottom: 15px; color: var(--primary-color); }
-        .tool-row { display: flex; gap: 10px; margin-bottom: 12px; align-items: center; }
+        .tool-row { display: flex; gap: 10px; margin-bottom: 36px; align-items: center; }
         .tool-row label { font-size: 0.85rem; width: 100px; color: #64748b; flex-shrink: 0; }
         .tool-row input[type="range"] { flex: 1; }
         .num-input { width: 60px; padding: 6px; border: 1px solid #cbd5e1; border-radius: 6px; text-align: center; }
         select { padding: 8px 12px; border-radius: 8px; border: 1px solid #cbd5e1; font-size: 0.95rem; width: 100%; background: #ffffff; }
+
+        .chain-linker-row {
+            display: flex; justify-content: flex-end; margin-top: -30px; margin-bottom: 8px; padding-right: 20px;
+        }
+        .btn-chain-lock {
+            background: tranparent; border: none; width: 23px; height: 23px; border-radius: 6px;
+            cursor: pointer; display: flex; align-items: center; justify-content: center; color: tranparent; transition: all 0.15s;
+        }
+        .btn-chain-lock:hover { background: #e2e8f0; color: #1e293b; }
+        .btn-chain-lock.active { background: tranparent; border: none; color: #0369a1; }
+        .btn-chain-lock svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 2.5; }
 
         /* Studio Panel Layout Grid */
         .studio-layout-container {
@@ -263,12 +274,28 @@
         
         #headerLayoutSelectWrapper { display: flex; flex: 1; justify-content: center; padding: 0 10px; }
 
+        /* --- Crop Modal Layout Optimized (Desktop Focus) --- */
         #cropModal {
             display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
-            background: rgba(0,0,0,0.6); z-index: 2000; align-items: center; justify-content: center;
+            background: rgba(0,0,0,0.7); z-index: 2000; align-items: center; justify-content: center;
         }
-        .crop-box { background: white; padding: 20px; border-radius: 12px; max-width: 600px; width: 90%; text-align: center; }
-        .crop-preview-container { max-height: 400px; margin: 15px 0; background: #eee; position: relative; overflow: hidden; }
+        .crop-box { 
+            background: white; padding: 30px; border-radius: 16px; 
+            max-width: 1400px; width: 95%; text-align: center; position: relative;
+            box-shadow: 0 25px 50px -12px rgba(0,0,0,0.25);
+        }
+        .crop-close-btn {
+            position: absolute; top: 15px; right: 15px; background: transparent; border: none;
+            cursor: pointer; color: #64748b; padding: 5px; display: flex; align-items: center; justify-content: center;
+            border-radius: 50%; transition: background 0.15s;
+        }
+        .crop-close-btn:hover { background: #f1f5f9; color: #1e293b; }
+        .crop-close-btn svg { width: 24px; height: 24px; fill: none; stroke: currentColor; stroke-width: 2; }
+        
+        .crop-preview-container { 
+            height: 800px; max-height: 80vh; margin: 20px 0; background: #f8fafc; 
+            position: relative; overflow: hidden; border-radius: 8px; border: 1px solid #e2e8f0;
+        }
         #cropImageTag { max-width: 100%; display: block; }
 
         /* ==========================================================================
@@ -306,7 +333,8 @@
             .tool-group.active-tab { display: block !important; }
 
             #tabGridExpansion { padding: 4px 5px; }
-            #tabGridExpansion .tool-row { margin-bottom: 8px; }
+            .tool-group .tool-row { margin-bottom: 20px; }
+            .chain-linker-row { margin-top: -15px; margin-bottom: 4px; }
 
             .studio-layout-container {
                 grid-template-columns: 55px 1fr 65px; gap: 8px; margin-top: 2px; width: 100%; align-items: center; justify-content: center;
@@ -342,6 +370,10 @@
             }
             .nav-tab-item svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 2; }
             .nav-tab-item.active { color: var(--text-color); background: #ffffff; font-weight: 600; }
+
+            /* Crop Box Mobile override */
+            .crop-box { padding: 15px; }
+            .crop-preview-container { height: 300px; margin: 10px 0; }
         }
     </style>
 </head>
@@ -409,16 +441,28 @@
 
                 <div class="tool-group active-tab" id="tabGridExpansion">
                     <h4>Grid Expansion Setting</h4>
+                    
                     <div class="tool-row">
-                        <label>Grid Columns</label>
+                        <label>Columns</label>
                         <input type="range" id="gridCols" value="8" min="1" max="30">
                         <input type="number" id="gridColsNum" class="num-input" value="8" min="1" max="30">
                     </div>
+                    
+                    <div class="chain-linker-row">
+                        <button class="btn-chain-lock active" id="btnChainLock" title="Link Columns & Rows Ratio">
+                            <svg viewBox="0 0 24 24">
+                                <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path>
+                                <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path>
+                            </svg>
+                        </button>
+                    </div>
+
                     <div class="tool-row">
-                        <label>Grid Rows</label>
+                        <label>Rows</label>
                         <input type="range" id="gridRows" value="6" min="1" max="30">
                         <input type="number" id="gridRowsNum" class="num-input" value="6" min="1" max="30">
                     </div>
+
                     <div class="tool-row">
                         <label>Block Size (px)</label>
                         <input type="range" id="gridSizeInput" value="80" min="20" max="200">
@@ -470,14 +514,14 @@
 
                         <div class="studio-right-col">
                             <div class="color-picker-wrapper">
-                                <span class="color-name-text" data-desktop="Stroke Mode" data-mobile="Stroke">Stroke Mode</span>
+                                <span class="color-name-text" data-desktop="Stroke" data-mobile="Stroke">Stroke</span>
                                 <div class="color-picker-circle-row">
                                     <input type="checkbox" id="chkUseStroke" class="color-checkbox" checked>
                                     <input type="color" id="strokeColor" class="circle-color-picker" value="#1e293b">
                                 </div>
                             </div>
                             <div class="color-picker-wrapper">
-                                <span class="color-name-text" data-desktop="Inner Fill Mode" data-mobile="Fill">Inner Fill Mode</span>
+                                <span class="color-name-text" data-desktop="Inner Fill" data-mobile="Fill">Inner Fill</span>
                                 <div class="color-picker-circle-row">
                                     <input type="checkbox" id="chkUseFill" class="color-checkbox" checked>
                                     <input type="color" id="fillColor" class="circle-color-picker" value="#7AA1E0">
@@ -531,8 +575,11 @@
 
 <div id="cropModal">
     <div class="crop-box">
+        <button class="crop-close-btn" id="btnModalXClose" title="Close Without Saving">
+            <svg viewBox="0 0 24 24"><path d="M18 6L6 18M6 6l12 12"/></svg>
+        </button>
         <h3>Adjust Image Area Selection</h3>
-        <p style="font-size:0.85rem; color:#64748b;">An uploaded image asset is detected. Adjust the box to select and scale your square section.</p>
+        <p style="font-size:0.85rem; color:#64748b;">An uploaded image asset is detected. Adjust the box to select and scale your square section (Use Mouse Scroll to Zoom / Drag to Pan).</p>
         <div class="crop-preview-container">
             <img id="cropImageTag" src="" alt="preview">
         </div>
@@ -619,6 +666,9 @@
     let isPanning = false;
     let startPanX = 0, startPanY = 0;
 
+    // สถานะการล็อกโซ่ (Columns และ Rows สัมพันธ์กันหรือไม่)
+    let isChainLocked = true;
+
     function adjustMobilePanelHeight() {
         if (window.innerWidth > 991) return;
         const panel = document.getElementById('toolsPanel');
@@ -626,7 +676,7 @@
         if (panel && activeTab) {
             let targetMaxHeight = '245px';
             if (activeTab.id === 'tabGridExpansion') {
-                targetMaxHeight = '155px';
+                targetMaxHeight = '185px'; /* เพิ่มความยาวเผื่อโซ่เล็กน้อย */
             }
             panel.style.maxHeight = targetMaxHeight;
         }
@@ -854,6 +904,33 @@
         return [(bigint >> 16) & 255, (bigint >> 8) & 255, bigint & 255];
     }
 
+    // ฟังก์ชันสำหรับผูกมัดค่าอินพุตแบบแยกส่วน พร้อมการรองรับ Chain Lock 
+    function syncGridInputs(sliderId, numId, isColumnInput) {
+        const slider = document.getElementById(sliderId);
+        const num = document.getElementById(numId);
+        
+        const oppositeSlider = document.getElementById(isColumnInput ? 'gridRows' : 'gridCols');
+        const oppositeNum = document.getElementById(isColumnInput ? 'gridRowsNum' : 'gridColsNum');
+
+        function updateValues(value) {
+            let val = parseInt(value);
+            if (isNaN(val)) val = 1;
+            val = Math.min(Math.max(parseInt(slider.min), val), parseInt(slider.max));
+
+            slider.value = val;
+            num.value = val;
+
+            if (isChainLocked) {
+                oppositeSlider.value = val;
+                oppositeNum.value = val;
+            }
+            renderTessellation();
+        }
+
+        slider.oninput = function() { updateValues(this.value); };
+        num.oninput = function() { updateValues(this.value); };
+    }
+
     function syncInputs(sliderId, numId, callback) {
         const slider = document.getElementById(sliderId);
         const num = document.getElementById(numId);
@@ -939,25 +1016,31 @@
                 document.getElementById('cropModal').style.display = 'flex';
                 if (cropper) cropper.destroy();
                 setTimeout(() => {
-                    cropper = new Cropper(cropImg, { aspectRatio: 1, viewMode: 1, background: true });
+                    cropper = new Cropper(cropImg, { 
+                        aspectRatio: 1, 
+                        viewMode: 1, 
+                        background: true,
+                        dragMode: 'move',
+                        responsive: true,
+                        restore: true
+                    });
                 }, 50);
             });
+            e.target.value = '';
         });
 
-        document.getElementById('btnCropSquare').onclick = () => {
-            if (!cropper) return;
-            const croppedCanvas = cropper.getCroppedCanvas({ width: canvas.width, height: canvas.height });
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-            ctx.drawImage(croppedCanvas, 0, 0, canvas.width, canvas.height);
-            saveCanvasState(); updateTilesFromCanvas();
+        function closeCropModal() {
             document.getElementById('cropModal').style.display = 'none';
-            cropper.destroy(); cropper = null;
-        };
+            if (cropper) {
+                cropper.destroy();
+                cropper = null;
+            }
+        }
 
-        document.getElementById('btnCropNone').onclick = () => {
-            document.getElementById('cropModal').style.display = 'none';
+        document.getElementById('btnModalXClose').onclick = closeCropModal;
+        document.getElementById('btnCropNone').onclick = function() {
             const originalSrc = document.getElementById('cropImageTag').src;
-            if (cropper) { cropper.destroy(); cropper = null; }
+            closeCropModal();
             const img = new Image();
             img.onload = function() {
                 ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -967,7 +1050,15 @@
             img.src = originalSrc;
         };
 
-        // ผูกปุ่ม Undo, Redo, Clear Canvas, และ Reset Blueprint ในหน้า Edit
+        document.getElementById('btnCropSquare').onclick = () => {
+            if (!cropper) return;
+            const croppedCanvas = cropper.getCroppedCanvas({ width: canvas.width, height: canvas.height });
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.drawImage(croppedCanvas, 0, 0, canvas.width, canvas.height);
+            saveCanvasState(); updateTilesFromCanvas();
+            closeCropModal();
+        };
+
         document.getElementById('btnUndo').onclick = () => { if (historyStep > 0) { historyStep--; restoreCanvasStep(); } };
         document.getElementById('btnRedo').onclick = () => { if (historyStep < drawingHistory.length - 1) { historyStep++; restoreCanvasStep(); } };
         document.getElementById('btnClearCanvas').onclick = () => { ctx.clearRect(0, 0, canvas.width, canvas.height); saveCanvasState(); updateTilesFromCanvas(); };
@@ -992,8 +1083,24 @@
             }
         };
 
-        syncInputs('gridCols', 'gridColsNum', renderTessellation);
-        syncInputs('gridRows', 'gridRowsNum', renderTessellation);
+        // ผูกมัดระบบโซ่ล็อก (Chain Linker) ล็อกอัตราส่วนคอลัมน์และแถว
+        document.getElementById('btnChainLock').onclick = function() {
+            isChainLocked = !isChainLocked;
+            this.classList.toggle('active', isChainLocked);
+            if (isChainLocked) {
+                // ซิงค์ค่าให้เท่ากันทันทีเมื่อกดล็อกโซ่
+                const currentCols = document.getElementById('gridCols').value;
+                document.getElementById('gridRows').value = currentCols;
+                document.getElementById('gridRowsNum').value = currentCols;
+                renderTessellation();
+            }
+        };
+
+        // เรียกใช้งานระบบการซิงค์ค่า Grid แบบใหม่ที่รองรับการตรวจสอบโซ่ล็อก
+        syncGridInputs('gridCols', 'gridColsNum', true);
+        syncGridInputs('gridRows', 'gridRowsNum', false);
+        
+        // Block size แยกทำงานปกติ
         syncInputs('gridSizeInput', 'gridSizeNum', renderTessellation);
         
         document.getElementById('bgColor').oninput = () => {
