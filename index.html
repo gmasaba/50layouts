@@ -160,10 +160,9 @@
             touch-action: none;
         }
         .tessellation-output {
-            display: grid;
             transform-origin: center center;
+            display: block;
             background: #e2e8f0;
-            gap: 0px;
         }
 
         .btn-reset-zoom-floating {
@@ -205,11 +204,11 @@
             display: flex; justify-content: flex-end; margin-top: -30px; margin-bottom: 8px; padding-right: 20px;
         }
         .btn-chain-lock {
-            background: tranparent; border: none; width: 23px; height: 23px; border-radius: 6px;
-            cursor: pointer; display: flex; align-items: center; justify-content: center; color: tranparent; transition: all 0.15s;
+            background: transparent; border: none; width: 28px; height: 28px; border-radius: 6px;
+            cursor: pointer; display: flex; align-items: center; justify-content: center; color: #64748b !important; transition: all 0.15s;
         }
         .btn-chain-lock:hover { background: #e2e8f0; color: #1e293b; }
-        .btn-chain-lock.active { background: tranparent; border: none; color: #0369a1; }
+        .btn-chain-lock.active { background: transparent; border: none; color: #0369a1 !important; }
         .btn-chain-lock svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 2.5; }
 
         /* Studio Panel Layout Grid */
@@ -328,13 +327,13 @@
             .panel-content { padding: 8px 14px; overflow-y: auto; height: 100%; }
             
             #editPatternTitle, #editPatternDesc, .mini-preview-box, .desktop-tab-toggle, .tool-group h4, .tools-panel hr, #desktopPanelRulesZone { display: none !important; }
+            .chain-linker-row { display: flex !important; justify-content: flex-end; margin-top: -15px; margin-bottom: 4px; width: 100%; }
 
             .tool-group { margin-bottom: 0; padding: 4px 0; }
             .tool-group.active-tab { display: block !important; }
 
             #tabGridExpansion { padding: 4px 5px; }
-            .tool-group .tool-row { margin-bottom: 20px; }
-            .chain-linker-row { margin-top: -15px; margin-bottom: 4px; }
+            .tool-group .tool-row { margin-bottom: 15px; }
 
             .studio-layout-container {
                 grid-template-columns: 55px 1fr 65px; gap: 8px; margin-top: 2px; width: 100%; align-items: center; justify-content: center;
@@ -416,7 +415,7 @@
                 <button class="btn-outline btn-reset-zoom-floating" id="btnResetZoom" title="Reset View Zoom/Pan">
                     <svg viewBox="0 0 24 24"><path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/></svg>
                 </button>
-                <div class="tessellation-output" id="tessellationOutput"></div>
+                <canvas class="tessellation-output" id="tessellationOutput"></canvas>
             </div>
         </div>
 
@@ -964,8 +963,13 @@
         if (!output) return;
         
         setTimeout(() => {
-            const rect = output.getBoundingClientRect();
-            if (rect.width === 0 || rect.height === 0) return;
+            const cols = parseInt(document.getElementById('gridCols').value) || 8;
+            const rows = parseInt(document.getElementById('gridRows').value) || 6;
+            const tileSize = parseInt(document.getElementById('gridSizeInput').value) || 80;
+            
+            const rawWidth = cols * tileSize;
+            const rawHeight = rows * tileSize;
+            if (rawWidth === 0 || rawHeight === 0) return;
 
             const availWidth = window.innerWidth;
             let panelHeight = 0;
@@ -977,9 +981,6 @@
                 panelHeight += 60;
             }
             const availHeight = window.innerHeight - 60 - panelHeight; 
-
-            const rawWidth = rect.width / scale;
-            const rawHeight = rect.height / scale;
 
             const scaleX = (availWidth * 0.85) / rawWidth;
             const scaleY = (availHeight * 0.85) / rawHeight;
@@ -1271,23 +1272,41 @@
         const tileSize = parseInt(document.getElementById('gridSizeInput').value) || 80;
         const currentBg = document.getElementById('bgColor').value;
 
-        const outputZone = document.getElementById('tessellationOutput');
-        outputZone.innerHTML = "";
-        outputZone.style.gridTemplateColumns = `repeat(${cols}, ${tileSize}px)`;
-        outputZone.style.gridTemplateRows = `repeat(${rows}, ${tileSize}px)`;
+        const outputCanvas = document.getElementById('tessellationOutput');
+        if (!outputCanvas) return;
+        
+        const oCtx = outputCanvas.getContext('2d');
 
-        const dataUrl = canvas.toDataURL();
-        for (let r = 0; r < rows; r++) {
-            for (let c = 0; c < cols; c++) {
-                const transformClass = getTransformWithPeriod(activePattern.matrix, r, c);
-                const tile = document.createElement('div');
-                tile.className = `tile ${transformClass}`;
-                tile.style.width = `${tileSize}px`; tile.style.height = `${tileSize}px`;
-                tile.style.backgroundImage = `url('${dataUrl}')`;
-                tile.style.backgroundColor = currentBg;
-                outputZone.appendChild(tile);
+        outputCanvas.width = cols * tileSize;
+        outputCanvas.height = rows * tileSize;
+        
+        oCtx.fillStyle = currentBg;
+        oCtx.fillRect(0, 0, outputCanvas.width, outputCanvas.height);
+
+        const sourceTileImg = new Image();
+        sourceTileImg.src = canvas.toDataURL();
+        
+        sourceTileImg.onload = function() {
+            for (let r = 0; r < rows; r++) {
+                for (let c = 0; c < cols; c++) {
+                    const transform = getTransformWithPeriod(activePattern.matrix, r, c);
+                    oCtx.save();
+                    oCtx.translate(c * tileSize + tileSize / 2, r * tileSize + tileSize / 2);
+                    
+                    if (transform === 'r90')   oCtx.rotate(90 * Math.PI / 180);
+                    if (transform === 'r180')  oCtx.rotate(180 * Math.PI / 180);
+                    if (transform === 'r270')  oCtx.rotate(270 * Math.PI / 180);
+                    if (transform === 'mx')    oCtx.scale(-1, 1);
+                    if (transform === 'my')    oCtx.scale(1, -1);
+                    if (transform === 'mxy')   oCtx.scale(-1, -1);
+                    if (transform === 'mx90')  { oCtx.scale(-1, 1); oCtx.rotate(90 * Math.PI / 180); }
+                    if (transform === 'my90')  { oCtx.scale(1, -1); oCtx.rotate(90 * Math.PI / 180); }
+                    
+                    oCtx.drawImage(sourceTileImg, -tileSize / 2, -tileSize / 2, tileSize, tileSize);
+                    oCtx.restore();
+                }
             }
-        }
+        };
     }
 
     function updateTilesFromCanvas() { renderTessellation(); }
