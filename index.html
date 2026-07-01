@@ -149,8 +149,7 @@
         .btn-outline:hover { background: #f1f5f9; border-color: #94a3b8; }
         .btn-outline svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 2; }
         
-        /* สไตล์พิเศษสำหรับปุ่มท็อกเกิลกริตเมื่อเปิดใช้งาน */
-        .btn-outline.active-toggle {
+                .btn-outline.active-toggle {
             background: #e2e8f0;
             border-color: #64748b;
             color: #0f172a;
@@ -664,8 +663,7 @@
     let selectedTool = "brush";
     let selectedLineWidth = 6;
     let cropper = null; 
-    let showGridOverlay = true; // สถานะเริ่มต้นของการแสดงผลเส้นกริด
-
+    let showGridOverlay = true; 
     // Canvas Engine State
     const canvas = document.getElementById('tileCanvas');
     const ctx = canvas.getContext('2d');
@@ -682,9 +680,8 @@
     let isPanning = false;
     let startPanX = 0, startPanY = 0;
 
-    // สถานะการล็อกโซ่ (Columns และ Rows สัมพันธ์กันหรือไม่)
+    // สถานะการล็อกโซ่
     let isChainLocked = true;
-
     function adjustMobilePanelHeight() {
         if (window.innerWidth > 991) return;
         const panel = document.getElementById('toolsPanel');
@@ -692,7 +689,7 @@
         if (panel && activeTab) {
             let targetMaxHeight = '245px';
             if (activeTab.id === 'tabGridExpansion') {
-                targetMaxHeight = '185px'; /* เพิ่มความยาวเผื่อโซ่เล็กน้อย */
+                targetMaxHeight = '185px'; 
             }
             panel.style.maxHeight = targetMaxHeight;
         }
@@ -1027,7 +1024,7 @@
             generateExplorerGrid();
         };
 
-        // ผูกมัดเหตุการณ์สำหรับปุ่มเปิดปิดเส้นกริด (Grid Overlay Button)
+        
         document.getElementById('btnToggleGrid').onclick = function() {
             showGridOverlay = !showGridOverlay;
             this.classList.toggle('active-toggle', showGridOverlay);
@@ -1108,12 +1105,12 @@
             }
         };
 
-        // ผูกมัดระบบโซ่ล็อก (Chain Linker) ล็อกอัตราส่วนคอลัมน์และแถว
+        
         document.getElementById('btnChainLock').onclick = function() {
             isChainLocked = !isChainLocked;
             this.classList.toggle('active', isChainLocked);
             if (isChainLocked) {
-                // ซิงค์ค่าให้เท่ากันทันทีเมื่อกดล็อกโซ่
+                
                 const currentCols = document.getElementById('gridCols').value;
                 document.getElementById('gridRows').value = currentCols;
                 document.getElementById('gridRowsNum').value = currentCols;
@@ -1121,11 +1118,11 @@
             }
         };
 
-        // เรียกใช้งานระบบการซิงค์ค่า Grid แบบใหม่ที่รองรับการตรวจสอบโซ่ล็อก
+        
         syncGridInputs('gridCols', 'gridColsNum', true);
         syncGridInputs('gridRows', 'gridRowsNum', false);
         
-        // Block size แยกทำงานปกติ
+        
         syncInputs('gridSizeInput', 'gridSizeNum', renderTessellation);
         
         document.getElementById('bgColor').oninput = () => {
@@ -1332,20 +1329,19 @@
                 }
             }
 
-            // ตรวจสอบเงื่อนไขการวาด "เส้นกริดรูป preview" (Grid Overlay) ทับหน้าลวดลายหลัง Render เสร็จสิ้น
-            if (showGridOverlay) {
+                        if (showGridOverlay) {
                 oCtx.save();
-                oCtx.strokeStyle = "#000000"; // ปรับเป็นเส้นทึบสีดำ 100% ชัดเจนแม้ภาพฉากหลังจะเป็นสีใดๆ
-                oCtx.lineWidth = 1.5;         // ขนาดความหนาของเส้นกริดที่เหมาะสมมองเห็นง่าย
+                oCtx.strokeStyle = "#000000"; 
+                oCtx.lineWidth = 1.5;         
                 
-                // วาดเส้นตารางตามแนวตั้ง (Vertical Lines)
+               
                 for (let c = 0; c <= cols; c++) {
                     oCtx.beginPath();
                     oCtx.moveTo(c * tileSize, 0);
                     oCtx.lineTo(c * tileSize, outputCanvas.height);
                     oCtx.stroke();
                 }
-                // วาดเส้นตารางตามแนวนอน (Horizontal Lines)
+                
                 for (let r = 0; r <= rows; r++) {
                     oCtx.beginPath();
                     oCtx.moveTo(0, r * tileSize);
@@ -1441,7 +1437,7 @@
         const sourceTileImg = new Image();
         sourceTileImg.src = canvas.toDataURL();
         sourceTileImg.onload = function() {
-            // 1. วาดลวดลายชิ้นงานแบบ Tessellation ทั้งหมดลงบน Canvas ที่จะ Export
+            
             for (let r = 0; r < rows; r++) {
                 for (let c = 0; c < cols; c++) {
                     const transform = getTransformWithPeriod(activePattern.matrix, r, c);
@@ -1460,20 +1456,20 @@
                 }
             }
 
-            // 2. ตรวจสอบสถานะการกดเปิดปุ่มกริด ถ้าเปิดอยู่ (`showGridOverlay === true`) ให้วาดเส้นกริดลงบนรูปภาพผลลัพธ์ด้วย
+            
             if (showGridOverlay) {
                 eCtx.save();
-                eCtx.strokeStyle = "#000000"; // เส้นกริดสีดำทึบ 100% ชัดเจนเหมือนหน้า preview
-                eCtx.lineWidth = 1.5;         // ความหนาคงที่เท่าหน้า preview
+                eCtx.strokeStyle = "#000000"; 
+                eCtx.lineWidth = 1.5;         
                 
-                // วาดเส้นกริดแนวตั้ง
+                
                 for (let c = 0; c <= cols; c++) {
                     eCtx.beginPath();
                     eCtx.moveTo(c * tileSize, 0);
                     eCtx.lineTo(c * tileSize, exportCanvas.height);
                     eCtx.stroke();
                 }
-                // วาดเส้นกริดแนวนอน
+                
                 for (let r = 0; r <= rows; r++) {
                     eCtx.beginPath();
                     eCtx.moveTo(0, r * tileSize);
@@ -1483,7 +1479,7 @@
                 eCtx.restore();
             }
 
-            // 3. ทำการดาวน์โหลดไฟล์รูปภาพ
+            
             const link = document.createElement('a');
             link.download = `Tessellation-${activePattern.title}.png`;
             link.href = exportCanvas.toDataURL('image/png'); link.click();
